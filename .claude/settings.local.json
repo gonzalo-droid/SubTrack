@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew assembleDebug *)",
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/button/*.kt)",
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/card/*.kt)",
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/avatar/*.kt)",
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/input/*.kt)",
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/indicator/*.kt)"
+    ]
+  }
+}

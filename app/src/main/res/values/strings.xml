@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">SubTrack</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_dashboard">Inicio</string>
+    <string name="nav_subscriptions">Suscripciones</string>
+    <string name="nav_people">Personas</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Payment status -->
+    <string name="status_paid">Pagado</string>
+    <string name="status_pending">Pendiente</string>
+    <string name="status_overdue">Vencido</string>
+    <string name="status_late">Con retraso</string>
+
+    <!-- Common actions -->
+    <string name="common_back">Volver</string>
+    <string name="common_save">Guardar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_delete">Eliminar</string>
+    <string name="common_confirm">Confirmar</string>
+    <string name="common_loading">Cargando…</string>
+    <string name="common_error_generic">Algo salió mal. Intenta de nuevo.</string>
+</resources>
