@@ -6,6 +6,6 @@ import javax.inject.Inject
 class ArchiveMemberUseCase @Inject constructor(
     private val repository: MemberRepository
 ) {
-    suspend operator fun invoke(subscriptionId: String, memberId: String) =
-        repository.archiveMember(subscriptionId, memberId)
+    suspend operator fun invoke(memberId: String) =
+        repository.archiveMember(memberId)
 }

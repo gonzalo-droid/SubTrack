@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubSplit — Gestión de Miembros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --bg-page: #050506;
+  --bg-app: #0A0A0C;
+  --bg-surface: #131316;
+  --bg-surface-hi: #1A1A1E;
+  --bg-surface-el: #242428;
+  --bg-sheet: #18181C;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --text-pri: #F5F5F7;
+  --text-sec: #9A9AA3;
+  --text-ter: #5A5A63;
+  --accent-green: #32D74B;
+  --accent-amber: #FFB340;
+  --accent-red: #FF453A;
+  --accent-blue: #0A84FF;
+  --accent-purple: #BF5AF2;
+  --accent-pink: #FF375F;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Geist', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-pri);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: auto;
+  padding: 48px 32px;
+  background-image:
+    radial-gradient(circle at 10% 5%, rgba(50, 215, 75, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(10, 132, 255, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 179, 64, 0.02) 0%, transparent 60%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+/* ============ HEADER ============ */
+.page-header {
+  max-width: 1800px;
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; flex-direction: column; gap: 10px; }
+.brand-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-ter);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-label::before { content: ''; width: 16px; height: 1px; background: var(--text-ter); }
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.brand-name .dot { color: var(--accent-green); }
+
+.page-meta { text-align: right; display: flex; flex-direction: column; gap: 8px; }
+.page-meta .date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+.page-meta .title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+
+/* ============ STORY FLOW ============ */
+
+.story-intro {
+  max-width: 1800px;
+  margin: 0 auto 40px;
+  padding: 28px 32px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.story-intro-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.story-intro-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.story-intro-title .accent { color: var(--accent-green); }
+
+.story-intro-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.story-nav {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.nav-chip {
+  padding: 8px 14px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-sec);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  transition: all 0.2s var(--ease);
+  cursor: pointer;
+}
+.nav-chip:hover {
+  background: var(--bg-surface-el);
+  color: var(--text-pri);
+  border-color: var(--border-strong);
+}
+
+.phones-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+
+.story-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.story-label-header {
+  padding: 0 4px;
+}
+
+.story-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.story-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-green);
+  letter-spacing: 0.18em;
+  padding: 4px 8px;
+  background: rgba(50, 215, 75, 0.1);
+  border: 1px solid rgba(50, 215, 75, 0.2);
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.story-arrow {
+  color: var(--text-ter);
+  display: flex;
+}
+
+.story-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.story-desc {
+  font-size: 11px;
+  color: var(--text-ter);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+/* ============ PHONE FRAME ============ */
+.phone {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 40px;
+  padding: 8px;
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 30px 60px -15px rgba(0,0,0,0.8),
+    0 15px 30px -8px rgba(0,0,0,0.6);
+  position: relative;
+  transition: transform 0.4s var(--ease);
+}
+.phone:hover { transform: translateY(-3px); }
+
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 24px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-app);
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-bar {
+  height: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px 0 28px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.status-bar .icons { display: flex; gap: 4px; align-items: center; }
+.signal-dots { display: flex; gap: 2px; align-items: flex-end; }
+.signal-dots span { width: 2px; background: var(--text-pri); border-radius: 1px; }
+.signal-dots span:nth-child(1) { height: 3px; }
+.signal-dots span:nth-child(2) { height: 5px; }
+.signal-dots span:nth-child(3) { height: 6px; }
+.signal-dots span:nth-child(4) { height: 8px; }
+
+.battery {
+  width: 20px; height: 10px;
+  border: 1px solid var(--text-pri);
+  border-radius: 3px;
+  padding: 1px;
+  position: relative;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: 3px;
+  width: 2px; height: 4px;
+  background: var(--text-pri);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill { width: 75%; height: 100%; background: var(--text-pri); border-radius: 1px; }
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.app-content::-webkit-scrollbar { display: none; }
+
+/* Dimmed backdrop (when bottom sheet is open) */
+.backdrop-content {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  filter: blur(1px);
+  pointer-events: none;
+  padding-top: 8px;
+}
+
+.dim-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+
+/* ============ BACKGROUND DETAIL STRUCTURE ============ */
+
+.bg-nav {
+  padding: 6px 14px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bg-back {
+  width: 28px; height: 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-pri);
+}
+
+.bg-hero {
+  padding: 14px 14px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bg-logo {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff;
+  font-family: var(--font-display);
+}
+.bg-logo.netflix { background: #E50914; }
+
+.bg-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bg-amount {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.bg-amount .cur {
+  font-size: 11px;
+  color: var(--text-sec);
+  margin-right: 2px;
+  font-weight: 500;
+}
+
+.bg-admin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  background: rgba(50, 215, 75, 0.1);
+  border: 1px solid rgba(50, 215, 75, 0.25);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  color: var(--accent-green);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.bg-admin-tag::before {
+  content: '';
+  width: 4px; height: 4px;
+  background: var(--accent-green);
+  border-radius: 50%;
+}
+
+.bg-section-header {
+  padding: 4px 14px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bg-section-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.bg-add-btn {
+  width: 24px; height: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-pri);
+}
+
+.bg-list {
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bg-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.bg-avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 9px;
+  color: #fff;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+
+.bg-row-info { flex: 1; min-width: 0; }
+.bg-row-name {
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 1px;
+}
+.bg-row-sub {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-ter);
+}
+
+.bg-row-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.bg-row-amount {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.bg-status {
+  font-family: var(--font-mono);
+  font-size: 6px;
+  padding: 1px 4px;
+  border-radius: 100px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.bg-status.paid { background: rgba(50, 215, 75, 0.12); color: var(--accent-green); }
+.bg-status.overdue { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); }
+
+/* ============ BOTTOM SHEET ============ */
+
+.sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg-sheet);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  z-index: 10;
+  overflow: hidden;
+  animation: slide-up 0.5s var(--ease-spring);
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  margin: 8px auto 0;
+}
+
+.sheet-header {
+  padding: 16px 18px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.sheet-title-block { flex: 1; }
+
+.sheet-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sheet-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.sheet-close {
+  width: 26px; height: 26px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sec);
+  flex-shrink: 0;
+}
+
+.sheet-body {
+  padding: 0 18px 16px;
+}
+
+/* ============ SHEET 1: ADD MEMBER — STEP 1 ============ */
+
+.step-indicator {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.step-dot {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+}
+.step-dot.active { background: var(--text-pri); }
+.step-dot.done { background: var(--accent-green); }
+
+.search-input {
+  padding: 10px 12px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-icon { color: var(--text-ter); display: flex; }
+.search-placeholder {
+  font-size: 11px;
+  color: var(--text-ter);
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+.contact-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.contact-option-btn {
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-option-icon {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-option-icon.blue { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); }
+.contact-option-icon.green { background: rgba(50, 215, 75, 0.15); color: var(--accent-green); }
+
+.contact-option-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.section-mini-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+}
+
+.contact-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 10px;
+  color: #fff;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+
+.contact-info { flex: 1; min-width: 0; }
+.contact-name {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 1px;
+  letter-spacing: -0.01em;
+}
+.contact-phone {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+}
+
+.contact-check {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-check.selected {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+  color: #000;
+}
+
+/* ============ SHEET 2: ADD MEMBER — STEP 2 (monto) ============ */
+
+.member-preview {
+  padding: 12px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.member-preview-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+.member-preview-info { flex: 1; }
+.member-preview-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+.member-preview-phone {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+}
+
+.amount-input-block {
+  padding: 16px 14px;
+  background: linear-gradient(135deg, rgba(50, 215, 75, 0.08) 0%, rgba(50, 215, 75, 0.02) 100%);
+  border: 1px solid rgba(50, 215, 75, 0.25);
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.amount-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.amount-input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.amount-currency {
+  font-size: 14px;
+  color: var(--text-sec);
+}
+.amount-value {
+  font-size: 32px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-pri);
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
+  padding: 0 4px;
+}
+
+.quick-amounts {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.quick-amount {
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-sec);
+  font-weight: 500;
+}
+.quick-amount.active {
+  background: rgba(50, 215, 75, 0.2);
+  border-color: rgba(50, 215, 75, 0.4);
+  color: var(--accent-green);
+}
+
+/* Math summary — el split breakdown en vivo */
+.math-summary {
+  padding: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.math-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+}
+
+.math-label {
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+.math-value {
+  font-family: var(--font-mono);
+  color: var(--text-pri);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.math-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+.math-row.highlight {
+  padding-top: 4px;
+}
+.math-row.highlight .math-label {
+  font-weight: 700;
+  color: var(--text-pri);
+  font-family: var(--font-display);
+  font-size: 11px;
+}
+.math-row.highlight .math-value {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.math-row.highlight .math-value.warning {
+  color: var(--accent-amber);
+}
+
+.admin-cover-note {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 179, 64, 0.08);
+  border: 1px solid rgba(255, 179, 64, 0.2);
+  border-radius: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.admin-cover-icon {
+  color: var(--accent-amber);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.admin-cover-text {
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+.admin-cover-text strong {
+  color: var(--accent-amber);
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+/* ============ SHEET 3: EDIT MEMBER ============ */
+
+.edit-hero {
+  padding: 14px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+.edit-info { flex: 1; }
+.edit-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.edit-detail {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+}
+
+.edit-status-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.edit-status-badge.overdue {
+  background: rgba(255, 69, 58, 0.12);
+  color: var(--accent-red);
+}
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.quick-stat {
+  text-align: center;
+  padding: 4px 2px;
+  border-right: 1px solid var(--border);
+}
+.quick-stat:last-child { border-right: none; }
+
+.quick-stat-value {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.quick-stat-value.amber { color: var(--accent-amber); }
+.quick-stat-value.green { color: var(--accent-green); }
+
+.quick-stat-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.edit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edit-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+
+.edit-action-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ic-green-sm { background: rgba(50, 215, 75, 0.15); color: var(--accent-green); }
+.ic-blue-sm { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); }
+.ic-amber-sm { background: rgba(255, 179, 64, 0.15); color: var(--accent-amber); }
+.ic-purple-sm { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); }
+.ic-red-sm { background: rgba(255, 69, 58, 0.15); color: var(--accent-red); }
+
+.edit-action-text { flex: 1; }
+.edit-action-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 1px;
+}
+.edit-action-desc {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-ter);
+}
+
+.edit-action-arrow {
+  color: var(--text-ter);
+  flex-shrink: 0;
+}
+
+.edit-action.danger .edit-action-label { color: var(--accent-red); }
+
+/* ============ SHEET 4: DELETE CONFIRM ============ */
+
+.delete-warning-hero {
+  text-align: center;
+  padding: 8px 0 16px;
+}
+
+.warning-icon {
+  width: 52px; height: 52px;
+  background: rgba(255, 179, 64, 0.15);
+  border: 1px solid rgba(255, 179, 64, 0.3);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-amber);
+  margin: 0 auto 12px;
+}
+
+.warning-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.warning-desc {
+  font-size: 11px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0 auto;
+}
+.warning-desc strong {
+  color: var(--text-pri);
+  font-weight: 700;
+}
+
+.decision-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.decision-card {
+  padding: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.decision-card.selected {
+  background: linear-gradient(135deg, rgba(50, 215, 75, 0.1) 0%, rgba(50, 215, 75, 0.02) 100%);
+  border-color: rgba(50, 215, 75, 0.35);
+}
+
+.decision-radio {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--text-ter);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.decision-radio.checked {
+  border-color: var(--accent-green);
+  background: var(--accent-green);
+}
+.decision-radio.checked::after {
+  content: '';
+  width: 5px; height: 5px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.decision-content { flex: 1; }
+
+.decision-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+}
+.decision-desc {
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+.decision-desc strong {
+  color: var(--text-pri);
+  font-weight: 600;
+}
+
+/* ============ SHEET 5: EXIT REQUEST ============ */
+
+.request-hero {
+  text-align: center;
+  padding: 8px 0 16px;
+}
+
+.request-icon {
+  width: 52px; height: 52px;
+  background: rgba(10, 132, 255, 0.15);
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  margin: 0 auto 12px;
+}
+
+.request-from {
+  padding: 12px;
+  background: var(--bg-surface-hi);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.request-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+.request-from-info { flex: 1; }
+.request-from-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.request-from-time {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-ter);
+  letter-spacing: 0.05em;
+}
+
+.request-message {
+  padding: 12px 14px;
+  background: rgba(10, 132, 255, 0.06);
+  border: 1px solid rgba(10, 132, 255, 0.15);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.request-message-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.15em;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.request-message-text {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-pri);
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+.request-consequences {
+  padding: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.consequences-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.consequence-item {
+  display: flex;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 10px;
+  color: var(--text-sec);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.consequence-bullet {
+  color: var(--accent-amber);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.consequence-item strong {
+  color: var(--text-pri);
+  font-weight: 600;
+}
+
+/* ============ BOTTOM SHEET FOOTER ============ */
+
+.sheet-footer {
+  padding: 12px 18px 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sheet-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 11px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: none;
+}
+
+.sheet-btn.primary {
+  background: var(--text-pri);
+  color: #000;
+}
+.sheet-btn.danger {
+  background: var(--accent-red);
+  color: #fff;
+}
+.sheet-btn.secondary {
+  background: var(--bg-surface);
+  color: var(--text-pri);
+  border: 1px solid var(--border);
+}
+
+.sheet-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+/* ============ FOOTER ============ */
+.footer-note {
+  max-width: 1800px;
+  margin: 72px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1500px) {
+  .phones-container { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .phones-container { grid-template-columns: repeat(2, 1fr); }
+  .story-intro { grid-template-columns: 1fr; gap: 16px; }
+}
+@media (max-width: 600px) {
+  .phones-container { grid-template-columns: 1fr; }
+  body { padding: 24px 16px; }
+  .brand-name { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="brand">
+    <span class="brand-label">UX Mockup · Gestión de Miembros</span>
+    <h1 class="brand-name">SubSplit<span class="dot">.</span></h1>
+  </div>
+  <div class="page-meta">
+    <span class="date">17 · Abr · 2026</span>
+    <span class="title">5 flujos · bottom sheets · reglas reales</span>
+  </div>
+</header>
+
+<!-- Story intro -->
+<div class="story-intro">
+  <div>
+    <div class="story-intro-label">Storyboard · Bottom sheets</div>
+    <h2 class="story-intro-title" style="margin-top:6px">5 momentos de<br><span class="accent">gestionar tu grupo</span></h2>
+  </div>
+  <p class="story-intro-desc">
+    Un grupo compartido es un ser vivo: la gente entra, sale, paga tarde, cambia. Estos 5 flujos cubren las decisiones reales que el admin (y el miembro) toman sobre la marcha, respetando la regla principal: <strong style="color:var(--text-pri)">SubSplit coordina, no mueve plata</strong>.
+  </p>
+  <div class="story-nav">
+    <div class="nav-chip">01 → 05</div>
+  </div>
+</div>
+
+<!-- 5 phones in a row -->
+<div class="phones-container">
+
+  <!-- ============ 01 · AGREGAR — PASO 1 ============ -->
+  <div class="story-col">
+    <div class="story-label-header">
+      <div class="story-step">
+        <span class="story-num">01</span>
+        <div class="story-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      <div class="story-title">Agregar miembro<br>· paso 1</div>
+      <div class="story-desc">
+        Elegir a quién. Contactos del teléfono, manual, o QR si ya tiene la app.
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <!-- Background: dimmed detail screen -->
+          <div class="backdrop-content">
+            <div class="bg-nav">
+              <div class="bg-back">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+            </div>
+            <div class="bg-hero">
+              <div class="bg-logo netflix">N</div>
+              <div class="bg-name">Netflix Premium</div>
+              <div class="bg-amount"><span class="cur">S/</span>54.90</div>
+              <div class="bg-admin-tag">Eres admin</div>
+            </div>
+            <div class="bg-section-header">
+              <span class="bg-section-title">Miembros · 4</span>
+              <div class="bg-add-btn">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="dim-overlay"></div>
+
+          <!-- Bottom sheet: Add member step 1 -->
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title-block">
+                <div class="sheet-eyebrow">Paso 1 de 2</div>
+                <div class="sheet-title">Agregar miembro</div>
+              </div>
+              <div class="sheet-close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+
+            <div class="sheet-body">
+              <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+              </div>
+
+              <div class="search-input">
+                <div class="search-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                </div>
+                <span class="search-placeholder">Buscar contacto o nombre...</span>
+              </div>
+
+              <div class="contact-options">
+                <div class="contact-option-btn">
+                  <div class="contact-option-icon blue">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/><circle cx="12" cy="10" r="3"/><path d="M7 20.6V18a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v2.6"/></svg>
+                  </div>
+                  <span class="contact-option-label">Contactos</span>
+                </div>
+                <div class="contact-option-btn">
+                  <div class="contact-option-icon green">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3M14 18h3M18 14v3M18 18v3"/></svg>
+                  </div>
+                  <span class="contact-option-label">QR code</span>
+                </div>
+              </div>
+
+              <div class="section-mini-label">Sugeridos · frecuentes</div>
+
+              <div class="contact-list">
+                <div class="contact-item">
+                  <div class="contact-avatar" style="background: linear-gradient(135deg, #FF375F, #C92A2A);">AP</div>
+                  <div class="contact-info">
+                    <div class="contact-name">Ana Paredes</div>
+                    <div class="contact-phone">+51 934 567 890</div>
+                  </div>
+                  <div class="contact-check selected">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">DR</div>
+                  <div class="contact-info">
+                    <div class="contact-name">Diego Rojas</div>
+                    <div class="contact-phone">+51 945 123 678</div>
+                  </div>
+                  <div class="contact-check"></div>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-avatar" style="background: linear-gradient(135deg, #BF5AF2, #7048E8);">SM</div>
+                  <div class="contact-info">
+                    <div class="contact-name">Sofía Mendoza</div>
+                    <div class="contact-phone">+51 912 876 543</div>
+                  </div>
+                  <div class="contact-check"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-footer">
+              <button class="sheet-btn primary">Continuar →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 02 · AGREGAR — PASO 2 (monto + admin cubre) ============ -->
+  <div class="story-col">
+    <div class="story-label-header">
+      <div class="story-step">
+        <span class="story-num">02</span>
+        <div class="story-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      <div class="story-title">Agregar miembro<br>· paso 2</div>
+      <div class="story-desc">
+        Definir cuánto aporta. Si no alcanza el total, se muestra cuánto cubre el admin.
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="backdrop-content">
+            <div class="bg-nav"><div class="bg-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div></div>
+            <div class="bg-hero">
+              <div class="bg-logo netflix">N</div>
+              <div class="bg-name">Netflix Premium</div>
+              <div class="bg-amount"><span class="cur">S/</span>54.90</div>
+            </div>
+          </div>
+
+          <div class="dim-overlay"></div>
+
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title-block">
+                <div class="sheet-eyebrow">Paso 2 de 2 · monto</div>
+                <div class="sheet-title">¿Cuánto<br>aporta Ana?</div>
+              </div>
+              <div class="sheet-close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+
+            <div class="sheet-body">
+              <div class="step-indicator">
+                <div class="step-dot done"></div>
+                <div class="step-dot active"></div>
+              </div>
+
+              <div class="member-preview">
+                <div class="member-preview-avatar" style="background: linear-gradient(135deg, #FF375F, #C92A2A);">AP</div>
+                <div class="member-preview-info">
+                  <div class="member-preview-name">Ana Paredes</div>
+                  <div class="member-preview-phone">+51 934 567 890</div>
+                </div>
+              </div>
+
+              <div class="amount-input-block">
+                <div class="amount-label">Aporte mensual</div>
+                <div class="amount-input-row">
+                  <span class="amount-currency">S/</span>
+                  <span class="amount-value">10.00</span>
+                </div>
+                <div class="quick-amounts">
+                  <div class="quick-amount">S/ 9.15</div>
+                  <div class="quick-amount active">S/ 10.00</div>
+                  <div class="quick-amount">S/ 13.73</div>
+                  <div class="quick-amount">Otro</div>
+                </div>
+              </div>
+
+              <div class="math-summary">
+                <div class="math-row">
+                  <span class="math-label">Total Netflix</span>
+                  <span class="math-value">S/ 54.90</span>
+                </div>
+                <div class="math-row">
+                  <span class="math-label">María · Carlos · Lucía</span>
+                  <span class="math-value">S/ 41.17</span>
+                </div>
+                <div class="math-row">
+                  <span class="math-label">Ana (nueva)</span>
+                  <span class="math-value" style="color:var(--accent-green)">+ S/ 10.00</span>
+                </div>
+                <div class="math-divider"></div>
+                <div class="math-row highlight">
+                  <span class="math-label">Tú cubres</span>
+                  <span class="math-value warning">S/ 3.73</span>
+                </div>
+              </div>
+
+              <div class="admin-cover-note">
+                <div class="admin-cover-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                </div>
+                <div class="admin-cover-text">
+                  Los aportes no cubren el total. <strong>Tú pagarás S/ 3.73 adicionales</strong>. Puedes ajustar luego si alguien cambia de monto.
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-footer">
+              <button class="sheet-btn primary">Agregar a Ana</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 03 · EDITAR MIEMBRO ============ -->
+  <div class="story-col">
+    <div class="story-label-header">
+      <div class="story-step">
+        <span class="story-num">03</span>
+        <div class="story-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      <div class="story-title">Gestionar<br>a un miembro</div>
+      <div class="story-desc">
+        Tap en un miembro. Stats rápidas + acciones: cobrar, marcar pagado, editar, quitar.
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="backdrop-content">
+            <div class="bg-nav"><div class="bg-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div></div>
+            <div class="bg-hero">
+              <div class="bg-logo netflix">N</div>
+              <div class="bg-name">Netflix Premium</div>
+              <div class="bg-amount"><span class="cur">S/</span>54.90</div>
+            </div>
+          </div>
+
+          <div class="dim-overlay"></div>
+
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title-block">
+                <div class="sheet-eyebrow">Miembro · Netflix</div>
+                <div class="sheet-title">María Rodríguez</div>
+              </div>
+              <div class="sheet-close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+
+            <div class="sheet-body">
+              <div class="edit-hero">
+                <div class="edit-avatar" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">MR</div>
+                <div class="edit-info">
+                  <div class="edit-name">María Rodríguez</div>
+                  <div class="edit-detail">+51 987 654 321 · Hermana</div>
+                </div>
+                <div class="edit-status-badge overdue">Vencido</div>
+              </div>
+
+              <div class="quick-stats">
+                <div class="quick-stat">
+                  <div class="quick-stat-value amber">S/ 13.73</div>
+                  <div class="quick-stat-label">Debe</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat-value">6</div>
+                  <div class="quick-stat-label">Meses</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat-value green">83%</div>
+                  <div class="quick-stat-label">Puntual</div>
+                </div>
+              </div>
+
+              <div class="edit-actions">
+                <div class="edit-action">
+                  <div class="edit-action-icon ic-green-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                  </div>
+                  <div class="edit-action-text">
+                    <div class="edit-action-label">Enviar recordatorio</div>
+                    <div class="edit-action-desc">WhatsApp · amigable</div>
+                  </div>
+                  <div class="edit-action-arrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+
+                <div class="edit-action">
+                  <div class="edit-action-icon ic-blue-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </div>
+                  <div class="edit-action-text">
+                    <div class="edit-action-label">Marcar como pagado</div>
+                    <div class="edit-action-desc">Confirmación manual</div>
+                  </div>
+                  <div class="edit-action-arrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+
+                <div class="edit-action">
+                  <div class="edit-action-icon ic-amber-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </div>
+                  <div class="edit-action-text">
+                    <div class="edit-action-label">Editar datos · monto</div>
+                    <div class="edit-action-desc">Nombre · teléfono · aporte</div>
+                  </div>
+                  <div class="edit-action-arrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+
+                <div class="edit-action">
+                  <div class="edit-action-icon ic-purple-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  </div>
+                  <div class="edit-action-text">
+                    <div class="edit-action-label">Ver historial</div>
+                    <div class="edit-action-desc">Timeline de pagos</div>
+                  </div>
+                  <div class="edit-action-arrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+
+                <div class="edit-action danger">
+                  <div class="edit-action-icon ic-red-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                  </div>
+                  <div class="edit-action-text">
+                    <div class="edit-action-label">Quitar del grupo</div>
+                    <div class="edit-action-desc">Archivar con deuda</div>
+                  </div>
+                  <div class="edit-action-arrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 04 · ELIMINAR CON DEUDA ============ -->
+  <div class="story-col">
+    <div class="story-label-header">
+      <div class="story-step">
+        <span class="story-num">04</span>
+        <div class="story-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      <div class="story-title">Quitar miembro<br>con deuda</div>
+      <div class="story-desc">
+        Opciones claras: archivar pendiente, perdonar, o transferir deuda al nuevo.
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="backdrop-content">
+            <div class="bg-nav"><div class="bg-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div></div>
+            <div class="bg-hero">
+              <div class="bg-logo netflix">N</div>
+              <div class="bg-name">Netflix Premium</div>
+            </div>
+          </div>
+
+          <div class="dim-overlay"></div>
+
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title-block">
+                <div class="sheet-eyebrow">Confirmar acción</div>
+              </div>
+              <div class="sheet-close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+
+            <div class="sheet-body">
+              <div class="delete-warning-hero">
+                <div class="warning-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.3 3.9a1.94 1.94 0 0 1 3.4 0l8.3 14.3a1.94 1.94 0 0 1-1.7 2.9H3.7a1.94 1.94 0 0 1-1.7-2.9L10.3 3.9z"/><path d="M12 9v4M12 17h.01"/></svg>
+                </div>
+                <h3 class="warning-title">Carlos tiene<br>S/ 13.73 pendiente</h3>
+                <p class="warning-desc">
+                  ¿Qué quieres hacer con la deuda? Carlos <strong>no puede borrarse</strong> mientras tenga pagos pendientes.
+                </p>
+              </div>
+
+              <div class="decision-cards">
+                <div class="decision-card selected">
+                  <div class="decision-radio checked"></div>
+                  <div class="decision-content">
+                    <div class="decision-title">Archivar con deuda</div>
+                    <div class="decision-desc">
+                      Carlos sale del grupo activo pero su <strong>deuda queda visible</strong>. Puedes agregar reemplazo sin afectar el total. Al pagar, lo borras definitivo.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="decision-card">
+                  <div class="decision-radio"></div>
+                  <div class="decision-content">
+                    <div class="decision-title">Perdonar deuda</div>
+                    <div class="decision-desc">
+                      Eliminas a Carlos por completo. <strong>Tú asumes</strong> los S/ 13.73 pendientes del ciclo.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="decision-card">
+                  <div class="decision-radio"></div>
+                  <div class="decision-content">
+                    <div class="decision-title">Transferir al reemplazo</div>
+                    <div class="decision-desc">
+                      Primero agrega a un nuevo miembro. La deuda pasa a él/ella como <strong>entrada inicial</strong>.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-footer">
+              <div class="sheet-btn-row">
+                <button class="sheet-btn secondary">Cancelar</button>
+                <button class="sheet-btn primary">Archivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 05 · SOLICITUD DE SALIDA ============ -->
+  <div class="story-col">
+    <div class="story-label-header">
+      <div class="story-step">
+        <span class="story-num">05</span>
+      </div>
+      <div class="story-title">Miembro pide<br>salir del grupo</div>
+      <div class="story-desc">
+        Al admin le llega la solicitud. Aprueba (dispara flujo 04) o rechaza con un mensaje.
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="backdrop-content">
+            <div class="bg-nav"><div class="bg-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></div></div>
+            <div class="bg-hero">
+              <div class="bg-logo netflix">N</div>
+              <div class="bg-name">Netflix Premium</div>
+            </div>
+          </div>
+
+          <div class="dim-overlay"></div>
+
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+              <div class="sheet-title-block">
+                <div class="sheet-eyebrow">Nueva solicitud</div>
+              </div>
+              <div class="sheet-close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+
+            <div class="sheet-body">
+              <div class="request-hero">
+                <div class="request-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </div>
+                <h3 class="warning-title">Pedido de salida</h3>
+              </div>
+
+              <div class="request-from">
+                <div class="request-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">CL</div>
+                <div class="request-from-info">
+                  <div class="request-from-name">Carlos Lima</div>
+                  <div class="request-from-time">Hace 2 horas · Netflix</div>
+                </div>
+              </div>
+
+              <div class="request-message">
+                <div class="request-message-label">Mensaje de Carlos</div>
+                <div class="request-message-text">
+                  "Hermano, ya no veo Netflix, me salgo del grupo. Gracias por todo este tiempo 🙏"
+                </div>
+              </div>
+
+              <div class="request-consequences">
+                <div class="consequences-label">Al aprobar</div>
+                <div class="consequence-item">
+                  <span class="consequence-bullet">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="1"/></svg>
+                  </span>
+                  <span>Carlos tiene <strong>S/ 13.73 pendiente</strong>. Deberás elegir qué hacer con la deuda.</span>
+                </div>
+                <div class="consequence-item">
+                  <span class="consequence-bullet">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="1"/></svg>
+                  </span>
+                  <span>El grupo quedará con <strong>3 miembros activos</strong>. Tú cubrirás S/ 13.73 hasta agregar reemplazo.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-footer">
+              <div class="sheet-btn-row">
+                <button class="sheet-btn secondary">Rechazar</button>
+                <button class="sheet-btn primary">Aprobar salida</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <span>SubSplit · Gestión de Miembros · 5 flujos</span>
+  <span>→ Next · Archivados + vista de miembro</span>
+</div>
+
+<script>
+  // Decision card selection in the delete confirmation
+  document.querySelectorAll('.decision-cards').forEach(container => {
+    container.querySelectorAll('.decision-card').forEach(card => {
+      card.addEventListener('click', () => {
+        container.querySelectorAll('.decision-card').forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.decision-radio').classList.remove('checked');
+        });
+        card.classList.add('selected');
+        card.querySelector('.decision-radio').classList.add('checked');
+      });
+    });
+  });
+
+  // Contact check toggle
+  document.querySelectorAll('.contact-item').forEach(item => {
+    item.addEventListener('click', () => {
+      item.querySelector('.contact-check').classList.toggle('selected');
+    });
+  });
+
+  // Quick amount selection
+  document.querySelectorAll('.quick-amounts').forEach(container => {
+    container.querySelectorAll('.quick-amount').forEach(chip => {
+      chip.addEventListener('click', () => {
+        container.querySelectorAll('.quick-amount').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -7,6 +7,6 @@ import javax.inject.Inject
 class UpdateMemberUseCase @Inject constructor(
     private val repository: MemberRepository
 ) {
-    suspend operator fun invoke(subscriptionId: String, member: Member) =
-        repository.updateMember(subscriptionId, member)
+    suspend operator fun invoke(member: Member) =
+        repository.updateMember(member)
 }

@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubSplit — Vista Miembro + Archivados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --bg-page: #050506;
+  --bg-app: #0A0A0C;
+  --bg-surface: #131316;
+  --bg-surface-hi: #1A1A1E;
+  --bg-surface-el: #242428;
+  --bg-sheet: #18181C;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --text-pri: #F5F5F7;
+  --text-sec: #9A9AA3;
+  --text-ter: #5A5A63;
+  --accent-green: #32D74B;
+  --accent-amber: #FFB340;
+  --accent-red: #FF453A;
+  --accent-blue: #0A84FF;
+  --accent-purple: #BF5AF2;
+  --accent-pink: #FF375F;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Geist', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-pri);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  padding: 48px 32px;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(10, 132, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(50, 215, 75, 0.04) 0%, transparent 40%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+.page-header {
+  max-width: 1600px;
+  margin: 0 auto 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; flex-direction: column; gap: 10px; }
+.brand-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-ter);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-label::before { content: ''; width: 16px; height: 1px; background: var(--text-ter); }
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.brand-name .dot { color: var(--accent-green); }
+
+.page-meta { text-align: right; display: flex; flex-direction: column; gap: 8px; }
+.page-meta .date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+.page-meta .title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+
+/* ============ SECTIONS ============ */
+
+.section {
+  max-width: 1600px;
+  margin: 0 auto 56px;
+}
+
+.section-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.section-num {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--text-ter);
+  font-variant-numeric: tabular-nums;
+}
+
+.section-content { display: flex; flex-direction: column; gap: 8px; }
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.section-title .accent { color: var(--accent-green); }
+.section-title .accent-blue { color: var(--accent-blue); }
+
+.section-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.55;
+  max-width: 700px;
+}
+
+/* ============ PHONES ROW ============ */
+
+.phones-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.phone-wrap { display: flex; flex-direction: column; gap: 16px; }
+
+.phone-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+.phone-label .num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-weight: 500;
+}
+.phone-label .name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+}
+
+.phone {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 44px;
+  padding: 10px;
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 20px 40px -10px rgba(0,0,0,0.6);
+  position: relative;
+  transition: transform 0.4s var(--ease);
+}
+.phone:hover { transform: translateY(-3px); }
+
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 18px; left: 50%;
+  transform: translateX(-50%);
+  width: 95px; height: 28px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-app);
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-bar {
+  height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 28px 0 32px;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-bar .icons { display: flex; gap: 5px; align-items: center; }
+.signal-dots { display: flex; gap: 2px; align-items: flex-end; }
+.signal-dots span { width: 3px; background: var(--text-pri); border-radius: 1px; }
+.signal-dots span:nth-child(1) { height: 4px; }
+.signal-dots span:nth-child(2) { height: 6px; }
+.signal-dots span:nth-child(3) { height: 8px; }
+.signal-dots span:nth-child(4) { height: 10px; }
+.battery {
+  width: 24px; height: 11px;
+  border: 1px solid var(--text-pri);
+  border-radius: 3px;
+  padding: 1px;
+  position: relative;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: 3px;
+  width: 2px; height: 4px;
+  background: var(--text-pri);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill { width: 75%; height: 100%; background: var(--text-pri); border-radius: 1px; }
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.app-content::-webkit-scrollbar { display: none; }
+
+/* ============ DETAIL NAV ============ */
+.detail-nav {
+  padding: 8px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-btn {
+  width: 36px; height: 36px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-pri);
+  cursor: pointer;
+}
+
+.icon-btn {
+  width: 36px; height: 36px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sec);
+}
+
+/* ============ MEMBER VIEW (NO-ADMIN) ============ */
+
+.member-hero {
+  padding: 22px 20px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.service-logo-lg {
+  width: 60px; height: 60px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 24px;
+  color: #fff;
+  font-family: var(--font-display);
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.25);
+}
+.logo-netflix { background: #E50914; }
+
+.service-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.service-plan {
+  font-size: 12px;
+  color: var(--text-ter);
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+
+.member-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(10, 132, 255, 0.1);
+  border: 1px solid rgba(10, 132, 255, 0.25);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-blue);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.member-tag::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent-blue);
+  border-radius: 50%;
+}
+
+/* Main amount card — MI aporte */
+.my-amount-card {
+  margin: 14px 20px 16px;
+  padding: 22px 20px 20px;
+  background: linear-gradient(135deg, rgba(255, 179, 64, 0.1) 0%, rgba(255, 179, 64, 0.02) 50%, var(--bg-surface) 100%);
+  border: 1px solid rgba(255, 179, 64, 0.3);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.my-amount-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255, 179, 64, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.my-amount-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--accent-amber);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.my-amount-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.my-amount-cur {
+  font-size: 24px;
+  color: var(--text-sec);
+  font-weight: 500;
+}
+
+.my-amount-value {
+  font-size: 56px;
+  color: var(--text-pri);
+}
+
+.my-amount-context {
+  font-size: 11px;
+  color: var(--text-sec);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.my-amount-context strong {
+  color: var(--text-pri);
+  font-weight: 600;
+  font-family: var(--font-display);
+}
+
+.amount-status-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 179, 64, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.status-icon-sm {
+  width: 22px; height: 22px;
+  background: rgba(255, 179, 64, 0.2);
+  color: var(--accent-amber);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.status-text-block { flex: 1; }
+.status-text-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-pri);
+  margin-bottom: 1px;
+  letter-spacing: -0.01em;
+}
+.status-text-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-amber);
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Primary action — Ya pagué */
+.pay-action {
+  margin: 0 20px 16px;
+  padding: 14px 16px 14px 18px;
+  background: var(--text-pri);
+  color: #000;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  border: none;
+  width: calc(100% - 40px);
+  font-family: var(--font-body);
+}
+.pay-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255,255,255,0.15);
+}
+
+.pay-action-text { flex: 1; text-align: left; }
+.pay-action-label {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+.pay-action-desc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(0,0,0,0.6);
+  letter-spacing: 0.03em;
+  font-weight: 500;
+}
+
+.pay-action-arrow {
+  width: 30px; height: 30px;
+  background: #000;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+/* Admin contact card */
+.admin-card {
+  margin: 0 20px 16px;
+  padding: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #BF5AF2, #7048E8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.admin-info { flex: 1; min-width: 0; }
+.admin-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.admin-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+}
+.admin-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 2px 5px;
+  background: rgba(50, 215, 75, 0.12);
+  color: var(--accent-green);
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.admin-contact {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+}
+
+.admin-wa-btn {
+  width: 36px; height: 36px;
+  background: rgba(37, 211, 102, 0.15);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #25D366;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+}
+.admin-wa-btn:hover {
+  background: rgba(37, 211, 102, 0.25);
+  transform: scale(1.08);
+}
+
+/* Section titles */
+.detail-section-header {
+  padding: 4px 20px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.detail-section-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.detail-section-count {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.08em;
+}
+
+/* My history list */
+.history-list {
+  margin: 0 20px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.history-item:last-child { border-bottom: none; }
+
+.history-month {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-sec);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-width: 52px;
+  font-weight: 600;
+}
+
+.history-amount {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-status-pill {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.history-status-pill.paid {
+  background: rgba(50, 215, 75, 0.12);
+  color: var(--accent-green);
+}
+.history-status-pill.late {
+  background: rgba(255, 179, 64, 0.12);
+  color: var(--accent-amber);
+}
+.history-status-pill.pending {
+  background: rgba(10, 132, 255, 0.12);
+  color: var(--accent-blue);
+}
+
+/* Secondary actions — leave group */
+.secondary-actions {
+  margin: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.secondary-action-btn {
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+.secondary-action-btn:hover {
+  background: var(--bg-surface-hi);
+}
+
+.secondary-action-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.secondary-action-icon.gray { background: rgba(255,255,255,0.06); color: var(--text-sec); }
+.secondary-action-icon.red { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); }
+
+.secondary-action-label {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.secondary-action-btn.danger .secondary-action-label { color: var(--accent-red); }
+
+.secondary-action-arrow {
+  color: var(--text-ter);
+  flex-shrink: 0;
+}
+
+/* ============ SHEET: YA PAGUÉ ============ */
+
+.backdrop-content {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  filter: blur(1px);
+  pointer-events: none;
+  padding-top: 8px;
+}
+
+.dim-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+
+.sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg-sheet);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  z-index: 10;
+  animation: slide-up 0.5s var(--ease-spring);
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  margin: 10px auto 0;
+}
+
+.sheet-header-paid {
+  padding: 20px 20px 10px;
+  text-align: center;
+}
+
+.paid-hero-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #32D74B 0%, #1FA838 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  margin: 0 auto 14px;
+  box-shadow: 0 12px 30px rgba(50, 215, 75, 0.35);
+}
+
+.paid-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.paid-title .accent { color: var(--accent-green); }
+
+.paid-subtitle {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.sheet-body-paid {
+  padding: 8px 20px 16px;
+}
+
+/* Upload photo block */
+.upload-block {
+  padding: 18px;
+  background: var(--bg-surface);
+  border: 2px dashed var(--border-strong);
+  border-radius: 16px;
+  text-align: center;
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+.upload-block:hover {
+  border-color: rgba(50, 215, 75, 0.4);
+  background: rgba(50, 215, 75, 0.04);
+}
+
+.upload-block.has-photo {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-style: solid;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 3/4;
+  max-height: 140px;
+}
+
+.upload-icon {
+  width: 40px; height: 40px;
+  background: rgba(50, 215, 75, 0.1);
+  color: var(--accent-green);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.upload-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+
+.upload-desc {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.05em;
+}
+
+.upload-options {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.upload-opt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-sec);
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* Notes field */
+.notes-field {
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+
+.notes-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.notes-placeholder {
+  font-size: 11px;
+  color: var(--text-ter);
+  letter-spacing: -0.01em;
+  font-style: italic;
+}
+
+/* Payment summary */
+.payment-summary {
+  padding: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: 3px 0;
+}
+
+.payment-row-label { color: var(--text-sec); }
+.payment-row-value {
+  font-family: var(--font-mono);
+  color: var(--text-pri);
+  font-weight: 600;
+}
+
+.payment-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 0;
+}
+
+.payment-row.total .payment-row-label {
+  font-weight: 700;
+  color: var(--text-pri);
+  font-family: var(--font-display);
+  font-size: 12px;
+}
+.payment-row.total .payment-row-value {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent-green);
+}
+
+.sheet-footer {
+  padding: 12px 20px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.sheet-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+}
+
+.sheet-btn.primary {
+  background: var(--accent-green);
+  color: #000;
+}
+.sheet-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(50, 215, 75, 0.3);
+}
+
+/* ============ ADMIN VIEW WITH ARCHIVED ============ */
+
+.admin-hero {
+  padding: 16px 20px 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-tag-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(50, 215, 75, 0.1);
+  border: 1px solid rgba(50, 215, 75, 0.25);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-green);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.admin-tag-big::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent-green);
+  border-radius: 50%;
+}
+
+.admin-amount {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.admin-amount .cur {
+  font-size: 14px;
+  color: var(--text-sec);
+  font-weight: 500;
+}
+
+.admin-due-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+  font-weight: 600;
+  padding: 3px 8px;
+  background: rgba(255, 179, 64, 0.1);
+  border-radius: 5px;
+}
+
+/* Active members */
+.members-list-admin {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.member-row-admin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.member-row-admin.archived {
+  background: rgba(255,255,255,0.02);
+  opacity: 0.75;
+  position: relative;
+}
+
+.member-row-admin.archived::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(255,255,255,0.015) 8px,
+    rgba(255,255,255,0.015) 16px
+  );
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.member-avatar-sm {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  color: #fff;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+
+.member-row-admin.archived .member-avatar-sm {
+  filter: grayscale(0.6);
+}
+
+.member-row-info { flex: 1; min-width: 0; }
+
+.member-row-name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.archived-tag {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  padding: 2px 4px;
+  background: rgba(255, 179, 64, 0.12);
+  color: var(--accent-amber);
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.member-row-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+}
+
+.member-row-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.member-row-amount {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.member-row-amount.debt { color: var(--accent-red); }
+
+.row-status-pill {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  padding: 2px 6px;
+  border-radius: 100px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.row-status-pill.paid { background: rgba(50, 215, 75, 0.12); color: var(--accent-green); }
+.row-status-pill.pending { background: rgba(255, 179, 64, 0.12); color: var(--accent-amber); }
+.row-status-pill.overdue { background: rgba(255, 69, 58, 0.12); color: var(--accent-red); }
+.row-status-pill.debt-pending {
+  background: rgba(255, 69, 58, 0.12);
+  color: var(--accent-red);
+}
+
+/* Archived divider */
+.archived-divider {
+  padding: 8px 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.archived-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.archived-divider-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--accent-amber);
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.archived-count-chip {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 2px 5px;
+  background: rgba(255, 179, 64, 0.15);
+  color: var(--accent-amber);
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.archived-help {
+  margin: 0 20px 14px;
+  padding: 10px 12px;
+  background: rgba(255, 179, 64, 0.06);
+  border: 1px solid rgba(255, 179, 64, 0.15);
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.archived-help-icon {
+  color: var(--accent-amber);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.archived-help-text {
+  font-size: 10px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+.archived-help-text strong {
+  color: var(--text-pri);
+  font-weight: 700;
+}
+
+/* ============ FOOTER ============ */
+.footer-note {
+  max-width: 1600px;
+  margin: 80px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1200px) {
+  .phones-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 800px) {
+  .phones-row { grid-template-columns: 1fr; }
+  .section-hero { grid-template-columns: 1fr; gap: 12px; }
+  .section-num { font-size: 48px; }
+  body { padding: 24px 16px; }
+  .brand-name { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="brand">
+    <span class="brand-label">UX Mockup · Vista Miembro + Archivados</span>
+    <h1 class="brand-name">SubSplit<span class="dot">.</span></h1>
+  </div>
+  <div class="page-meta">
+    <span class="date">17 · Abr · 2026</span>
+    <span class="title">Privacidad por diseño · admin con contexto</span>
+  </div>
+</header>
+
+<!-- ============ SECTION 1: MEMBER VIEW (NO-ADMIN) ============ -->
+<div class="section">
+  <div class="section-hero">
+    <div class="section-num">A</div>
+    <div class="section-content">
+      <span class="section-eyebrow">Parte 1 · Vista no-admin</span>
+      <h2 class="section-title">El miembro solo ve<br><span class="accent-blue">lo suyo</span></h2>
+      <p class="section-desc">
+        Privacidad por diseño: sin otros miembros, sin montos ajenos, sin grupo visible. La pantalla está hecha para responder tres preguntas: <strong style="color:var(--text-pri)">cuánto debo, cuándo vence, y ya lo pagué</strong>. El bottom sheet de confirmación soporta foto del comprobante como prueba opcional.
+      </p>
+    </div>
+  </div>
+
+  <div class="phones-row">
+
+    <!-- PHONE 1: Member view -->
+    <div class="phone-wrap">
+      <div class="phone-label">
+        <span class="num">06</span>
+        <span class="name">Vista del miembro</span>
+      </div>
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="icons">
+              <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+              <div class="battery"><div class="battery-fill"></div></div>
+            </div>
+          </div>
+
+          <div class="app-content" style="overflow-y: auto;">
+            <div class="detail-nav">
+              <div class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+              <div class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+              </div>
+            </div>
+
+            <div class="member-hero">
+              <div class="service-logo-lg logo-netflix">N</div>
+              <div>
+                <div class="service-name">Netflix Premium</div>
+                <div class="service-plan">Plan familiar · Perfil 2</div>
+              </div>
+              <div class="member-tag">Eres miembro</div>
+            </div>
+
+            <!-- MI aporte card -->
+            <div class="my-amount-card">
+              <div class="my-amount-label">Tu aporte este mes</div>
+              <div class="my-amount-display">
+                <span class="my-amount-cur">S/</span>
+                <span class="my-amount-value">13.73</span>
+              </div>
+              <div class="my-amount-context">
+                Tu parte del plan familiar. Gonzalo administra el grupo.
+              </div>
+              <div class="amount-status-row">
+                <div class="status-icon-sm">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div class="status-text-block">
+                  <div class="status-text-title">Vence hoy · 17 de abril</div>
+                  <div class="status-text-sub">Pago pendiente</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary action -->
+            <button class="pay-action">
+              <div class="pay-action-text">
+                <div class="pay-action-label">Ya pagué</div>
+                <div class="pay-action-desc">Notificar a Gonzalo</div>
+              </div>
+              <div class="pay-action-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </div>
+            </button>
+
+            <!-- Admin contact -->
+            <div class="admin-card">
+              <div class="admin-avatar">GM</div>
+              <div class="admin-info">
+                <div class="admin-name-row">
+                  <span class="admin-name">Gonzalo Meza</span>
+                  <span class="admin-label">ADMIN</span>
+                </div>
+                <div class="admin-contact">+51 987 654 321</div>
+              </div>
+              <div class="admin-wa-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+              </div>
+            </div>
+
+            <!-- My history -->
+            <div class="detail-section-header">
+              <span class="detail-section-title">Tu historial</span>
+              <span class="detail-section-count">3 meses</span>
+            </div>
+
+            <div class="history-list">
+              <div class="history-item">
+                <span class="history-month">Abr 26</span>
+                <span class="history-amount">S/ 13.73</span>
+                <span class="history-status-pill pending">Pendiente</span>
+              </div>
+              <div class="history-item">
+                <span class="history-month">Mar 26</span>
+                <span class="history-amount">S/ 13.73</span>
+                <span class="history-status-pill paid">Pagado</span>
+              </div>
+              <div class="history-item">
+                <span class="history-month">Feb 26</span>
+                <span class="history-amount">S/ 13.73</span>
+                <span class="history-status-pill late">Tardío</span>
+              </div>
+              <div class="history-item">
+                <span class="history-month">Ene 26</span>
+                <span class="history-amount">S/ 13.73</span>
+                <span class="history-status-pill paid">Pagado</span>
+              </div>
+            </div>
+
+            <!-- Secondary actions -->
+            <div class="secondary-actions">
+              <div class="secondary-action-btn">
+                <div class="secondary-action-icon gray">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+                </div>
+                <span class="secondary-action-label">Cómo funciona</span>
+                <div class="secondary-action-arrow">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+              <div class="secondary-action-btn danger">
+                <div class="secondary-action-icon red">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </div>
+                <span class="secondary-action-label">Pedir salir del grupo</span>
+                <div class="secondary-action-arrow">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 2: Ya pagué sheet -->
+    <div class="phone-wrap">
+      <div class="phone-label">
+        <span class="num">07</span>
+        <span class="name">Confirmar pago</span>
+      </div>
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="icons">
+              <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+              <div class="battery"><div class="battery-fill"></div></div>
+            </div>
+          </div>
+
+          <div class="app-content">
+            <!-- Background -->
+            <div class="backdrop-content">
+              <div class="detail-nav">
+                <div class="back-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </div>
+              </div>
+              <div class="member-hero">
+                <div class="service-logo-lg logo-netflix">N</div>
+                <div>
+                  <div class="service-name">Netflix Premium</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dim-overlay"></div>
+
+            <!-- Sheet -->
+            <div class="sheet">
+              <div class="sheet-handle"></div>
+              <div class="sheet-header-paid">
+                <div class="paid-hero-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                <h3 class="paid-title">Confirmar tu<br><span class="accent">pago</span></h3>
+                <p class="paid-subtitle">
+                  Gonzalo recibirá una notificación. Si adjuntas el comprobante, va más rápido.
+                </p>
+              </div>
+
+              <div class="sheet-body-paid">
+                <!-- Upload -->
+                <div class="upload-block">
+                  <div class="upload-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6M9 15l3-3 3 3"/></svg>
+                  </div>
+                  <div class="upload-title">Adjuntar comprobante</div>
+                  <div class="upload-desc">Opcional · JPG · PNG · PDF</div>
+                  <div class="upload-options">
+                    <div class="upload-opt">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                      Cámara
+                    </div>
+                    <div class="upload-opt">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                      Galería
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Payment summary -->
+                <div class="payment-summary">
+                  <div class="payment-row">
+                    <span class="payment-row-label">Servicio</span>
+                    <span class="payment-row-value">Netflix · Abril</span>
+                  </div>
+                  <div class="payment-row">
+                    <span class="payment-row-label">Destinatario</span>
+                    <span class="payment-row-value">Gonzalo M.</span>
+                  </div>
+                  <div class="payment-divider"></div>
+                  <div class="payment-row total">
+                    <span class="payment-row-label">Monto</span>
+                    <span class="payment-row-value">S/ 13.73</span>
+                  </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="notes-field">
+                  <div class="notes-label">Nota para Gonzalo · Opcional</div>
+                  <div class="notes-placeholder">"Te yapée ahora"</div>
+                </div>
+              </div>
+
+              <div class="sheet-footer">
+                <button class="sheet-btn primary">
+                  Confirmar pago · Notificar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 3: Pantalla de admin comparativa -->
+    <div class="phone-wrap">
+      <div class="phone-label">
+        <span class="num">B</span>
+        <span class="name">Comparativa · admin</span>
+      </div>
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="icons">
+              <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+              <div class="battery"><div class="battery-fill"></div></div>
+            </div>
+          </div>
+
+          <div class="app-content" style="overflow-y: auto; padding-bottom: 20px;">
+            <div class="detail-nav">
+              <div class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+              <div class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+              </div>
+            </div>
+
+            <div class="admin-hero">
+              <div class="service-logo-lg logo-netflix">N</div>
+              <div>
+                <div class="service-name">Netflix Premium</div>
+                <div class="service-plan">Plan familiar · 4 activos</div>
+              </div>
+              <div class="admin-tag-big">Eres admin</div>
+              <div class="admin-amount"><span class="cur">S/</span>54.90</div>
+              <div class="admin-due-pill">Corte hoy · 17 de abril</div>
+            </div>
+
+            <!-- Active members -->
+            <div class="detail-section-header">
+              <span class="detail-section-title">Activos</span>
+              <span class="detail-section-count">4 miembros</span>
+            </div>
+
+            <div class="members-list-admin">
+              <div class="member-row-admin">
+                <div class="member-avatar-sm" style="background: linear-gradient(135deg, #BF5AF2, #7048E8);">G</div>
+                <div class="member-row-info">
+                  <div class="member-row-name">Gonzalo (tú)</div>
+                  <div class="member-row-sub">Admin</div>
+                </div>
+                <div class="member-row-right">
+                  <div class="member-row-amount">S/ 13.73</div>
+                  <div class="row-status-pill paid">Pagado</div>
+                </div>
+              </div>
+
+              <div class="member-row-admin">
+                <div class="member-avatar-sm" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">MR</div>
+                <div class="member-row-info">
+                  <div class="member-row-name">María Rodríguez</div>
+                  <div class="member-row-sub">Hermana</div>
+                </div>
+                <div class="member-row-right">
+                  <div class="member-row-amount">S/ 13.73</div>
+                  <div class="row-status-pill overdue">Vencido</div>
+                </div>
+              </div>
+
+              <div class="member-row-admin">
+                <div class="member-avatar-sm" style="background: linear-gradient(135deg, #FFD93D, #F08C00);">LP</div>
+                <div class="member-row-info">
+                  <div class="member-row-name">Lucía Paredes</div>
+                  <div class="member-row-sub">Prima</div>
+                </div>
+                <div class="member-row-right">
+                  <div class="member-row-amount">S/ 13.73</div>
+                  <div class="row-status-pill paid">Pagado</div>
+                </div>
+              </div>
+
+              <div class="member-row-admin">
+                <div class="member-avatar-sm" style="background: linear-gradient(135deg, #FF375F, #C92A2A);">AP</div>
+                <div class="member-row-info">
+                  <div class="member-row-name">Ana Paredes</div>
+                  <div class="member-row-sub">Nueva · Abr 15</div>
+                </div>
+                <div class="member-row-right">
+                  <div class="member-row-amount">S/ 10.00</div>
+                  <div class="row-status-pill pending">Pendiente</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Archived divider -->
+            <div class="archived-divider">
+              <div class="archived-divider-line"></div>
+              <span class="archived-divider-label">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9M10 13h4"/></svg>
+                Archivados
+                <span class="archived-count-chip">1</span>
+              </span>
+              <div class="archived-divider-line"></div>
+            </div>
+
+            <div class="archived-help">
+              <div class="archived-help-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              </div>
+              <div class="archived-help-text">
+                Miembros que salieron con <strong>deuda pendiente</strong>. Cuando paguen, puedes borrarlos definitivamente.
+              </div>
+            </div>
+
+            <div class="members-list-admin">
+              <div class="member-row-admin archived">
+                <div class="member-avatar-sm" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">CL</div>
+                <div class="member-row-info">
+                  <div class="member-row-name">
+                    Carlos Lima
+                    <span class="archived-tag">Archivado</span>
+                  </div>
+                  <div class="member-row-sub">Salió el 10 abr</div>
+                </div>
+                <div class="member-row-right">
+                  <div class="member-row-amount debt">S/ 13.73</div>
+                  <div class="row-status-pill debt-pending">Deuda</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-note">
+  <span>SubSplit · Vista Miembro + Archivados</span>
+  <span>→ Next · Perfil actualizado o pasar a código</span>
+</div>
+
+</body>
+</html>

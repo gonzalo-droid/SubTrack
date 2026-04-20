@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubSplit — UX Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --bg-page: #060606;
+  --bg-app: #0A0A0A;
+  --bg-surface: #141414;
+  --bg-surface-hi: #1C1C1E;
+  --bg-surface-el: #242426;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.1);
+  --text-pri: #F5F5F7;
+  --text-sec: #98989F;
+  --text-ter: #636366;
+  --accent-green: #30D158;
+  --accent-amber: #FF9F0A;
+  --accent-red: #FF453A;
+  --accent-blue: #0A84FF;
+  --accent-purple: #BF5AF2;
+  --font-display: 'Fraunces', serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-body: 'Geist', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-pri);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: auto;
+  padding: 48px 32px;
+  background-image: 
+    radial-gradient(circle at 20% 10%, rgba(48, 209, 88, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(10, 132, 255, 0.04) 0%, transparent 40%);
+}
+
+/* ============ HEADER ============ */
+.page-header {
+  max-width: 1600px;
+  margin: 0 auto 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brand-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-ter);
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.brand-name em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-green);
+}
+
+.page-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-meta .date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+
+.page-meta .title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--text-sec);
+}
+
+/* ============ PHONES LAYOUT ============ */
+.phones-grid {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.phone-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.phone-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.phone-label .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+}
+
+.phone-label .name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-pri);
+}
+
+/* ============ PHONE FRAME ============ */
+.phone {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 44px;
+  padding: 10px;
+  border: 1px solid var(--border-strong);
+  box-shadow: 
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 40px 80px -20px rgba(0,0,0,0.8),
+    0 20px 40px -10px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95px;
+  height: 28px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-app);
+  border-radius: 36px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status-bar {
+  height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px 0 32px;
+  padding-top: 12px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-pri);
+  flex-shrink: 0;
+}
+
+.status-bar .icons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.signal-dots { display: flex; gap: 2px; align-items: flex-end; }
+.signal-dots span {
+  width: 3px; background: var(--text-pri); border-radius: 1px;
+}
+.signal-dots span:nth-child(1) { height: 4px; }
+.signal-dots span:nth-child(2) { height: 6px; }
+.signal-dots span:nth-child(3) { height: 8px; }
+.signal-dots span:nth-child(4) { height: 10px; }
+
+.battery {
+  width: 24px; height: 11px;
+  border: 1px solid var(--text-pri);
+  border-radius: 3px;
+  position: relative;
+  padding: 1px;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 3px;
+  width: 2px;
+  height: 4px;
+  background: var(--text-pri);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill {
+  width: 75%; height: 100%;
+  background: var(--text-pri);
+  border-radius: 1px;
+}
+
+/* App content scroll */
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.app-content::-webkit-scrollbar { display: none; }
+
+/* ============ TAB BAR ============ */
+.tab-bar {
+  height: 78px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-ter);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tab.active { color: var(--text-pri); }
+.tab:hover { color: var(--text-sec); }
+
+.tab-icon {
+  width: 26px; height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ============ SHARED COMPONENTS ============ */
+
+.app-header {
+  padding: 16px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.greeting-block { display: flex; flex-direction: column; gap: 2px; }
+.greeting-small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+.greeting-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--text-pri);
+  font-weight: 400;
+}
+
+.header-actions { display: flex; gap: 10px; }
+.icon-btn {
+  width: 38px; height: 38px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-sec);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+.icon-btn:hover {
+  background: var(--bg-surface-hi);
+  color: var(--text-pri);
+  border-color: var(--border-strong);
+}
+.icon-btn .badge {
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 8px; height: 8px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  border: 2px solid var(--bg-app);
+}
+
+.avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #30D158 0%, #0A84FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+}
+
+/* ============ SCREEN 1: HOME ============ */
+
+.hero-card {
+  margin: 8px 20px 24px;
+  padding: 28px 24px;
+  background: linear-gradient(135deg, #1C1C1E 0%, #141416 100%);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -30%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(48, 209, 88, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.hero-amount {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-pri);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-amount .currency {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text-sec);
+  margin-right: 4px;
+  vertical-align: 0.2em;
+}
+
+.hero-amount .decimals {
+  font-size: 28px;
+  color: var(--text-sec);
+}
+
+.hero-meta {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.hero-breakdown {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+.hero-breakdown strong {
+  color: var(--accent-green);
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.progress-container {
+  margin-top: 20px;
+}
+.progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  width: 57%;
+  background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-blue) 100%);
+  border-radius: 2px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.05em;
+}
+
+/* Section headers */
+.section-header {
+  padding: 0 20px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--text-pri);
+  font-weight: 400;
+}
+.section-link {
+  font-size: 12px;
+  color: var(--accent-blue);
+  cursor: pointer;
+}
+
+/* Upcoming scroll */
+.upcoming-row {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 24px;
+  overflow-x: auto;
+}
+.upcoming-row::-webkit-scrollbar { display: none; }
+
+.upcoming-card {
+  flex-shrink: 0;
+  width: 160px;
+  padding: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.upcoming-card:hover {
+  background: var(--bg-surface-hi);
+  transform: translateY(-2px);
+}
+.upcoming-card.amber { border-color: rgba(255, 159, 10, 0.3); }
+.upcoming-card.red { border-color: rgba(255, 69, 58, 0.3); }
+
+.service-logo {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.logo-netflix { background: #E50914; }
+.logo-spotify { background: #1DB954; }
+.logo-hbo { background: linear-gradient(135deg, #9A1FD4, #5B1794); }
+.logo-disney { background: #113CCF; }
+.logo-youtube { background: #FF0000; }
+.logo-icloud { background: linear-gradient(135deg, #5AC8FA, #007AFF); }
+.logo-chatgpt { background: linear-gradient(135deg, #10A37F, #0D7A5F); }
+
+.upcoming-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-pri);
+  margin-bottom: 2px;
+}
+.upcoming-due {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.upcoming-due.amber { color: var(--accent-amber); }
+.upcoming-due.red { color: var(--accent-red); }
+
+.upcoming-amount {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text-pri);
+  font-variant-numeric: tabular-nums;
+}
+.upcoming-amount .cur {
+  font-size: 12px;
+  color: var(--text-ter);
+  font-weight: 400;
+  margin-right: 2px;
+}
+
+.upcoming-avatars {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+  gap: 4px;
+}
+.avatar-mini {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-surface);
+  margin-left: -6px;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+}
+.avatar-mini:first-child { margin-left: 0; }
+.avatar-mini.a1 { background: linear-gradient(135deg, #FF6B6B, #C92A2A); }
+.avatar-mini.a2 { background: linear-gradient(135deg, #4ECDC4, #0A9396); }
+.avatar-mini.a3 { background: linear-gradient(135deg, #FFD93D, #F08C00); }
+.avatar-mini.a4 { background: linear-gradient(135deg, #BF5AF2, #7048E8); }
+
+.status-dot {
+  margin-left: 6px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+}
+.status-dot.amber { background: var(--accent-amber); }
+.status-dot.red { background: var(--accent-red); }
+
+/* Debts list */
+.debts-list {
+  padding: 0 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.debt-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.debt-item:hover {
+  background: var(--bg-surface-hi);
+  border-color: var(--border-strong);
+}
+
+.debt-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.debt-info { flex: 1; min-width: 0; }
+.debt-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-pri);
+  margin-bottom: 1px;
+}
+.debt-detail {
+  font-size: 11px;
+  color: var(--text-ter);
+  font-family: var(--font-mono);
+}
+.debt-amount {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-pri);
+  font-variant-numeric: tabular-nums;
+  margin-right: 8px;
+}
+
+.remind-btn {
+  width: 32px; height: 32px;
+  background: rgba(48, 209, 88, 0.1);
+  border: 1px solid rgba(48, 209, 88, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-green);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.remind-btn:hover {
+  background: rgba(48, 209, 88, 0.18);
+  transform: scale(1.05);
+}
+
+/* Insight card */
+.insight-card {
+  margin: 0 20px 24px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.08) 0%, rgba(10, 132, 255, 0.02) 100%);
+  border: 1px solid rgba(10, 132, 255, 0.15);
+  border-radius: 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.insight-icon {
+  width: 32px; height: 32px;
+  background: rgba(10, 132, 255, 0.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.insight-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-sec);
+}
+.insight-text strong {
+  color: var(--text-pri);
+  font-weight: 500;
+}
+
+/* ============ SCREEN 2: SUBSCRIPTION DETAIL ============ */
+
+.detail-nav {
+  padding: 8px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-btn {
+  width: 36px; height: 36px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-pri);
+  cursor: pointer;
+}
+
+.detail-hero {
+  padding: 24px 20px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.detail-logo {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 26px;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(229, 9, 20, 0.25);
+}
+
+.detail-service-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.admin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(48, 209, 88, 0.1);
+  border: 1px solid rgba(48, 209, 88, 0.25);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-green);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.admin-tag::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--accent-green);
+  border-radius: 50%;
+}
+
+.detail-amount-row {
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.detail-amount {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.detail-amount .cur {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--text-sec);
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.detail-cycle {
+  font-size: 13px;
+  color: var(--text-ter);
+}
+
+.detail-due {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+  margin-top: 4px;
+}
+
+/* Members section */
+.members-header {
+  padding: 8px 20px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.members-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+}
+
+.members-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+}
+
+.members-list {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.member-row:hover {
+  background: var(--bg-surface-hi);
+  border-color: var(--border-strong);
+}
+
+.member-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.member-info { flex: 1; min-width: 0; }
+.member-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-pri);
+  margin-bottom: 1px;
+}
+.member-profile {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.03em;
+}
+
+.member-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.member-amount {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-pri);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.member-status {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 100px;
+  font-weight: 500;
+}
+.status-paid {
+  background: rgba(48, 209, 88, 0.12);
+  color: var(--accent-green);
+}
+.status-pending {
+  background: rgba(255, 159, 10, 0.12);
+  color: var(--accent-amber);
+}
+.status-overdue {
+  background: rgba(255, 69, 58, 0.12);
+  color: var(--accent-red);
+}
+
+/* Floating cobranza bar */
+.cobranza-bar {
+  margin: 24px 20px 20px;
+  padding: 14px 16px 14px 18px;
+  background: linear-gradient(135deg, rgba(48, 209, 88, 0.12) 0%, rgba(48, 209, 88, 0.04) 100%);
+  border: 1px solid rgba(48, 209, 88, 0.25);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cobranza-bar:hover {
+  background: linear-gradient(135deg, rgba(48, 209, 88, 0.18) 0%, rgba(48, 209, 88, 0.06) 100%);
+}
+
+.cobranza-text { flex: 1; }
+.cobranza-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-pri);
+  margin-bottom: 2px;
+}
+.cobranza-detail {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(48, 209, 88, 0.8);
+  letter-spacing: 0.03em;
+}
+
+.cobranza-arrow {
+  width: 32px; height: 32px;
+  background: var(--accent-green);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+/* Timeline */
+.timeline-section {
+  padding: 0 20px 24px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.timeline-item:last-child { border-bottom: none; }
+
+.timeline-month {
+  flex-shrink: 0;
+  width: 48px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-top: 2px;
+}
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-status-row {
+  display: flex;
+  gap: 4px;
+}
+.tl-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+}
+.tl-dot.paid { background: var(--accent-green); }
+.tl-dot.missed { background: var(--accent-red); }
+
+.timeline-total {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-sec);
+}
+
+/* ============ SCREEN 3: CREATE — DIVIDIR ============ */
+
+.wizard-header {
+  padding: 12px 20px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wizard-cancel {
+  font-size: 14px;
+  color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.wizard-progress {
+  display: flex;
+  gap: 4px;
+}
+.wizard-dot {
+  width: 22px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+.wizard-dot.done { background: var(--accent-green); }
+.wizard-dot.active { background: var(--text-pri); }
+
+.wizard-step {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+}
+
+.wizard-title-block {
+  padding: 24px 20px 20px;
+}
+
+.wizard-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.wizard-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.wizard-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-green);
+}
+
+.wizard-subtitle {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+
+/* Split options */
+.split-options {
+  padding: 8px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.split-option {
+  padding: 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.split-option:hover {
+  background: var(--bg-surface-hi);
+}
+.split-option.selected {
+  background: linear-gradient(135deg, rgba(48, 209, 88, 0.08) 0%, rgba(48, 209, 88, 0.02) 100%);
+  border-color: rgba(48, 209, 88, 0.4);
+}
+
+.split-option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.split-option-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--text-pri);
+}
+
+.radio {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--text-ter);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.radio.checked {
+  border-color: var(--accent-green);
+  background: var(--accent-green);
+}
+.radio.checked::after {
+  content: '';
+  width: 7px; height: 7px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.split-preview {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-sec);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+.split-preview .calc-eq {
+  color: var(--text-ter);
+  margin: 0 6px;
+}
+.split-preview .calc-result {
+  color: var(--accent-green);
+  font-weight: 500;
+}
+
+.split-breakdown {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.breakdown-name {
+  color: var(--text-sec);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.breakdown-amount {
+  font-family: var(--font-mono);
+  color: var(--text-pri);
+  font-weight: 500;
+}
+
+.breakdown-avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Wizard footer */
+.wizard-footer {
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-app);
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--text-pri);
+  color: #000;
+  border: none;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+  letter-spacing: -0.01em;
+}
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(255,255,255,0.08);
+}
+
+.summary-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+.summary-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.summary-val {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ SCREEN 4: PERSONAS ============ */
+
+.people-filter {
+  padding: 8px 20px 20px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+.people-filter::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  padding: 7px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-sec);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.filter-chip.active {
+  background: var(--text-pri);
+  color: #000;
+  border-color: var(--text-pri);
+  font-weight: 500;
+}
+
+.people-summary {
+  margin: 0 20px 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #141416 0%, #0F0F11 100%);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.summary-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+.summary-amount {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.summary-amount.green { color: var(--accent-green); }
+.summary-amount.amber { color: var(--accent-amber); }
+.summary-amount .c {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-ter);
+  font-weight: 400;
+  margin-right: 3px;
+}
+
+.summary-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: 0 12px;
+}
+
+/* People list */
+.people-list {
+  padding: 0 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.person-card {
+  padding: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.person-card:hover {
+  background: var(--bg-surface-hi);
+  border-color: var(--border-strong);
+}
+
+.person-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.person-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  position: relative;
+}
+.person-avatar.app-user::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 12px; height: 12px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  border: 2px solid var(--bg-surface);
+}
+
+.person-details { flex: 1; }
+.person-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-pri);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.app-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  padding: 1px 5px;
+  background: rgba(48, 209, 88, 0.15);
+  color: var(--accent-green);
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+}
+.person-phone {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-ter);
+}
+
+.person-debt-block {
+  text-align: right;
+}
+.person-debt-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.person-debt-amount {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.person-debt-amount.amber { color: var(--accent-amber); }
+.person-debt-amount.green { color: var(--accent-green); }
+
+.person-subs {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.sub-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+}
+.sub-chip-logo {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #fff;
+  font-weight: 700;
+}
+.sub-chip-text {
+  font-size: 10px;
+  color: var(--text-sec);
+  font-weight: 500;
+}
+.sub-chip.paid .sub-chip-text::before {
+  content: '✓ ';
+  color: var(--accent-green);
+}
+.sub-chip.pending .sub-chip-text::before {
+  content: '• ';
+  color: var(--accent-amber);
+}
+
+.person-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.mini-action {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mini-action:hover {
+  color: var(--accent-green);
+  border-color: rgba(48, 209, 88, 0.3);
+}
+
+/* ============ ANNOTATIONS ============ */
+
+.annotations {
+  max-width: 1600px;
+  margin: 80px auto 0;
+  padding-top: 56px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.annotation h4 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: var(--text-pri);
+}
+
+.annotation .anno-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.annotation ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.annotation li {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-sec);
+  padding-left: 14px;
+  position: relative;
+}
+
+.annotation li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 4px; height: 4px;
+  background: var(--text-ter);
+  border-radius: 50%;
+}
+
+.annotation li strong {
+  color: var(--text-pri);
+  font-weight: 500;
+}
+
+.footer-note {
+  max-width: 1600px;
+  margin: 72px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1400px) {
+  .phones-grid, .annotations { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .phones-grid, .annotations { grid-template-columns: 1fr; }
+  body { padding: 24px 16px; }
+  .brand-name { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="brand">
+    <span class="brand-label">— UX Mockup · v0.1</span>
+    <h1 class="brand-name">SubSplit<em>.</em></h1>
+  </div>
+  <div class="page-meta">
+    <span class="date">17 · Abr · 2026</span>
+    <span class="title">Las cuatro pantallas que definen el producto</span>
+  </div>
+</header>
+
+<div class="phones-grid">
+
+  <!-- ============================ SCREEN 1: HOME ============================ -->
+  <div class="phone-col">
+    <div class="phone-label">
+      <span class="num">01 / 04</span>
+      <span class="name">Inicio</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+        <div class="app-content">
+          <div class="app-header">
+            <div class="greeting-block">
+              <span class="greeting-small">Viernes · Abril</span>
+              <span class="greeting-name">Hola, Gonzalo</span>
+            </div>
+            <div class="header-actions">
+              <div class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                <span class="badge"></span>
+              </div>
+              <div class="avatar">GM</div>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div class="hero-label">Gasto mensual · Abril</div>
+            <div class="hero-amount"><span class="currency">S/</span>204<span class="decimals">.90</span></div>
+            <div class="hero-meta">
+              <div class="hero-breakdown">
+                Recuperas <strong>S/ 84.50</strong> de compartidas<br>
+                <span style="color:var(--text-ter)">Gasto neto · S/ 120.40</span>
+              </div>
+            </div>
+            <div class="progress-container">
+              <div class="progress-track"><div class="progress-fill"></div></div>
+              <div class="progress-label"><span>DÍA 17 / 30</span><span>57%</span></div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <span class="section-title">Próximos cortes</span>
+            <span class="section-link">Ver todos</span>
+          </div>
+
+          <div class="upcoming-row">
+            <div class="upcoming-card red">
+              <div class="service-logo logo-netflix">N</div>
+              <div class="upcoming-name">Netflix Premium</div>
+              <div class="upcoming-due red">Vence hoy</div>
+              <div class="upcoming-amount"><span class="cur">S/</span>54.90</div>
+              <div class="upcoming-avatars">
+                <div class="avatar-mini a1">M</div>
+                <div class="avatar-mini a2">C</div>
+                <div class="avatar-mini a3">L</div>
+                <div class="status-dot red"></div>
+              </div>
+            </div>
+            <div class="upcoming-card amber">
+              <div class="service-logo logo-spotify">S</div>
+              <div class="upcoming-name">Spotify Familiar</div>
+              <div class="upcoming-due amber">En 2 días</div>
+              <div class="upcoming-amount"><span class="cur">S/</span>26.90</div>
+              <div class="upcoming-avatars">
+                <div class="avatar-mini a2">C</div>
+                <div class="avatar-mini a4">A</div>
+                <div class="status-dot amber"></div>
+              </div>
+            </div>
+            <div class="upcoming-card">
+              <div class="service-logo logo-chatgpt">AI</div>
+              <div class="upcoming-name">ChatGPT Plus</div>
+              <div class="upcoming-due">En 8 días</div>
+              <div class="upcoming-amount"><span class="cur">S/</span>74.90</div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <span class="section-title">Te deben</span>
+            <span class="section-link">Ver todos</span>
+          </div>
+
+          <div class="debts-list">
+            <div class="debt-item">
+              <div class="debt-avatar" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">MR</div>
+              <div class="debt-info">
+                <div class="debt-name">María Rodríguez</div>
+                <div class="debt-detail">Netflix · Vence hoy</div>
+              </div>
+              <div class="debt-amount">S/ 18.30</div>
+              <div class="remind-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2zm4.9 13.6c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.5 0-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3 0-1.5.8-2.2 1-2.5.3-.3.6-.4.8-.4.2 0 .4 0 .6.1.2.1.4.1.6.6.2.5.7 1.7.7 1.8.1.1.1.3 0 .5-.1.2-.2.3-.4.5-.1.2-.3.3-.4.5-.1.1-.3.3-.1.6.2.3.8 1.3 1.8 2.1 1.2 1.1 2.3 1.4 2.6 1.5.3.1.5.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.3.1 1.5.7 1.8.8.3.1.5.2.5.3.1.2.1.9-.1 1.4z"/></svg>
+              </div>
+            </div>
+            <div class="debt-item">
+              <div class="debt-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">CL</div>
+              <div class="debt-info">
+                <div class="debt-name">Carlos Lima</div>
+                <div class="debt-detail">Netflix · Vence hoy</div>
+              </div>
+              <div class="debt-amount">S/ 18.30</div>
+              <div class="remind-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2zm4.9 13.6c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.5 0-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3 0-1.5.8-2.2 1-2.5.3-.3.6-.4.8-.4.2 0 .4 0 .6.1.2.1.4.1.6.6.2.5.7 1.7.7 1.8.1.1.1.3 0 .5-.1.2-.2.3-.4.5-.1.2-.3.3-.4.5-.1.1-.3.3-.1.6.2.3.8 1.3 1.8 2.1 1.2 1.1 2.3 1.4 2.6 1.5.3.1.5.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.3.1 1.5.7 1.8.8.3.1.5.2.5.3.1.2.1.9-.1 1.4z"/></svg>
+              </div>
+            </div>
+            <div class="debt-item">
+              <div class="debt-avatar" style="background: linear-gradient(135deg, #FFD93D, #F08C00);">AP</div>
+              <div class="debt-info">
+                <div class="debt-name">Ana Paredes</div>
+                <div class="debt-detail">Spotify · En 2 días</div>
+              </div>
+              <div class="debt-amount">S/ 8.96</div>
+              <div class="remind-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2zm4.9 13.6c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.5 0-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3 0-1.5.8-2.2 1-2.5.3-.3.6-.4.8-.4.2 0 .4 0 .6.1.2.1.4.1.6.6.2.5.7 1.7.7 1.8.1.1.1.3 0 .5-.1.2-.2.3-.4.5-.1.2-.3.3-.4.5-.1.1-.3.3-.1.6.2.3.8 1.3 1.8 2.1 1.2 1.1 2.3 1.4 2.6 1.5.3.1.5.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.3.1 1.5.7 1.8.8.3.1.5.2.5.3.1.2.1.9-.1 1.4z"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            </div>
+            <div class="insight-text">
+              Netflix sube de precio el <strong>próximo ciclo</strong>. Tu parte pasará de S/ 18.30 a S/ 20.80.
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12 12 3l9 9v9a2 2 0 0 1-2 2h-3v-7h-4v7H8a2 2 0 0 1-2-2v-9h-3z" /></svg>
+            </div>
+            <span class="tab-label">Inicio</span>
+          </div>
+          <div class="tab">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>
+            </div>
+            <span class="tab-label">Suscripciones</span>
+          </div>
+          <div class="tab">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 14c2.8 0 5 2.2 5 5"/></svg>
+            </div>
+            <span class="tab-label">Personas</span>
+          </div>
+          <div class="tab">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </div>
+            <span class="tab-label">Perfil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ SCREEN 2: DETAIL ============================ -->
+  <div class="phone-col">
+    <div class="phone-label">
+      <span class="num">02 / 04</span>
+      <span class="name">Detalle compartido</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+        <div class="app-content">
+          <div class="detail-nav">
+            <div class="back-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </div>
+            <div class="icon-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+            </div>
+          </div>
+
+          <div class="detail-hero">
+            <div class="detail-logo logo-netflix">N</div>
+            <div>
+              <div class="detail-service-name">Netflix Premium</div>
+              <div class="detail-cycle">Plan familiar · 4 perfiles</div>
+            </div>
+            <div class="admin-tag">Eres admin</div>
+            <div class="detail-amount-row">
+              <div class="detail-amount"><span class="cur">S/</span>54.90</div>
+            </div>
+            <div class="detail-due">Corte · Hoy 17 de abril</div>
+          </div>
+
+          <div class="members-header">
+            <span class="members-title">Miembros</span>
+            <span class="members-count">4 · S/ 13.73 c/u</span>
+          </div>
+
+          <div class="members-list">
+            <div class="member-row">
+              <div class="member-avatar" style="background: linear-gradient(135deg, #BF5AF2, #7048E8);">G</div>
+              <div class="member-info">
+                <div class="member-name">Gonzalo (tú)</div>
+                <div class="member-profile">Perfil 1 · Admin</div>
+              </div>
+              <div class="member-right">
+                <div class="member-amount">S/ 13.73</div>
+                <div class="member-status status-paid">Pagado</div>
+              </div>
+            </div>
+            <div class="member-row">
+              <div class="member-avatar" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">MR</div>
+              <div class="member-info">
+                <div class="member-name">María Rodríguez</div>
+                <div class="member-profile">Perfil 2 · Hermana</div>
+              </div>
+              <div class="member-right">
+                <div class="member-amount">S/ 13.73</div>
+                <div class="member-status status-overdue">Vencido</div>
+              </div>
+            </div>
+            <div class="member-row">
+              <div class="member-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">CL</div>
+              <div class="member-info">
+                <div class="member-name">Carlos Lima</div>
+                <div class="member-profile">Perfil 3 · Amigo</div>
+              </div>
+              <div class="member-right">
+                <div class="member-amount">S/ 13.73</div>
+                <div class="member-status status-overdue">Vencido</div>
+              </div>
+            </div>
+            <div class="member-row">
+              <div class="member-avatar" style="background: linear-gradient(135deg, #FFD93D, #F08C00);">LP</div>
+              <div class="member-info">
+                <div class="member-name">Lucía Paredes</div>
+                <div class="member-profile">Perfil 4 · Prima</div>
+              </div>
+              <div class="member-right">
+                <div class="member-amount">S/ 13.73</div>
+                <div class="member-status status-paid">Pagado</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cobranza-bar">
+            <div class="cobranza-text">
+              <div class="cobranza-label">Cobrar a 2 pendientes</div>
+              <div class="cobranza-detail">S/ 27.46 · Vía WhatsApp</div>
+            </div>
+            <div class="cobranza-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+
+          <div class="members-header">
+            <span class="members-title">Historial</span>
+            <span class="members-count">Últimos 3 meses</span>
+          </div>
+
+          <div class="timeline-section">
+            <div class="timeline-item">
+              <div class="timeline-month">Mar 26</div>
+              <div class="timeline-content">
+                <div class="timeline-status-row">
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                </div>
+                <div class="timeline-total">S/ 54.90 · Completo</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-month">Feb 26</div>
+              <div class="timeline-content">
+                <div class="timeline-status-row">
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot missed">!</div>
+                  <div class="tl-dot paid">✓</div>
+                </div>
+                <div class="timeline-total">S/ 41.17 · Parcial</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-month">Ene 26</div>
+              <div class="timeline-content">
+                <div class="timeline-status-row">
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                  <div class="tl-dot paid">✓</div>
+                </div>
+                <div class="timeline-total">S/ 54.90 · Completo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12 12 3l9 9v9a2 2 0 0 1-2 2h-3v-7h-4v7H8a2 2 0 0 1-2-2v-9h-3z" /></svg></div><span class="tab-label">Inicio</span></div>
+          <div class="tab active">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+            </div>
+            <span class="tab-label">Suscripciones</span>
+          </div>
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 14c2.8 0 5 2.2 5 5"/></svg></div><span class="tab-label">Personas</span></div>
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><span class="tab-label">Perfil</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ SCREEN 3: CREATE WIZARD ============================ -->
+  <div class="phone-col">
+    <div class="phone-label">
+      <span class="num">03 / 04</span>
+      <span class="name">Crear · dividir</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+        <div class="app-content">
+          <div class="wizard-header">
+            <span class="wizard-cancel">Cancelar</span>
+            <div class="wizard-progress">
+              <div class="wizard-dot done"></div>
+              <div class="wizard-dot done"></div>
+              <div class="wizard-dot done"></div>
+              <div class="wizard-dot active"></div>
+            </div>
+            <span class="wizard-step">04/04</span>
+          </div>
+
+          <div class="wizard-title-block">
+            <div class="wizard-eyebrow">Paso 4 · División</div>
+            <h1 class="wizard-title">¿Cómo<br>lo dividen<em>?</em></h1>
+            <p class="wizard-subtitle">Netflix Premium · S/ 54.90 entre 4 personas</p>
+          </div>
+
+          <div class="split-options">
+            <div class="split-option selected">
+              <div class="split-option-header">
+                <span class="split-option-name">Partes iguales</span>
+                <div class="radio checked"></div>
+              </div>
+              <div class="split-preview">
+                S/ 54.90 <span class="calc-eq">÷</span> 4 <span class="calc-eq">=</span> <span class="calc-result">S/ 13.73</span> por persona
+              </div>
+              <div class="split-breakdown">
+                <div class="breakdown-row">
+                  <div class="breakdown-name">
+                    <div class="breakdown-avatar" style="background: linear-gradient(135deg, #BF5AF2, #7048E8);">G</div>
+                    Gonzalo (tú)
+                  </div>
+                  <div class="breakdown-amount">S/ 13.73</div>
+                </div>
+                <div class="breakdown-row">
+                  <div class="breakdown-name">
+                    <div class="breakdown-avatar" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">M</div>
+                    María
+                  </div>
+                  <div class="breakdown-amount">S/ 13.73</div>
+                </div>
+                <div class="breakdown-row">
+                  <div class="breakdown-name">
+                    <div class="breakdown-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">C</div>
+                    Carlos
+                  </div>
+                  <div class="breakdown-amount">S/ 13.73</div>
+                </div>
+                <div class="breakdown-row">
+                  <div class="breakdown-name">
+                    <div class="breakdown-avatar" style="background: linear-gradient(135deg, #FFD93D, #F08C00);">L</div>
+                    Lucía
+                  </div>
+                  <div class="breakdown-amount">S/ 13.73</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="split-option">
+              <div class="split-option-header">
+                <span class="split-option-name">Por porcentajes</span>
+                <div class="radio"></div>
+              </div>
+              <div class="split-preview">
+                Define <span class="calc-result">% por persona</span> · suma 100%
+              </div>
+            </div>
+
+            <div class="split-option">
+              <div class="split-option-header">
+                <span class="split-option-name">Montos fijos</span>
+                <div class="radio"></div>
+              </div>
+              <div class="split-preview">
+                Ingresa monto exacto <span class="calc-eq">·</span> ideal si uno paga más
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-footer">
+          <div class="summary-mini">
+            <span class="summary-label">Total mensual</span>
+            <span class="summary-val">S/ 54.90</span>
+          </div>
+          <button class="primary-btn">Crear y enviar invitaciones</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ SCREEN 4: PERSONAS ============================ -->
+  <div class="phone-col">
+    <div class="phone-label">
+      <span class="num">04 / 04</span>
+      <span class="name">Personas</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+        <div class="app-content">
+          <div class="app-header">
+            <div class="greeting-block">
+              <span class="greeting-small">— Gestión</span>
+              <span class="greeting-name">Personas</span>
+            </div>
+            <div class="header-actions">
+              <div class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              </div>
+              <div class="icon-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="people-summary">
+            <div class="summary-block">
+              <span class="summary-eyebrow">Te deben</span>
+              <div class="summary-amount amber"><span class="c">S/</span>45.56</div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-block">
+              <span class="summary-eyebrow">Ya pagaron</span>
+              <div class="summary-amount green"><span class="c">S/</span>38.94</div>
+            </div>
+          </div>
+
+          <div class="people-filter">
+            <div class="filter-chip active">Todas · 5</div>
+            <div class="filter-chip">Te deben · 2</div>
+            <div class="filter-chip">Pagaron · 3</div>
+            <div class="filter-chip">Con app</div>
+          </div>
+
+          <div class="people-list">
+            <div class="person-card">
+              <div class="person-top">
+                <div class="person-avatar app-user" style="background: linear-gradient(135deg, #FF6B6B, #C92A2A);">MR</div>
+                <div class="person-details">
+                  <div class="person-name">María Rodríguez <span class="app-badge">APP</span></div>
+                  <div class="person-phone">+51 987 654 321</div>
+                </div>
+                <div class="person-debt-block">
+                  <div class="person-debt-label">Debe</div>
+                  <div class="person-debt-amount amber">S/ 18.30</div>
+                </div>
+              </div>
+              <div class="person-subs">
+                <div class="sub-chip pending">
+                  <div class="sub-chip-logo logo-netflix">N</div>
+                  <span class="sub-chip-text">Netflix</span>
+                </div>
+                <div class="sub-chip paid">
+                  <div class="sub-chip-logo logo-spotify">S</div>
+                  <span class="sub-chip-text">Spotify</span>
+                </div>
+                <div class="person-actions">
+                  <div class="mini-action">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="person-card">
+              <div class="person-top">
+                <div class="person-avatar" style="background: linear-gradient(135deg, #4ECDC4, #0A9396);">CL</div>
+                <div class="person-details">
+                  <div class="person-name">Carlos Lima</div>
+                  <div class="person-phone">+51 912 345 678</div>
+                </div>
+                <div class="person-debt-block">
+                  <div class="person-debt-label">Debe</div>
+                  <div class="person-debt-amount amber">S/ 27.26</div>
+                </div>
+              </div>
+              <div class="person-subs">
+                <div class="sub-chip pending">
+                  <div class="sub-chip-logo logo-netflix">N</div>
+                  <span class="sub-chip-text">Netflix</span>
+                </div>
+                <div class="sub-chip pending">
+                  <div class="sub-chip-logo logo-hbo">H</div>
+                  <span class="sub-chip-text">HBO</span>
+                </div>
+                <div class="person-actions">
+                  <div class="mini-action">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.74.44 3.37 1.22 4.8L2 22l5.3-1.2c1.36.74 2.9 1.2 4.7 1.2 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="person-card">
+              <div class="person-top">
+                <div class="person-avatar app-user" style="background: linear-gradient(135deg, #FFD93D, #F08C00);">LP</div>
+                <div class="person-details">
+                  <div class="person-name">Lucía Paredes <span class="app-badge">APP</span></div>
+                  <div class="person-phone">+51 956 789 012</div>
+                </div>
+                <div class="person-debt-block">
+                  <div class="person-debt-label">Al día</div>
+                  <div class="person-debt-amount green">S/ 0.00</div>
+                </div>
+              </div>
+              <div class="person-subs">
+                <div class="sub-chip paid">
+                  <div class="sub-chip-logo logo-netflix">N</div>
+                  <span class="sub-chip-text">Netflix</span>
+                </div>
+                <div class="sub-chip paid">
+                  <div class="sub-chip-logo logo-disney">D</div>
+                  <span class="sub-chip-text">Disney</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="person-card">
+              <div class="person-top">
+                <div class="person-avatar" style="background: linear-gradient(135deg, #BF5AF2, #7048E8);">AP</div>
+                <div class="person-details">
+                  <div class="person-name">Ana Paredes</div>
+                  <div class="person-phone">+51 934 567 890</div>
+                </div>
+                <div class="person-debt-block">
+                  <div class="person-debt-label">Al día</div>
+                  <div class="person-debt-amount green">S/ 0.00</div>
+                </div>
+              </div>
+              <div class="person-subs">
+                <div class="sub-chip paid">
+                  <div class="sub-chip-logo logo-spotify">S</div>
+                  <span class="sub-chip-text">Spotify</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12 12 3l9 9v9a2 2 0 0 1-2 2h-3v-7h-4v7H8a2 2 0 0 1-2-2v-9h-3z" /></svg></div><span class="tab-label">Inicio</span></div>
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><span class="tab-label">Suscripciones</span></div>
+          <div class="tab active">
+            <div class="tab-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 14c2.8 0 5 2.2 5 5"/></svg>
+            </div>
+            <span class="tab-label">Personas</span>
+          </div>
+          <div class="tab"><div class="tab-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><span class="tab-label">Perfil</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================ ANNOTATIONS ============================ -->
+<div class="annotations">
+
+  <div class="annotation">
+    <span class="anno-num">01 / Inicio</span>
+    <h4>Dashboard dual</h4>
+    <ul>
+      <li><strong>Hero con dos números</strong>: gasto bruto grande + recuperación en menor jerarquía. Muestra el valor neto real.</li>
+      <li><strong>Próximos cortes</strong> scroll horizontal con bordes coloreados según urgencia (verde / ámbar / rojo).</li>
+      <li><strong>"Te deben"</strong> visible solo si eres admin de alguna compartida. Botón WhatsApp a 1 tap.</li>
+      <li><strong>Insight card</strong> proactivo: detecta cambios de precio antes de que pases a "vencido".</li>
+    </ul>
+  </div>
+
+  <div class="annotation">
+    <span class="anno-num">02 / Detalle</span>
+    <h4>El núcleo del producto</h4>
+    <ul>
+      <li><strong>Tag de rol</strong> visible arriba: "Eres admin" vs "Eres miembro" cambia las acciones disponibles.</li>
+      <li><strong>Lista de miembros</strong> con estado de pago codificado por color. Tap abre bottom sheet con acciones.</li>
+      <li><strong>Cobranza bar</strong> flotante: resume cuántos deben y total a cobrar. Un tap envía WhatsApp en serie.</li>
+      <li><strong>Timeline compacto</strong>: 3 meses de historial como señal social (quién siempre paga tarde).</li>
+    </ul>
+  </div>
+
+  <div class="annotation">
+    <span class="anno-num">03 / Crear</span>
+    <h4>Wizard de 4 pasos</h4>
+    <ul>
+      <li><strong>Progreso visible</strong> arriba con dots — evita ansiedad "¿cuánto falta?".</li>
+      <li><strong>Opciones de división</strong> como cards con preview del cálculo en vivo.</li>
+      <li><strong>Breakdown expandido</strong> de la opción seleccionada — el usuario ve exactamente qué pagará cada uno.</li>
+      <li><strong>Footer sticky</strong> con total y CTA principal siempre accesible.</li>
+    </ul>
+  </div>
+
+  <div class="annotation">
+    <span class="anno-num">04 / Personas</span>
+    <h4>Vista por persona</h4>
+    <ul>
+      <li><strong>Resumen dual</strong>: cuánto te deben vs cuánto ya pagaron este mes.</li>
+      <li><strong>Filtros</strong> rápidos con conteo para navegar grupos grandes.</li>
+      <li><strong>Badge "APP"</strong> + punto verde en avatar: diferencia visual entre usuarios con y sin la app instalada.</li>
+      <li><strong>Chips de suscripciones</strong> con estado (✓ pagado · • pendiente) — resumen visual por persona.</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <span>SubSplit · UX Spec · Native Android + iOS</span>
+  <span>— Próximo paso · Design System</span>
+</div>
+
+<script>
+  // Interactive tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const tabBar = e.currentTarget.parentElement;
+      tabBar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+    });
+  });
+
+  // Split option selection
+  document.querySelectorAll('.split-option').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      const parent = e.currentTarget.parentElement;
+      parent.querySelectorAll('.split-option').forEach(o => {
+        o.classList.remove('selected');
+        o.querySelector('.radio').classList.remove('checked');
+      });
+      e.currentTarget.classList.add('selected');
+      e.currentTarget.querySelector('.radio').classList.add('checked');
+    });
+  });
+
+  // Filter chip selection
+  document.querySelectorAll('.people-filter').forEach(filter => {
+    filter.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        filter.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -6,7 +6,15 @@
       "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/card/*.kt)",
       "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/avatar/*.kt)",
       "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/input/*.kt)",
-      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/indicator/*.kt)"
+      "Bash(rm /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/indicator/*.kt)",
+      "Bash(./gradlew compileDebugKotlin)",
+      "Bash(./gradlew :app:compileDebugKotlin)",
+      "Bash(sed -n '130,160p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '270,295p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '325,345p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '140,150p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '278,288p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '332,342p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)"
     ]
   }
 }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +41,9 @@ fun STIconButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showBadge: Boolean = false
+    showBadge: Boolean = false,
+    iconTint: Color = TextSecondary,
+    containerColor: Color = BgSurface
 ) {
     Box(modifier = modifier) {
         Box(
@@ -49,13 +52,13 @@ fun STIconButton(
                 .size(36.dp)
                 .clip(IconButtonShape)
                 .border(1.dp, BorderDefault, IconButtonShape)
-                .background(BgSurface)
+                .background(containerColor)
                 .clickable(role = Role.Button, onClick = onClick)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                tint = TextSecondary,
+                tint = iconTint,
                 modifier = Modifier.size(20.dp)
             )
         }

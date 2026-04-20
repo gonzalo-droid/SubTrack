@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SubSplit — Onboarding Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --bg-page: #050506;
+  --bg-app: #0A0A0C;
+  --bg-surface: #131316;
+  --bg-surface-hi: #1A1A1E;
+  --bg-surface-el: #242428;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.12);
+  --text-pri: #F5F5F7;
+  --text-sec: #9A9AA3;
+  --text-ter: #5A5A63;
+  --accent-green: #32D74B;
+  --accent-amber: #FFB340;
+  --accent-red: #FF453A;
+  --accent-blue: #0A84FF;
+  --accent-purple: #BF5AF2;
+  --accent-pink: #FF375F;
+  --accent-cyan: #64D2FF;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Geist', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-pri);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  padding: 48px 32px;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(50, 215, 75, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(10, 132, 255, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(191, 90, 242, 0.03) 0%, transparent 60%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+/* ============ HEADER ============ */
+.page-header {
+  max-width: 1800px;
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; flex-direction: column; gap: 10px; }
+.brand-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-ter);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-label::before { content: ''; width: 16px; height: 1px; background: var(--text-ter); }
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.brand-name .dot { color: var(--accent-green); }
+
+.page-meta { text-align: right; display: flex; flex-direction: column; gap: 8px; }
+.page-meta .date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-ter);
+  text-transform: uppercase;
+}
+.page-meta .title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+
+/* ============ PHASE HEADERS ============ */
+.phase-header {
+  max-width: 1800px;
+  margin: 0 auto 20px;
+  padding: 20px 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.phase-num {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-ter);
+  font-variant-numeric: tabular-nums;
+  min-width: 50px;
+}
+
+.phase-content { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.phase-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.phase-desc {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  max-width: 700px;
+  letter-spacing: -0.01em;
+}
+
+.phase-header.green .phase-eyebrow { color: var(--accent-green); }
+.phase-header.blue .phase-eyebrow { color: var(--accent-blue); }
+.phase-header.amber .phase-eyebrow { color: var(--accent-amber); }
+
+.phase-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.phase-badge.green { background: rgba(50, 215, 75, 0.1); color: var(--accent-green); border: 1px solid rgba(50, 215, 75, 0.2); }
+.phase-badge.blue { background: rgba(10, 132, 255, 0.1); color: var(--accent-blue); border: 1px solid rgba(10, 132, 255, 0.2); }
+.phase-badge.amber { background: rgba(255, 179, 64, 0.1); color: var(--accent-amber); border: 1px solid rgba(255, 179, 64, 0.2); }
+
+/* ============ PHONE GRID ============ */
+.phones-grid {
+  max-width: 1800px;
+  margin: 0 auto 48px;
+  display: grid;
+  gap: 24px;
+}
+
+.phones-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.phones-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+.phone-wrap { display: flex; flex-direction: column; gap: 12px; }
+
+.phone-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+.phone-label .num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-weight: 500;
+}
+.phone-label .name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+
+.phone {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 40px;
+  padding: 8px;
+  border: 1px solid var(--border-strong);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 30px 60px -15px rgba(0,0,0,0.8),
+    0 15px 30px -8px rgba(0,0,0,0.6);
+  position: relative;
+  transition: transform 0.4s var(--ease);
+}
+.phone:hover { transform: translateY(-3px); }
+
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 24px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-app);
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-bar {
+  height: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px 0 28px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  color: var(--text-pri);
+}
+.status-bar .icons { display: flex; gap: 4px; align-items: center; }
+.signal-dots { display: flex; gap: 2px; align-items: flex-end; }
+.signal-dots span { width: 2px; background: var(--text-pri); border-radius: 1px; }
+.signal-dots span:nth-child(1) { height: 3px; }
+.signal-dots span:nth-child(2) { height: 5px; }
+.signal-dots span:nth-child(3) { height: 6px; }
+.signal-dots span:nth-child(4) { height: 8px; }
+
+.battery {
+  width: 20px; height: 10px;
+  border: 1px solid var(--text-pri);
+  border-radius: 3px;
+  padding: 1px;
+  position: relative;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: 3px;
+  width: 2px; height: 4px;
+  background: var(--text-pri);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill { width: 75%; height: 100%; background: var(--text-pri); border-radius: 1px; }
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+.app-content::-webkit-scrollbar { display: none; }
+
+/* ============ ONBOARDING COMMON ============ */
+
+.onb-topbar {
+  padding: 8px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 32px;
+}
+
+.onb-progress {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  max-width: 100px;
+}
+
+.progress-seg {
+  height: 3px;
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  transition: all 0.4s var(--ease);
+}
+.progress-seg.done { background: var(--text-pri); }
+.progress-seg.active {
+  background: var(--text-pri);
+  box-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+.skip-btn {
+  font-size: 12px;
+  color: var(--text-sec);
+  font-weight: 500;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* Visual hero for value slides */
+.value-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.value-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 240px;
+}
+
+.value-text {
+  padding: 20px 0 24px;
+  text-align: left;
+}
+
+.value-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.value-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.value-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+.value-desc strong {
+  color: var(--text-pri);
+  font-weight: 600;
+}
+
+/* CTA bottom */
+.onb-footer {
+  padding: 8px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cta-primary {
+  width: 100%;
+  padding: 15px;
+  background: var(--text-pri);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.cta-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(255,255,255,0.15);
+}
+
+.cta-primary.green { background: var(--accent-green); }
+
+.cta-secondary {
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: var(--text-sec);
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+}
+
+/* ============ SCREEN 01: WELCOME — TRACKER ============ */
+
+.visual-tracker {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tracker-center {
+  width: 90px; height: 90px;
+  background: linear-gradient(135deg, #0A84FF 0%, #64D2FF 100%);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(10, 132, 255, 0.4);
+  z-index: 2;
+  animation: pulse-hero 3s ease-in-out infinite;
+}
+@keyframes pulse-hero {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.tracker-orbit-card {
+  position: absolute;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 110px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  animation: float-card 4s ease-in-out infinite;
+}
+
+.tracker-orbit-card.c1 {
+  top: 10px; left: 0;
+  animation-delay: 0s;
+}
+.tracker-orbit-card.c2 {
+  top: 60px; right: -10px;
+  animation-delay: 0.5s;
+}
+.tracker-orbit-card.c3 {
+  bottom: 30px; left: -10px;
+  animation-delay: 1s;
+}
+.tracker-orbit-card.c4 {
+  bottom: 0; right: 20px;
+  animation-delay: 1.5s;
+}
+
+@keyframes float-card {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.tracker-card-logo {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.logo-netflix-xs { background: #E50914; }
+.logo-spotify-xs { background: #1DB954; }
+.logo-hbo-xs { background: linear-gradient(135deg, #9A1FD4, #5B1794); }
+.logo-chatgpt-xs { background: linear-gradient(135deg, #10A37F, #0D7A5F); }
+
+.tracker-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tracker-card-name {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.tracker-card-amount {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-sec);
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+.tracker-connection {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.connection-line {
+  stroke: rgba(10, 132, 255, 0.2);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  fill: none;
+}
+
+/* ============ SCREEN 02: SHARE ============ */
+
+.visual-share {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-wa-bubble {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  padding: 12px 14px;
+  border-radius: 18px 18px 4px 18px;
+  color: #fff;
+  font-size: 11px;
+  max-width: 190px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+  animation: slide-in-right 1s var(--ease-spring);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.share-wa-bubble strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.share-arrow-down {
+  color: var(--accent-green);
+  margin-bottom: 8px;
+  animation: bounce-arrow 1.5s ease-in-out infinite;
+}
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.share-members-row {
+  display: flex;
+  gap: -8px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.share-member {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  border: 3px solid var(--bg-app);
+  margin-left: -10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.share-member:first-child { margin-left: 0; }
+
+.share-member.m1 { background: linear-gradient(135deg, #FF6B6B, #C92A2A); animation: pop-in 0.6s var(--ease-spring) 0.1s both; }
+.share-member.m2 { background: linear-gradient(135deg, #FFD93D, #F08C00); animation: pop-in 0.6s var(--ease-spring) 0.3s both; }
+.share-member.m3 { background: linear-gradient(135deg, #BF5AF2, #7048E8); animation: pop-in 0.6s var(--ease-spring) 0.5s both; }
+
+@keyframes pop-in {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+.share-splitter {
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.split-calc {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.split-total {
+  color: var(--text-sec);
+  font-weight: 500;
+}
+
+.split-divided {
+  color: var(--accent-green);
+  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+/* ============ SCREEN 03: INSIGHTS ============ */
+
+.visual-insights {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.insight-alert-card {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  animation: slide-up-reveal 0.6s var(--ease-spring) both;
+}
+
+.insight-alert-card.c1 { animation-delay: 0.1s; }
+.insight-alert-card.c2 { animation-delay: 0.3s; border-color: rgba(255, 179, 64, 0.3); }
+.insight-alert-card.c3 { animation-delay: 0.5s; }
+
+@keyframes slide-up-reveal {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.insight-alert-icon {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ia-icon-up { background: rgba(255, 69, 58, 0.15); color: var(--accent-red); }
+.ia-icon-warn { background: rgba(255, 179, 64, 0.15); color: var(--accent-amber); }
+.ia-icon-save { background: rgba(50, 215, 75, 0.15); color: var(--accent-green); }
+
+.insight-alert-text {
+  flex: 1;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+.insight-alert-text strong {
+  color: var(--text-pri);
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.insight-alert-amount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.insight-alert-amount.red { color: var(--accent-red); }
+.insight-alert-amount.green { color: var(--accent-green); }
+
+/* ============ SCREEN 04: AUTH ============ */
+
+.auth-top {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.auth-logo-big {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.auth-logo-big .dot {
+  color: var(--accent-green);
+}
+
+.auth-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-icon-block {
+  position: relative;
+  width: 130px; height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-icon-orbit {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 50%;
+  animation: rotate-slow 30s linear infinite;
+}
+@keyframes rotate-slow { to { transform: rotate(360deg); } }
+
+.auth-center-glyph {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, #32D74B 0%, #0A84FF 100%);
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(50, 215, 75, 0.35);
+}
+
+.auth-text-block {
+  padding: 0 24px 20px;
+  text-align: center;
+}
+
+.auth-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.auth-subtitle {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.auth-footer {
+  padding: 12px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: -0.01em;
+  border: none;
+}
+
+.auth-btn.google {
+  background: #fff;
+  color: #202124;
+}
+.auth-btn.apple {
+  background: #000;
+  color: #fff;
+  border: 1px solid var(--border-strong);
+}
+
+.auth-btn:hover { transform: translateY(-1px); }
+
+.auth-terms {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-ter);
+  line-height: 1.5;
+  padding: 8px 12px 0;
+  letter-spacing: -0.005em;
+}
+
+.auth-terms a {
+  color: var(--text-sec);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ============ SCREEN 05: NOTIFICATIONS PERMISSION ============ */
+
+.notif-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+.notif-preview-stack {
+  width: 100%;
+  max-width: 240px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-preview {
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.notif-preview.top {
+  z-index: 3;
+  animation: slide-in-top 0.6s var(--ease-spring) 0.2s both;
+}
+.notif-preview.mid {
+  z-index: 2;
+  margin-top: -12px;
+  transform: scale(0.96);
+  opacity: 0.7;
+  animation: slide-in-top 0.6s var(--ease-spring) 0.4s both;
+}
+.notif-preview.bot {
+  z-index: 1;
+  margin-top: -12px;
+  transform: scale(0.92);
+  opacity: 0.4;
+  animation: slide-in-top 0.6s var(--ease-spring) 0.6s both;
+}
+
+@keyframes slide-in-top {
+  from { transform: translateY(-30px); opacity: 0; }
+}
+
+.notif-app-icon {
+  width: 26px; height: 26px;
+  background: linear-gradient(135deg, #32D74B 0%, #0A84FF 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: -0.03em;
+}
+
+.notif-content { flex: 1; min-width: 0; }
+
+.notif-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.notif-app-name {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.notif-time {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-ter);
+  letter-spacing: 0.05em;
+}
+
+.notif-body {
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--text-sec);
+  letter-spacing: -0.01em;
+}
+.notif-body strong {
+  color: var(--text-pri);
+  font-weight: 600;
+}
+
+/* ============ SCREEN 06: ADD FIRST SUB ============ */
+
+.first-sub-header {
+  padding: 20px;
+  text-align: center;
+}
+
+.first-sub-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.first-sub-title .accent {
+  color: var(--accent-green);
+}
+
+.first-sub-subtitle {
+  font-size: 11px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  padding: 0 12px;
+  letter-spacing: -0.01em;
+}
+
+.services-grid {
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.service-tile {
+  aspect-ratio: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  padding: 6px;
+}
+
+.service-tile:hover {
+  background: var(--bg-surface-hi);
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+
+.service-tile.selected {
+  background: linear-gradient(135deg, rgba(50, 215, 75, 0.15) 0%, rgba(50, 215, 75, 0.04) 100%);
+  border-color: rgba(50, 215, 75, 0.4);
+}
+
+.service-tile-logo {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.service-tile-name {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-pri);
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.logo-youtube-sm { background: #FF0000; }
+.logo-disney-sm { background: #113CCF; }
+.logo-icloud-sm { background: linear-gradient(135deg, #5AC8FA, #007AFF); }
+.logo-paramount-sm { background: #0064FF; }
+.logo-prime-sm { background: #00A8E1; }
+.logo-other-sm {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(255,255,255,0.2);
+  color: var(--text-sec);
+}
+
+.services-hint {
+  padding: 0 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+/* ============ SCREEN 07: SUCCESS ============ */
+
+.success-visual {
+  padding: 30px 20px 20px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.success-circle {
+  width: 96px; height: 96px;
+  background: linear-gradient(135deg, #32D74B 0%, #1FA838 100%);
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  box-shadow: 0 20px 50px rgba(50, 215, 75, 0.45);
+  animation: success-pop 0.8s var(--ease-spring);
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes success-pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.success-sparkle {
+  position: absolute;
+  color: var(--accent-green);
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.success-sparkle.s1 { top: 20px; left: 30%; animation-delay: 0.2s; }
+.success-sparkle.s2 { top: 40px; right: 25%; animation-delay: 0.6s; }
+.success-sparkle.s3 { bottom: 10px; left: 35%; animation-delay: 1s; }
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.success-text-block {
+  padding: 20px 24px 24px;
+  text-align: center;
+}
+
+.success-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.success-title .accent {
+  color: var(--accent-green);
+}
+
+.success-subtitle {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+.success-actions {
+  padding: 8px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.success-action {
+  padding: 14px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  text-align: left;
+}
+
+.success-action:hover {
+  background: var(--bg-surface-hi);
+  transform: translateX(2px);
+}
+
+.success-action-icon {
+  width: 36px; height: 36px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sa-icon-blue { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); }
+.sa-icon-green { background: rgba(50, 215, 75, 0.15); color: var(--accent-green); }
+.sa-icon-purple { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); }
+
+.success-action-text {
+  flex: 1;
+}
+
+.success-action-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1px;
+}
+
+.success-action-desc {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-ter);
+  letter-spacing: 0.03em;
+}
+
+.success-action-arrow {
+  color: var(--text-ter);
+  flex-shrink: 0;
+}
+
+.success-skip {
+  margin-top: 4px;
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-sec);
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+}
+
+/* ============ FOOTER ============ */
+.footer-note {
+  max-width: 1800px;
+  margin: 72px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1500px) {
+  .phones-grid.cols-4 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 1100px) {
+  .phones-grid.cols-3,
+  .phones-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .phase-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+@media (max-width: 700px) {
+  .phones-grid.cols-3,
+  .phones-grid.cols-4 { grid-template-columns: 1fr; }
+  body { padding: 24px 16px; }
+  .brand-name { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="brand">
+    <span class="brand-label">UX Mockup · Onboarding Flow</span>
+    <h1 class="brand-name">SubSplit<span class="dot">.</span></h1>
+  </div>
+  <div class="page-meta">
+    <span class="date">17 · Abr · 2026</span>
+    <span class="title">7 pantallas · 3 fases · activación mínima</span>
+  </div>
+</header>
+
+<!-- ============ PHASE 1: VALOR ============ -->
+<div class="phase-header green">
+  <div class="phase-num">01</div>
+  <div class="phase-content">
+    <span class="phase-eyebrow">— Fase 1 · Valor propuesto</span>
+    <h2 class="phase-title">Tres slides, tres problemas reales</h2>
+    <p class="phase-desc">
+      El pitch no vende la app, vende el dolor que resuelve. Skip siempre visible arriba a la derecha para usuarios que ya vienen convencidos.
+    </p>
+  </div>
+  <div class="phase-badge green">3 slides · skip visible</div>
+</div>
+
+<div class="phones-grid cols-3">
+
+  <!-- ============ 01 · WELCOME TRACKER ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">01</span>
+      <span class="name">Tracker</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="onb-topbar">
+          <div class="onb-progress">
+            <div class="progress-seg active"></div>
+            <div class="progress-seg"></div>
+            <div class="progress-seg"></div>
+          </div>
+          <span class="skip-btn">Saltar</span>
+        </div>
+
+        <div class="value-hero">
+          <div class="value-visual">
+            <div class="visual-tracker">
+              <svg class="tracker-connection" viewBox="0 0 260 260">
+                <path class="connection-line" d="M 55 40 L 130 130"/>
+                <path class="connection-line" d="M 215 85 L 130 130"/>
+                <path class="connection-line" d="M 50 200 L 130 130"/>
+                <path class="connection-line" d="M 200 230 L 130 130"/>
+              </svg>
+
+              <div class="tracker-center">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h2"/></svg>
+              </div>
+
+              <div class="tracker-orbit-card c1">
+                <div class="tracker-card-logo logo-netflix-xs">N</div>
+                <div class="tracker-card-text">
+                  <div class="tracker-card-name">Netflix</div>
+                  <div class="tracker-card-amount">S/ 54.90</div>
+                </div>
+              </div>
+              <div class="tracker-orbit-card c2">
+                <div class="tracker-card-logo logo-spotify-xs">S</div>
+                <div class="tracker-card-text">
+                  <div class="tracker-card-name">Spotify</div>
+                  <div class="tracker-card-amount">S/ 26.90</div>
+                </div>
+              </div>
+              <div class="tracker-orbit-card c3">
+                <div class="tracker-card-logo logo-chatgpt-xs">AI</div>
+                <div class="tracker-card-text">
+                  <div class="tracker-card-name">ChatGPT</div>
+                  <div class="tracker-card-amount">S/ 74.90</div>
+                </div>
+              </div>
+              <div class="tracker-orbit-card c4">
+                <div class="tracker-card-logo logo-hbo-xs">H</div>
+                <div class="tracker-card-text">
+                  <div class="tracker-card-name">HBO Max</div>
+                  <div class="tracker-card-amount">S/ 29.90</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="value-text">
+            <div class="value-eyebrow" style="color: var(--accent-blue);">01 · Todo en un lugar</div>
+            <h1 class="value-title">Tus suscripciones,<br>sin sustos</h1>
+            <p class="value-desc">
+              Netflix, Spotify, ChatGPT y todas las demás en un solo lugar. <strong>Nunca más pagos sorpresa</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="onb-footer">
+          <button class="cta-primary">Continuar →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 02 · SHARE ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">02</span>
+      <span class="name">Cobranza</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="onb-topbar">
+          <div class="onb-progress">
+            <div class="progress-seg done"></div>
+            <div class="progress-seg active"></div>
+            <div class="progress-seg"></div>
+          </div>
+          <span class="skip-btn">Saltar</span>
+        </div>
+
+        <div class="value-hero">
+          <div class="value-visual">
+            <div class="visual-share">
+              <div class="share-wa-bubble">
+                Hola Carlos 👋<br>
+                Netflix vence mañana: <strong>S/ 13.73</strong><br>
+                Yape: 987 654 321 🙏
+              </div>
+
+              <div class="share-arrow-down">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              </div>
+
+              <div class="share-members-row">
+                <div class="share-member m1">M</div>
+                <div class="share-member m2">L</div>
+                <div class="share-member m3">C</div>
+              </div>
+
+              <div class="share-splitter">
+                <div class="split-calc">
+                  <span class="split-total">S/ 54.90 ÷ 4</span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="color: var(--text-ter);"><path d="M5 12h14"/></svg>
+                <div class="split-calc">
+                  <span class="split-divided">S/ 13.73</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="value-text">
+            <div class="value-eyebrow" style="color: var(--accent-green);">02 · Comparte sin pelear</div>
+            <h1 class="value-title">Cobra a tus amigos<br>por WhatsApp</h1>
+            <p class="value-desc">
+              Divide el costo, genera el mensaje y <strong>cobra con un tap</strong>. Tus amigos no necesitan instalar nada.
+            </p>
+          </div>
+        </div>
+
+        <div class="onb-footer">
+          <button class="cta-primary">Continuar →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 03 · INSIGHTS ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">03</span>
+      <span class="name">Alertas</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="onb-topbar">
+          <div class="onb-progress">
+            <div class="progress-seg done"></div>
+            <div class="progress-seg done"></div>
+            <div class="progress-seg active"></div>
+          </div>
+          <span class="skip-btn">Saltar</span>
+        </div>
+
+        <div class="value-hero">
+          <div class="value-visual">
+            <div class="visual-insights">
+              <div class="insight-alert-card c1">
+                <div class="insight-alert-icon ia-icon-up">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" transform="rotate(180 12 12)"/><polyline points="17 18 23 18 23 12" transform="rotate(180 12 12)"/></svg>
+                </div>
+                <div class="insight-alert-text">
+                  Netflix <strong>subió de precio</strong><br>
+                  Tu parte ahora es S/ 15.20
+                </div>
+                <div class="insight-alert-amount red">+S/ 8</div>
+              </div>
+
+              <div class="insight-alert-card c2">
+                <div class="insight-alert-icon ia-icon-warn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div class="insight-alert-text">
+                  <strong>Notion Plus</strong> sin uso<br>
+                  47 días sin abrir la app
+                </div>
+                <div class="insight-alert-amount" style="color: var(--accent-amber);">?</div>
+              </div>
+
+              <div class="insight-alert-card c3">
+                <div class="insight-alert-icon ia-icon-save">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="insight-alert-text">
+                  Ahorras este año<br>
+                  <strong>compartiendo Netflix</strong>
+                </div>
+                <div class="insight-alert-amount green">+S/ 494</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="value-text">
+            <div class="value-eyebrow" style="color: var(--accent-amber);">03 · Insights automáticos</div>
+            <h1 class="value-title">Nunca más<br>pagues de más</h1>
+            <p class="value-desc">
+              Detectamos subidas de precio, suscripciones olvidadas y <strong>te decimos cuánto ahorras</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="onb-footer">
+          <button class="cta-primary green">Empezar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ PHASE 2: LOGIN + PERMS ============ -->
+<div class="phase-header blue">
+  <div class="phase-num">02</div>
+  <div class="phase-content">
+    <span class="phase-eyebrow">— Fase 2 · Autenticación</span>
+    <h2 class="phase-title">Login en un tap · permisos con contexto</h2>
+    <p class="phase-desc">
+      Sin email ni password. Solo Google o Apple. La pantalla de permisos explica el valor antes del diálogo nativo para subir la tasa de aceptación.
+    </p>
+  </div>
+  <div class="phase-badge blue">2 pantallas · 1 tap login</div>
+</div>
+
+<div class="phones-grid cols-4">
+
+  <!-- ============ 04 · AUTH ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">04</span>
+      <span class="name">Login</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="auth-top">
+          <h1 class="auth-logo-big">SubSplit<span class="dot">.</span></h1>
+        </div>
+
+        <div class="auth-visual">
+          <div class="auth-icon-block">
+            <div class="auth-icon-orbit"></div>
+            <div class="auth-center-glyph">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-text-block">
+          <h2 class="auth-title">Crea tu cuenta</h2>
+          <p class="auth-subtitle">
+            Inicia sesión con un tap. Tus datos están seguros y puedes borrarlos cuando quieras.
+          </p>
+        </div>
+
+        <div class="auth-footer">
+          <button class="auth-btn google">
+            <svg width="16" height="16" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+              <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+              <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+              <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2c-.4.4 6.6-4.8 6.6-14.8 0-1.3-.1-2.6-.4-3.9z"/>
+            </svg>
+            Continuar con Google
+          </button>
+          <button class="auth-btn apple">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            Continuar con Apple
+          </button>
+          <div class="auth-terms">
+            Al continuar, aceptas nuestros <a href="#">Términos</a> y <a href="#">Privacidad</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 05 · NOTIFS ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">05</span>
+      <span class="name">Notificaciones</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="onb-topbar">
+          <div class="onb-progress" style="max-width: 60px;">
+            <div class="progress-seg active"></div>
+            <div class="progress-seg"></div>
+          </div>
+          <span class="skip-btn">Después</span>
+        </div>
+
+        <div class="notif-visual">
+          <div class="notif-preview-stack">
+            <div class="notif-preview bot">
+              <div class="notif-app-icon">S.</div>
+              <div class="notif-content">
+                <div class="notif-header-row">
+                  <span class="notif-app-name">SubSplit</span>
+                  <span class="notif-time">Hoy</span>
+                </div>
+                <div class="notif-body">
+                  Carlos te <strong>pagó S/ 13.73</strong> por Netflix 🎉
+                </div>
+              </div>
+            </div>
+            <div class="notif-preview mid">
+              <div class="notif-app-icon">S.</div>
+              <div class="notif-content">
+                <div class="notif-header-row">
+                  <span class="notif-app-name">SubSplit</span>
+                  <span class="notif-time">Hoy</span>
+                </div>
+                <div class="notif-body">
+                  Spotify <strong>vence mañana</strong> · S/ 6.50
+                </div>
+              </div>
+            </div>
+            <div class="notif-preview top">
+              <div class="notif-app-icon">S.</div>
+              <div class="notif-content">
+                <div class="notif-header-row">
+                  <span class="notif-app-name">SubSplit</span>
+                  <span class="notif-time">Ahora</span>
+                </div>
+                <div class="notif-body">
+                  Netflix vence en <strong>3 días</strong>. María y Carlos aún no pagan
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="value-text" style="padding: 16px 24px;">
+          <div class="value-eyebrow" style="color: var(--accent-amber);">— Permiso importante</div>
+          <h1 class="value-title" style="font-size: 24px;">Avisos antes<br>del corte</h1>
+          <p class="value-desc">
+            Te avisamos <strong>3 días antes</strong> y te muestro quién no ha pagado. Sin spam, solo lo importante.
+          </p>
+        </div>
+
+        <div class="onb-footer">
+          <button class="cta-primary">Activar notificaciones</button>
+          <button class="cta-secondary">Saltar por ahora</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 06 · FIRST SUB ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">06</span>
+      <span class="name">Primera sub</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="onb-topbar">
+          <div class="onb-progress" style="max-width: 60px;">
+            <div class="progress-seg done"></div>
+            <div class="progress-seg active"></div>
+          </div>
+          <span class="skip-btn">Saltar</span>
+        </div>
+
+        <div class="first-sub-header">
+          <h1 class="first-sub-title">Agrega tu <span class="accent">primera</span></h1>
+          <p class="first-sub-subtitle">Elige una para empezar. Puedes agregar más luego.</p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-tile selected">
+            <div class="service-tile-logo logo-netflix-xs">N</div>
+            <span class="service-tile-name">Netflix</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-spotify-xs">S</div>
+            <span class="service-tile-name">Spotify</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-hbo-xs">H</div>
+            <span class="service-tile-name">HBO Max</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-disney-sm">D+</div>
+            <span class="service-tile-name">Disney+</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-youtube-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="m10 15 5.19-3L10 9v6z"/></svg>
+            </div>
+            <span class="service-tile-name">YouTube</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-chatgpt-xs">AI</div>
+            <span class="service-tile-name">ChatGPT</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-prime-sm">P</div>
+            <span class="service-tile-name">Prime Video</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-icloud-sm">iC</div>
+            <span class="service-tile-name">iCloud+</span>
+          </div>
+          <div class="service-tile">
+            <div class="service-tile-logo logo-other-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <span class="service-tile-name">Otro</span>
+          </div>
+        </div>
+
+        <div class="services-hint">+ AGREGA MÁS DESPUÉS</div>
+
+        <div class="onb-footer">
+          <button class="cta-primary green">Continuar con Netflix →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 07 · SUCCESS ============ -->
+  <div class="phone-wrap">
+    <div class="phone-label">
+      <span class="num">07</span>
+      <span class="name">¡Listo!</span>
+    </div>
+    <div class="phone">
+      <div class="screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="signal-dots"><span></span><span></span><span></span><span></span></div>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="success-visual">
+          <svg class="success-sparkle s1" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>
+          <svg class="success-sparkle s2" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>
+          <svg class="success-sparkle s3" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>
+
+          <div class="success-circle">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+        </div>
+
+        <div class="success-text-block">
+          <h1 class="success-title">¡Listo,<br><span class="accent">Gonzalo</span>!</h1>
+          <p class="success-subtitle">
+            Netflix ya está en tu tracker. ¿Qué quieres hacer ahora?
+          </p>
+        </div>
+
+        <div class="success-actions">
+          <div class="success-action">
+            <div class="success-action-icon sa-icon-blue">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div class="success-action-text">
+              <div class="success-action-label">Agregar otra suscripción</div>
+              <div class="success-action-desc">Spotify · HBO · ChatGPT...</div>
+            </div>
+            <div class="success-action-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+
+          <div class="success-action">
+            <div class="success-action-icon sa-icon-green">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 14c2.8 0 5 2.2 5 5"/></svg>
+            </div>
+            <div class="success-action-text">
+              <div class="success-action-label">Compartir con amigos</div>
+              <div class="success-action-desc">Divide Netflix · ahorra S/ 41</div>
+            </div>
+            <div class="success-action-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+
+          <div class="success-action">
+            <div class="success-action-icon sa-icon-purple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 12 12 3l9 9v9a2 2 0 0 1-2 2h-3v-7h-4v7H8a2 2 0 0 1-2-2v-9h-3z"/></svg>
+            </div>
+            <div class="success-action-text">
+              <div class="success-action-label">Ir al inicio</div>
+              <div class="success-action-desc">Ver tu dashboard</div>
+            </div>
+            <div class="success-action-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <span>SubSplit · Onboarding · 7 pantallas · UX cerrada ✓</span>
+  <span>→ Next · código nativo Android</span>
+</div>
+
+<script>
+  // Service tile selection
+  document.querySelectorAll('.services-grid').forEach(grid => {
+    grid.querySelectorAll('.service-tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        grid.querySelectorAll('.service-tile').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,23 +1,53 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
+import com.gondroid.subtrack.core.designsystem.components.text.Eyebrow
+import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
+import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 
 @Composable
-fun OnboardingScreen(onFinish: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Onboarding", color = TextPrimary)
+fun OnboardingScreen(
+    onFinish: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Spacing.s),
+            modifier = Modifier.padding(Spacing.xl)
+        ) {
+            Eyebrow(text = "route: Onboarding")
+            Spacer(Modifier.height(Spacing.xs))
+            Text("Onboarding", style = SubTrackType.headlineL, color = TextPrimary)
+            Spacer(Modifier.height(Spacing.base))
+            PrimaryButton(
+                text = "Continuar →",
+                onClick = onFinish,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)
 @Composable
 private fun OnboardingScreenPreview() {
     SubTrackTheme { OnboardingScreen(onFinish = {}) }
