@@ -37,6 +37,8 @@ object MockData {
     private const val T_2026_03_04 = 1772582400000L
     private const val T_2026_04_02 = 1775174400000L
     private const val T_2026_04_05 = 1775433600000L
+    private const val T_2026_02_02 = 1769990400000L
+    private const val T_2026_03_01 = 1772323200000L
 
     // ── Usuario principal ────────────────────────────────────────────────────
     val currentUser = User(
@@ -142,6 +144,7 @@ object MockData {
             id = "sub_netflix",
             name = "Netflix Premium",
             brandColor = "#E50914",
+            serviceTemplateId = "tpl_netflix",
             totalAmount = 54.90,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 15,
@@ -158,6 +161,7 @@ object MockData {
             id = "sub_spotify",
             name = "Spotify Familiar",
             brandColor = "#1DB954",
+            serviceTemplateId = "tpl_spotify",
             totalAmount = 26.90,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 1,
@@ -173,6 +177,7 @@ object MockData {
             id = "sub_chatgpt",
             name = "ChatGPT Plus",
             brandColor = "#10A37F",
+            serviceTemplateId = "tpl_chatgpt",
             totalAmount = 74.90,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 10,
@@ -186,6 +191,7 @@ object MockData {
             id = "sub_icloud",
             name = "iCloud 200GB",
             brandColor = "#147EFB",
+            serviceTemplateId = "tpl_icloud",
             totalAmount = 13.00,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 20,
@@ -214,6 +220,7 @@ object MockData {
             id = "sub_notion",
             name = "Notion Plus",
             brandColor = "#000000",
+            serviceTemplateId = "tpl_notion",
             totalAmount = 32.50,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 3,
@@ -383,6 +390,52 @@ object MockData {
             amount = 12.25,
             status = PaymentStatus.PENDING,
             paidAt = null,
+            proofUrl = null,
+            note = null
+        ),
+        // Spotify Febrero 2026
+        Payment(
+            id = "pay_spotify_2026-02_ana",
+            subscriptionId = "sub_spotify",
+            memberId = "mem_ana",
+            monthKey = "2026-02",
+            amount = 8.97,
+            status = PaymentStatus.PAID,
+            paidAt = T_2026_02_02,
+            proofUrl = null,
+            note = null
+        ),
+        Payment(
+            id = "pay_spotify_2026-02_diego",
+            subscriptionId = "sub_spotify",
+            memberId = "mem_diego",
+            monthKey = "2026-02",
+            amount = 8.97,
+            status = PaymentStatus.PAID,
+            paidAt = T_2026_02_03,
+            proofUrl = null,
+            note = null
+        ),
+        // Spotify Marzo 2026
+        Payment(
+            id = "pay_spotify_2026-03_ana",
+            subscriptionId = "sub_spotify",
+            memberId = "mem_ana",
+            monthKey = "2026-03",
+            amount = 8.97,
+            status = PaymentStatus.LATE,
+            paidAt = T_2026_03_20,
+            proofUrl = null,
+            note = null
+        ),
+        Payment(
+            id = "pay_spotify_2026-03_diego",
+            subscriptionId = "sub_spotify",
+            memberId = "mem_diego",
+            monthKey = "2026-03",
+            amount = 8.97,
+            status = PaymentStatus.PAID,
+            paidAt = T_2026_03_01,
             proofUrl = null,
             note = null
         ),

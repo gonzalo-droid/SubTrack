@@ -149,10 +149,10 @@ fun ComponentGalleryScreen() {
                     horizontalArrangement = Arrangement.spacedBy(Spacing.s),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ServiceLogo(serviceName = "Netflix", brandColor = Color(0xFFE50914), size = LogoSize.Large.dp)
-                    ServiceLogo(serviceName = "Spotify", brandColor = Color(0xFF1DB954), size = LogoSize.Large.dp)
-                    ServiceLogo(serviceName = "iCloud+", brandColor = Color(0xFF147EFB), size = LogoSize.Large.dp)
-                    ServiceLogo(serviceName = "ChatGPT Plus", brandColor = Color(0xFF10A37F), size = LogoSize.Large.dp)
+                    ServiceLogo(serviceName = "Netflix", brandColor = Color(0xFFE50914), size = LogoSize.Large.dp, serviceId = "tpl_netflix")
+                    ServiceLogo(serviceName = "Spotify", brandColor = Color(0xFF1DB954), size = LogoSize.Large.dp, serviceId = "tpl_spotify")
+                    ServiceLogo(serviceName = "iCloud+", brandColor = Color(0xFF147EFB), size = LogoSize.Large.dp, serviceId = "tpl_icloud")
+                    ServiceLogo(serviceName = "ChatGPT Plus", brandColor = Color(0xFF10A37F), size = LogoSize.Large.dp, serviceId = "tpl_chatgpt")
                 }
             }
         }

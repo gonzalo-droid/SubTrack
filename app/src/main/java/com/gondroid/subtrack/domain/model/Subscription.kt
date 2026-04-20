@@ -9,6 +9,7 @@ data class Subscription(
     val name: String,
     val logoUrl: String? = null,
     val brandColor: String,
+    val serviceTemplateId: String? = null,
     val totalAmount: Double,
     val currency: String = "PEN",
     val cycle: BillingCycle,

@@ -255,6 +255,11 @@
     <string name="profile_stats_spend">gasto mensual</string>
     <string name="profile_stats_recovered">recuperado</string>
 
+    <!-- Legal / logos disclaimer -->
+    <string name="legal_logos_title">Logos y marcas</string>
+    <string name="legal_logos_body">Los logos de servicios mostrados en SubTrack (Netflix, Spotify, YouTube, entre otros) son marcas registradas de sus respectivos propietarios. Su uso es únicamente referencial e informativo, sin intención comercial ni de afiliación.</string>
+    <string name="legal_logos_simpleicons">Iconos basados en Simple Icons (simpleicons.org) · Licencia CC0 1.0</string>
+
     <!-- Alias edit screen -->
     <string name="alias_title">Alias de cobranza</string>
     <string name="alias_save">Guardar</string>
@@ -505,6 +510,33 @@
     <string name="member_action_exit_title">Salir del grupo</string>
     <string name="member_action_exit_desc">Solicitar salida de %1$s. El administrador debe aprobarlo. Seguirás activo hasta que lo confirme.</string>
     <string name="member_action_exit_confirm">Enviar solicitud</string>
+
+    <!-- Subscription list screen -->
+    <string name="subscription_list_search_hint">Buscar suscripción…</string>
+    <string name="subscription_list_filter_all">Todas</string>
+    <string name="subscription_list_filter_personal">Personales</string>
+    <string name="subscription_list_filter_shared">Compartidas</string>
+    <string name="subscription_list_stat_total">Total</string>
+    <string name="subscription_list_stat_personal">Personal</string>
+    <string name="subscription_list_stat_shared">Compartida</string>
+    <string name="subscription_list_stat_monthly">Mensual</string>
+    <string name="subscription_list_empty">Sin suscripciones</string>
+    <string name="subscription_list_fab_cd">Crear suscripción</string>
+    <string name="subscription_list_tag_admin">ADMIN</string>
+    <string name="subscription_list_tag_member">MIEMBRO</string>
+
+    <!-- People screen -->
+    <string name="people_search_hint">Buscar persona…</string>
+    <string name="people_empty">Sin personas aún</string>
+    <string name="people_empty_search">Sin resultados</string>
+    <string name="people_has_app_tag">APP</string>
+    <string name="people_owes_label">debe</string>
+    <string name="people_monthly_label">/mes</string>
+    <string name="people_detail_punctuality">Puntual</string>
+    <string name="people_detail_monthly">Mensual</string>
+    <string name="people_detail_since">Desde</string>
+    <string name="people_detail_subs_title">Suscripciones</string>
+    <string name="people_detail_archived_label">Archivados</string>
 
     <!-- Payment history item -->
     <string name="member_history_paid_on">Pagado el %1$s</string>

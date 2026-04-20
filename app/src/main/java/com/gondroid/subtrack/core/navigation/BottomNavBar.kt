@@ -97,7 +97,9 @@ fun BottomNavBar(navController: NavController) {
                             indication = null
                         ) {
                             navController.navigate(item.route) {
-                                popUpTo(Route.Dashboard) { saveState = true }
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
                                 restoreState = true
                             }

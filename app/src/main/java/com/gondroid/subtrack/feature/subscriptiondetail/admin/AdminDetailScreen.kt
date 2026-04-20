@@ -240,10 +240,15 @@ fun AdminDetailScreen(
                                     it.currentStatus == PaymentStatus.PENDING
                         } ?: emptyList()
                         BulkReminderSheet(
-                            pendingMembers = pending,
+                            pendingItems = pending.map {
+                                com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.BulkReminderItem(
+                                    member = it,
+                                    subscriptionId = sub?.id ?: "",
+                                    subscriptionName = sub?.name ?: ""
+                                )
+                            },
                             templates = com.gondroid.subtrack.data.mock.MockData.templates,
                             adminName = "Gonzalo",
-                            subscriptionName = sub?.name ?: "",
                             onDone = {
                                 viewModel.onBulkReminderSent()
                                 viewModel.closeSheet()
@@ -310,7 +315,7 @@ private fun AdminDetailContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
-                ServiceLogo(serviceName = sub.name, brandColor = brandColor, size = 64.dp)
+                ServiceLogo(serviceName = sub.name, brandColor = brandColor, size = 64.dp, serviceId = sub.serviceTemplateId)
                 Text(
                     text = sub.name,
                     style = SubTrackType.displayS,

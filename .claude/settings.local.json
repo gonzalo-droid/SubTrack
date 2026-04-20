@@ -14,7 +14,15 @@
       "Bash(sed -n '325,345p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
       "Bash(sed -n '140,150p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
       "Bash(sed -n '278,288p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
-      "Bash(sed -n '332,342p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)"
+      "Bash(sed -n '332,342p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/feature/createsubscription/CreateSubscriptionScreen.kt)",
+      "Bash(sed -n '33,70p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/cards/HeroCard.kt)",
+      "Bash(sed -n '39,80p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/buttons/STIconButton.kt)",
+      "Bash(sed -n '49,90p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/input/STTextField.kt)",
+      "Bash(xargs ls *)",
+      "Bash(sed -n '29,45p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/avatar/AvatarStack.kt)",
+      "Bash(sed -n '46,65p' /Users/gonzalo/AndroidStudioProjects/SubTrack/app/src/main/java/com/gondroid/subtrack/core/designsystem/components/text/StatusPill.kt)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:cdn.jsdelivr.net)"
     ]
   }
 }

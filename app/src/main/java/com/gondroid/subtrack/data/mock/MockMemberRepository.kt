@@ -3,12 +3,13 @@ package com.gondroid.subtrack.data.mock
 import com.gondroid.subtrack.domain.model.ExitRequest
 import com.gondroid.subtrack.domain.model.ExitRequestStatus
 import com.gondroid.subtrack.domain.model.Member
-import com.gondroid.subtrack.domain.model.PersonSubscriptionChip
 import com.gondroid.subtrack.domain.model.PersonSummary
+import com.gondroid.subtrack.domain.model.SubscriptionParticipation
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.MemberRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 import javax.inject.Inject
@@ -97,38 +98,78 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
         }
 
     override fun getAllPeopleWithSubscriptions(): Flow<List<PersonSummary>> =
-        store.map { subscriptions ->
-            // Collect all members across all subscriptions, group by id
-            val memberMap = mutableMapOf<String, Triple<Member, MutableList<PersonSubscriptionChip>, String>>()
+        combine(store, MockDataStore.payments) { subscriptions, payments ->
+            data class MemberAccumulator(
+                val member: Member,
+                val participations: MutableList<SubscriptionParticipation>,
+                var earliestJoin: Long,
+                var latestActivity: Long?
+            )
+
+            val memberMap = mutableMapOf<String, MemberAccumulator>()
 
             subscriptions.forEach { sub ->
-                (sub.members + sub.archivedMembers).forEach { member ->
-                    val existing = memberMap[member.id]
-                    val chip = PersonSubscriptionChip(
+                val allMembers = sub.members.map { it to false } + sub.archivedMembers.map { it to true }
+                allMembers.forEach { (member, archived) ->
+                    val participation = SubscriptionParticipation(
                         subscriptionId = sub.id,
                         subscriptionName = sub.name,
+                        brandColor = sub.brandColor,
                         status = member.currentStatus,
-                        shareAmount = member.shareAmount
+                        shareAmount = member.shareAmount,
+                        isArchived = archived
                     )
+                    val existing = memberMap[member.id]
                     if (existing == null) {
-                        memberMap[member.id] = Triple(member, mutableListOf(chip), sub.id)
+                        memberMap[member.id] = MemberAccumulator(
+                            member = member,
+                            participations = mutableListOf(participation),
+                            earliestJoin = member.joinedAt,
+                            latestActivity = null
+                        )
                     } else {
-                        existing.second.add(chip)
+                        existing.participations.add(participation)
+                        if (member.joinedAt < existing.earliestJoin) {
+                            existing.earliestJoin = member.joinedAt
+                        }
                     }
                 }
             }
 
-            memberMap.values.map { (member, chips, _) ->
-                val totalDebt = chips
+            // Enrich with payment history
+            payments.forEach { payment ->
+                val paidAt = payment.paidAt ?: return@forEach
+                val acc = memberMap[payment.memberId] ?: return@forEach
+                if (acc.latestActivity == null || paidAt > (acc.latestActivity ?: 0L)) {
+                    acc.latestActivity = paidAt
+                }
+            }
+
+            memberMap.values.map { acc ->
+                val member = acc.member
+                val memberPayments = payments.filter { it.memberId == member.id }
+                val decidedPayments = memberPayments.filter { it.status != PaymentStatus.PENDING }
+                val punctual = decidedPayments.count { it.status == PaymentStatus.PAID }
+                val punctualityPercent = if (decidedPayments.isEmpty()) 100
+                else (punctual * 100 / decidedPayments.size)
+
+                val totalDebt = acc.participations
                     .filter { it.status == PaymentStatus.OVERDUE || it.status == PaymentStatus.LATE }
                     .sumOf { it.shareAmount }
+
                 PersonSummary(
                     userId = member.userId,
                     name = member.name,
                     phone = member.phone,
                     hasApp = member.userId != null,
                     totalDebt = totalDebt,
-                    subscriptions = chips
+                    totalMonthlyContribution = acc.participations
+                        .filter { !it.isArchived }
+                        .sumOf { it.shareAmount },
+                    punctualityPercent = punctualityPercent,
+                    firstJoinedAt = acc.earliestJoin,
+                    lastActivityAt = acc.latestActivity,
+                    subscriptions = acc.participations
                 )
             }.sortedByDescending { it.totalDebt }
         }

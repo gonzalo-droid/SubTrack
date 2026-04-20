@@ -57,29 +57,37 @@ import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 
+data class BulkReminderItem(
+    val member: Member,
+    val subscriptionId: String,
+    val subscriptionName: String
+)
+
 @Composable
 fun BulkReminderSheet(
-    pendingMembers: List<Member>,
+    pendingItems: List<BulkReminderItem>,
     templates: List<Template>,
     adminName: String,
-    subscriptionName: String,
     onDone: () -> Unit
 ) {
     val context = LocalContext.current
-    var selectedMemberIds by remember { mutableStateOf(pendingMembers.map { it.id }.toSet()) }
+    var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
     var selectedTemplateId by remember { mutableStateOf(templates.firstOrNull { it.isDefault }?.id ?: templates.firstOrNull()?.id) }
     var sendingIndex by remember { mutableIntStateOf(-1) }
 
+    val pendingMembers = pendingItems.map { it.member }
     val selectedMembers = pendingMembers.filter { it.id in selectedMemberIds }
+    val selectedItems = pendingItems.filter { it.member.id in selectedMemberIds }
     val template = templates.find { it.id == selectedTemplateId }
 
     if (sendingIndex >= 0) {
         // Sending mode: show current member + next button
-        val current = selectedMembers.getOrNull(sendingIndex)
-        if (current == null) {
+        val currentItem = selectedItems.getOrNull(sendingIndex)
+        if (currentItem == null) {
             onDone()
             return
         }
+        val current = currentItem.member
         SheetContainer {
             Column(
                 modifier = Modifier
@@ -93,7 +101,7 @@ fun BulkReminderSheet(
                     text = stringResource(
                         R.string.member_sheet_bulk_next,
                         sendingIndex + 1,
-                        selectedMembers.size
+                        selectedItems.size
                     ),
                     style = SubTrackType.headlineS,
                     color = TextPrimary
@@ -104,18 +112,19 @@ fun BulkReminderSheet(
                 Text(text = current.name, style = SubTrackType.titleL, color = TextPrimary)
                 Spacer(Modifier.height(Spacing.l))
                 PrimaryButton(
-                    text = if (sendingIndex + 1 < selectedMembers.size)
-                        stringResource(R.string.member_sheet_bulk_next, sendingIndex + 2, selectedMembers.size)
+                    text = if (sendingIndex + 1 < selectedItems.size)
+                        stringResource(R.string.member_sheet_bulk_next, sendingIndex + 2, selectedItems.size)
                     else
-                        stringResource(R.string.member_sheet_bulk_done, selectedMembers.size),
+                        stringResource(R.string.member_sheet_bulk_done, selectedItems.size),
                     onClick = {
-                        val next = selectedMembers.getOrNull(sendingIndex + 1)
-                        if (next != null) {
+                        val nextItem = selectedItems.getOrNull(sendingIndex + 1)
+                        if (nextItem != null) {
                             sendingIndex++
+                            val next = nextItem.member
                             val msg = template?.let {
                                 WhatsAppHelper.buildReminderMessage(
                                     memberName = next.name,
-                                    serviceName = subscriptionName,
+                                    serviceName = nextItem.subscriptionName,
                                     amount = "%.2f".format(next.shareAmount),
                                     adminName = adminName
                                 )
@@ -237,11 +246,12 @@ fun BulkReminderSheet(
             }
 
             // Message preview
-            if (template != null && selectedMembers.isNotEmpty()) {
-                val previewMember = selectedMembers.first()
+            if (template != null && selectedItems.isNotEmpty()) {
+                val previewItem = selectedItems.first()
+                val previewMember = previewItem.member
                 val previewMsg = WhatsAppHelper.buildReminderMessage(
                     memberName = previewMember.name,
-                    serviceName = subscriptionName,
+                    serviceName = previewItem.subscriptionName,
                     amount = "%.2f".format(previewMember.shareAmount),
                     adminName = adminName
                 )
@@ -273,13 +283,14 @@ fun BulkReminderSheet(
             Spacer(Modifier.height(Spacing.m))
 
             PrimaryButton(
-                text = stringResource(R.string.member_sheet_bulk_send, selectedMembers.size),
+                text = stringResource(R.string.member_sheet_bulk_send, selectedItems.size),
                 onClick = {
-                    if (selectedMembers.isNotEmpty() && template != null) {
-                        val first = selectedMembers.first()
+                    if (selectedItems.isNotEmpty() && template != null) {
+                        val firstItem = selectedItems.first()
+                        val first = firstItem.member
                         val msg = WhatsAppHelper.buildReminderMessage(
                             memberName = first.name,
-                            serviceName = subscriptionName,
+                            serviceName = firstItem.subscriptionName,
                             amount = "%.2f".format(first.shareAmount),
                             adminName = adminName
                         )
@@ -288,7 +299,7 @@ fun BulkReminderSheet(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = selectedMembers.isNotEmpty()
+                enabled = selectedItems.isNotEmpty()
             )
             Spacer(Modifier.height(Spacing.xl))
         }
@@ -300,15 +311,22 @@ fun BulkReminderSheet(
 private fun BulkReminderSheetPreview() {
     SubTrackTheme {
         BulkReminderSheet(
-            pendingMembers = listOf(
-                Member("m1", null, "María Rodríguez", "+51 912 345 678", "Perfil 2", 10.98, false, PaymentStatus.OVERDUE, 0L),
-                Member("m2", null, "Roberto Vargas", "+51 978 901 234", "Perfil 3", 10.98, false, PaymentStatus.PENDING, 0L)
+            pendingItems = listOf(
+                BulkReminderItem(
+                    member = Member("m1", null, "María Rodríguez", "+51 912 345 678", "Perfil 2", 10.98, false, PaymentStatus.OVERDUE, 0L),
+                    subscriptionId = "sub_netflix",
+                    subscriptionName = "Netflix"
+                ),
+                BulkReminderItem(
+                    member = Member("m2", null, "Roberto Vargas", "+51 978 901 234", "Perfil 3", 10.98, false, PaymentStatus.PENDING, 0L),
+                    subscriptionId = "sub_netflix",
+                    subscriptionName = "Netflix"
+                )
             ),
             templates = listOf(
                 Template("t1", "Amigable", "👋", TemplateTone.FRIENDLY, "Hola {nombre}! Recuerda pagar {servicio} — S/{monto}. ¡Gracias!", true)
             ),
             adminName = "Gonzalo",
-            subscriptionName = "Netflix",
             onDone = {}
         )
     }

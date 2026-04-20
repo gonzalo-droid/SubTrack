@@ -27,6 +27,7 @@ class GetMemberSubscriptionDetailUseCase @Inject constructor(
                 subscriptionId = sub.id,
                 serviceName = sub.name,
                 brandColor = sub.brandColor,
+                serviceTemplateId = sub.serviceTemplateId,
                 cycle = sub.cycle,
                 cutoffDay = sub.cutoffDay,
                 currency = sub.currency,

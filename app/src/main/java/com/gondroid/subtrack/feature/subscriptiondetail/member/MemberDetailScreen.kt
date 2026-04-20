@@ -197,7 +197,8 @@ private fun MemberDetailContent(
                 ServiceLogo(
                     serviceName = view.serviceName,
                     brandColor = view.brandColor.toComposeColor(),
-                    size = 56.dp
+                    size = 56.dp,
+                    serviceId = view.serviceTemplateId
                 )
                 Spacer(Modifier.height(Spacing.m))
                 Eyebrow(text = stringResource(R.string.member_detail_my_share))

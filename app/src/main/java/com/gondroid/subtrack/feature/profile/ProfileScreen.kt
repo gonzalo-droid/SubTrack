@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,6 +70,7 @@ import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
 import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
+import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
@@ -125,6 +127,7 @@ private fun ProfileContent(
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showLegalSheet by remember { mutableStateOf(false) }
     var darkModeEnabled by remember { mutableStateOf(true) }
     var faceIdEnabled by remember { mutableStateOf(false) }
 
@@ -407,6 +410,14 @@ private fun ProfileContent(
                 )
                 SettingsDivider()
                 SettingsRow(
+                    icon = Icons.Outlined.Lock,
+                    iconBg = Color.White.copy(alpha = 0.06f),
+                    iconTint = TextSecondary,
+                    title = stringResource(R.string.legal_logos_title),
+                    onClick = { showLegalSheet = true }
+                )
+                SettingsDivider()
+                SettingsRow(
                     icon = Icons.AutoMirrored.Outlined.Logout,
                     iconBg = AccentRedBg,
                     iconTint = AccentRed,
@@ -417,6 +428,7 @@ private fun ProfileContent(
                 )
             }
         }
+
 
         // Footer
         item {
@@ -431,6 +443,10 @@ private fun ProfileContent(
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
+    }
+
+    if (showLegalSheet) {
+        LegalLogosSheet(onDismiss = { showLegalSheet = false })
     }
 }
 
@@ -760,6 +776,43 @@ private fun ReferralEntryCard(
             )
         }
         Icon(Icons.Outlined.ChevronRight, null, tint = TextTertiary, modifier = Modifier.size(18.dp))
+    }
+}
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun LegalLogosSheet(onDismiss: () -> Unit) {
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    androidx.compose.material3.ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = BgSheet
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Spacing.base)
+                .padding(bottom = Spacing.xl)
+                .navigationBarsPadding()
+        ) {
+            Text(
+                text = stringResource(R.string.legal_logos_title),
+                style = SubTrackType.headlineM,
+                color = TextPrimary
+            )
+            Spacer(modifier = Modifier.height(Spacing.s))
+            Text(
+                text = stringResource(R.string.legal_logos_body),
+                style = SubTrackType.bodyS,
+                color = TextSecondary
+            )
+            Spacer(modifier = Modifier.height(Spacing.m))
+            Text(
+                text = stringResource(R.string.legal_logos_simpleicons),
+                style = SubTrackType.monoXS,
+                color = TextTertiary
+            )
+        }
     }
 }
 

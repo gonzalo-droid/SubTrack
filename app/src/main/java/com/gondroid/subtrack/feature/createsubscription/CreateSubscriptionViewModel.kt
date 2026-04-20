@@ -226,6 +226,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                 name = form.resolvedServiceName,
                 logoUrl = null,
                 brandColor = form.selectedService?.brandColor ?: "#888888",
+                serviceTemplateId = form.selectedService?.id?.takeIf { it != "tpl_other" },
                 totalAmount = totalAmount,
                 currency = form.currency,
                 cycle = form.cycle,

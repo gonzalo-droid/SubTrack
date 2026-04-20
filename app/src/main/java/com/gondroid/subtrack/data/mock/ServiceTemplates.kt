@@ -14,7 +14,12 @@ object ServiceTemplates {
         ServiceTemplate("tpl_chatgpt",  "ChatGPT Plus",      "#10A37F", "AI", 74.90, SubscriptionCategory.AI),
         ServiceTemplate("tpl_prime",    "Prime Video",       "#00A8E1", "P",  29.90, SubscriptionCategory.STREAMING),
         ServiceTemplate("tpl_icloud",   "iCloud+",           "#007AFF", "iC", 13.00, SubscriptionCategory.CLOUD),
-        ServiceTemplate("tpl_notion",   "Notion Plus",       "#000000", "N",  32.50, SubscriptionCategory.PRODUCTIVITY)
+        ServiceTemplate("tpl_notion",       "Notion Plus",       "#000000", "N",  32.50, SubscriptionCategory.PRODUCTIVITY),
+        ServiceTemplate("tpl_appletv",      "Apple TV+",         "#000000", "TV", 18.90, SubscriptionCategory.STREAMING),
+        ServiceTemplate("tpl_applemusic",   "Apple Music",       "#FC3C44", "♫",  17.90, SubscriptionCategory.MUSIC),
+        ServiceTemplate("tpl_crunchyroll",  "Crunchyroll",       "#F47521", "CR", 24.90, SubscriptionCategory.STREAMING),
+        ServiceTemplate("tpl_claude",       "Claude Pro",        "#D97757", "C",  89.90, SubscriptionCategory.AI),
+        ServiceTemplate("tpl_linkedin",     "LinkedIn Premium",  "#0A66C2", "in", 89.90, SubscriptionCategory.OTHER)
     )
 
     val other = ServiceTemplate(

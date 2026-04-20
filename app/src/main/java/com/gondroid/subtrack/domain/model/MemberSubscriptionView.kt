@@ -12,6 +12,7 @@ data class MemberSubscriptionView(
     val subscriptionId: String,
     val serviceName: String,
     val brandColor: String,
+    val serviceTemplateId: String? = null,
     val cycle: BillingCycle,
     val cutoffDay: Int,
     val currency: String,

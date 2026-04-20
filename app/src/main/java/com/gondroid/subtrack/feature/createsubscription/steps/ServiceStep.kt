@@ -212,7 +212,8 @@ private fun ServiceTile(
         ServiceLogo(
             serviceName = service.name,
             brandColor = brandColor,
-            size = LogoSize.Large.dp
+            size = LogoSize.Large.dp,
+            serviceId = service.id.takeIf { it != "tpl_other" }
         )
         Spacer(Modifier.height(Spacing.xs))
         Text(

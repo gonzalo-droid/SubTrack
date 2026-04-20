@@ -524,7 +524,8 @@ private fun UpcomingCutoffCard(
         ServiceLogo(
             serviceName = subscription.name,
             brandColor = subscription.brandColor.toComposeColor(),
-            size = LogoSize.Medium.dp
+            size = LogoSize.Medium.dp,
+            serviceId = subscription.serviceTemplateId
         )
         Spacer(Modifier.height(Spacing.s))
         Text(
@@ -609,7 +610,8 @@ private fun PersonalSubRow(
         ServiceLogo(
             serviceName = subscription.name,
             brandColor = subscription.brandColor.toComposeColor(),
-            size = LogoSize.Medium.dp
+            size = LogoSize.Medium.dp,
+            serviceId = subscription.serviceTemplateId
         )
         Spacer(Modifier.width(Spacing.m))
         Column(modifier = Modifier.weight(1f)) {

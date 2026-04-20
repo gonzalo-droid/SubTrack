@@ -8,12 +8,18 @@ data class PersonSummary(
     val phone: String,
     val hasApp: Boolean,
     val totalDebt: Double,
-    val subscriptions: List<PersonSubscriptionChip>
+    val totalMonthlyContribution: Double,
+    val punctualityPercent: Int,
+    val firstJoinedAt: Long,
+    val lastActivityAt: Long?,
+    val subscriptions: List<SubscriptionParticipation>
 )
 
-data class PersonSubscriptionChip(
+data class SubscriptionParticipation(
     val subscriptionId: String,
     val subscriptionName: String,
+    val brandColor: String,
     val status: PaymentStatus,
-    val shareAmount: Double
+    val shareAmount: Double,
+    val isArchived: Boolean
 )

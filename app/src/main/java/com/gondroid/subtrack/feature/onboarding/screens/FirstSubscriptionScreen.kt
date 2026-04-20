@@ -200,7 +200,8 @@ private fun ServiceTile(
         ServiceLogo(
             serviceName = service.name,
             brandColor = service.brandColor.toComposeColor(),
-            size = 34.dp
+            size = 34.dp,
+            serviceId = service.id.takeIf { it != "tpl_other" }
         )
         Spacer(Modifier.height(Spacing.xs))
         Text(

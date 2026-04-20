@@ -93,7 +93,8 @@ fun DetailsStep(
                 ServiceLogo(
                     serviceName = service.name,
                     brandColor = service.brandColor.toComposeColor(),
-                    size = 16.dp
+                    size = 16.dp,
+                    serviceId = service.id.takeIf { it != "tpl_other" }
                 )
                 Text(service.name, style = SubTrackType.monoXS, color = TextTertiary)
             }
