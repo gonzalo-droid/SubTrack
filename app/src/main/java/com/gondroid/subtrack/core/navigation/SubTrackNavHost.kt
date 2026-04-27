@@ -13,6 +13,7 @@ import com.gondroid.subtrack.feature.onboarding.OnboardingScreen
 import com.gondroid.subtrack.feature.people.PeopleScreen
 import com.gondroid.subtrack.feature.profile.ProfileScreen
 import com.gondroid.subtrack.feature.profile.alias.AliasEditScreen
+import com.gondroid.subtrack.feature.profile.editprofile.EditProfileScreen
 import com.gondroid.subtrack.feature.profile.referral.ReferralScreen
 import com.gondroid.subtrack.feature.profile.templates.EditTemplateScreen
 import com.gondroid.subtrack.feature.profile.templates.TemplatesScreen
@@ -66,7 +67,7 @@ fun SubTrackNavHost(
                 onNavigateToTemplates = { navController.navigate(Route.Templates) },
                 onNavigateToReferral = { navController.navigate(Route.Referral) },
                 onNavigateToAliasEdit = { navController.navigate(Route.AliasEdit) },
-                onNavigateToEditUser = { /* TODO: [fase-futura] EditUserScreen */ },
+                onNavigateToEditUser = { navController.navigate(Route.EditUser) },
                 onNavigateToEditTemplate = { id -> navController.navigate(Route.EditTemplate(id)) },
                 onDebugOnboarding = {
                     navController.navigate(Route.Onboarding) {
@@ -75,6 +76,10 @@ fun SubTrackNavHost(
                 },
                 onDebugData = { navController.navigate(Route.Debug) }
             )
+        }
+
+        composable<Route.EditUser> {
+            EditProfileScreen(onBack = { navController.popBackStack() })
         }
 
         composable<Route.AliasEdit> {

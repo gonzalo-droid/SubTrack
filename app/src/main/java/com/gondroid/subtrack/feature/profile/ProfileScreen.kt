@@ -190,7 +190,7 @@ private fun ProfileContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
-                Avatar(name = data.user.name, size = 48.dp)
+                Avatar(name = data.user.name, size = 48.dp, imageUrl = data.user.profileImageUrl)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(data.user.name, style = SubTrackType.titleL, color = TextPrimary)
                     Text(data.user.email ?: "", style = SubTrackType.monoXS, color = TextTertiary)

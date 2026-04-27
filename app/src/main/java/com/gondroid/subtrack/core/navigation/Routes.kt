@@ -19,5 +19,7 @@ sealed interface Route {
     @Serializable data class EditTemplate(val id: String? = null) : Route
     @Serializable data object Referral : Route
 
+    @Serializable data object EditUser : Route
+
     @Serializable data object Debug : Route
 }

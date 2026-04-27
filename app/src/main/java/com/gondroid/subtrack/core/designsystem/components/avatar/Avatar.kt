@@ -14,12 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.gondroid.subtrack.core.designsystem.theme.SpaceGrotesk
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
@@ -29,27 +31,36 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 fun Avatar(
     name: String,
     modifier: Modifier = Modifier,
-    size: Dp = 40.dp
+    size: Dp = 40.dp,
+    imageUrl: String? = null
 ) {
-    val gradient = avatarGradientFor(name)
-    val fontSize = (size.value * 0.37f).sp
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .size(size)
-            .clip(SubTrackShapes.circle)
-            .background(gradient)
-    ) {
-        Text(
-            text = initialsFor(name),
-            style = TextStyle(
-                fontFamily = SpaceGrotesk,
-                fontWeight = FontWeight.Bold,
-                fontSize = fontSize,
-                lineHeight = fontSize,
-                color = Color.White
-            )
+    val clippedModifier = modifier.size(size).clip(SubTrackShapes.circle)
+
+    if (imageUrl != null) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = clippedModifier
         )
+    } else {
+        val gradient = avatarGradientFor(name)
+        val fontSize = (size.value * 0.37f).sp
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = clippedModifier.background(gradient)
+        ) {
+            Text(
+                text = initialsFor(name),
+                style = TextStyle(
+                    fontFamily = SpaceGrotesk,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = fontSize,
+                    lineHeight = fontSize,
+                    color = Color.White
+                )
+            )
+        }
     }
 }
 
