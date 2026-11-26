@@ -6,17 +6,16 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Alta: antes del primer build para tienda
 
-- [ ] **ACC-02** — Cerrar sesión de verdad (`FirebaseAuth.signOut`, limpiar `AppStore` y Room; hoy el diálogo de `ProfileScreen.kt:124-140` no hace nada) y borrar la cuenta desde la app: Auth, `users/{uid}` en Firestore y datos locales. Página web para pedir el borrado (Data safety).
-- [ ] **PRIV-03 / PUB-15 / AJU-01** — Escribir y publicar la política de privacidad y los términos (cuenta de Google, teléfonos de los miembros, Firestore). Enlazarlos en Ajustes y en el texto del onboarding.
-- [ ] **SEC-03 / SEC-04 / PUB-09** — Keystore de subida fuera del repo (`~/.config/subtrack-signing/`), `signingConfig` de release leído de `local.properties`, Play App Signing activado y el respaldo anotado (dónde están la keystore, `google-services.json` y las credenciales; nunca las llaves).
-- [ ] **PRIV-01** — Decidir qué entra en el respaldo de Android y escribir `data_extraction_rules.xml` / `backup_rules.xml` (hoy son la plantilla comentada).
-- [ ] **UIS-02 / ARQ-03** — No mostrar el texto de excepciones al usuario (`AdminDetailScreen.kt:145`, `MemberDetailViewModel`, `AdminDetailViewModel`). Errores tipados con mensajes de `strings.xml`.
-- [ ] **Login real** — Probar Google + Firestore con una cuenta real en un dispositivo: el usuario aparece en Authentication y sus datos en `users/{uid}`.
+- [ ] **Login real** — Probar Google + Firestore con una cuenta real en un dispositivo: el usuario aparece en Authentication, sus datos en `users/{uid}`, y "Eliminar cuenta" borra ambos.
+- [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte y borrado de cuenta). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
+- [ ] **SEC-03** — Crear la llave de subida con el comando de "Publicación" en `CLAUDE.md`, poner `subtrack.signing.*` en `local.properties`, guardar el respaldo y activar Play App Signing.
 
 ## Media
 
+- [ ] **ARQ-03** — Errores tipados (`DataError`) en la capa de datos, para que la UI distinga sin conexión de otros fallos (hoy muestra siempre el mensaje genérico).
+- [ ] **LNK-01** — La política y los términos se abren en el navegador; la base pide WebView para páginas propias. Decidir y anotar.
 - [ ] **ACC-04** — Permitir usar la app sin cuenta (los datos ya son locales), o anotar en `DECISIONES.md` por qué se exige.
-- [ ] **AJU-01 / AJU-02 / AJU-03 / AJU-05** — Ajustes: licencias, "Compartir la app" (hoja del sistema), "Valorar la app" (`market://details?id=com.gondroid.subtrack`) y contacto con destinatario + versión, modelo y Android en el cuerpo.
+- [ ] **AJU-01 / AJU-02 / AJU-03 / AJU-05** — Ajustes (privacidad y términos ya están): licencias, "Compartir la app" (hoja del sistema), "Valorar la app" (`market://details?id=com.gondroid.subtrack`) y contacto con destinatario + versión, modelo y Android en el cuerpo.
 - [ ] **SEC-02** — Que el build funcione sin `google-services.json`: aplicar el plugin solo si existe y avisar con un warning.
 - [ ] **UPD-01 / UPD-02 / UPD-04** — Versión mínima (`minVersionCode`) en un documento de Firestore, pantalla "Actualiza la app" que nunca bloquea sin red, y `schemaVersion` en el perfil `users/{uid}`.
 - [ ] **DOC-01 / DOC-02 / DOC-03 / STK-02** — Crear `docs/DECISIONES.md` (solo Android, Hilt, Firebase en vez de Ktor) y `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (Kotlin 2.4.21, Hilt 2.60.1).
@@ -39,7 +38,7 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Antes de activar una función planeada
 
-- **Pro (pagos):** PAY-01 (Play Billing + RevenueCat), PAY-03 (preguntar por el derecho `premium`; borrar `AppStore.isProUser`, que no se usa), PAY-04 ("Restaurar compras"), PAY-05 (sandbox), PAY-06 (privacidad).
+- **Pro (pagos):** PAY-01 (Play Billing + RevenueCat), PAY-03 (preguntar por el derecho `premium`), PAY-04 ("Restaurar compras"), PAY-05 (sandbox), PAY-06 (privacidad).
 - **Recordatorios (push):** PUSH-01 (FCM), PUSH-03 (canales con nombres claros), PUSH-04 (tocar la notificación abre la pantalla correcta).
 - **Referidos (deep links):** DL-01 (App Links verificados con `assetlinks.json` en `subtrack.app`), DL-02 (URL → ruta testeada; una URL desconocida abre Inicio).
 
