@@ -416,7 +416,15 @@
     <string name="create_subscription_other_name_placeholder">Ej. Canva, Duolingo…</string>
     <string name="create_subscription_other_color_label">COLOR</string>
 
-    <string name="create_subscription_step2_eyebrow">Paso 2 · Detalles</string>
+    <string name="create_subscription_who_pays_eyebrow">Paso 2 · Quién paga</string>
+    <string name="create_subscription_who_pays_title">¿Quién paga %1$s?</string>
+    <string name="create_subscription_who_pays_hint">%1$s suele pagarse en plan familiar, así que la marcamos como compartida.</string>
+    <string name="create_subscription_who_pays_me">Solo yo</string>
+    <string name="create_subscription_who_pays_me_desc">La pagas tú y solo tú la ves en tu tracker.</string>
+    <string name="create_subscription_who_pays_shared">La comparto</string>
+    <string name="create_subscription_who_pays_shared_desc">Divides el costo y cobras a cada uno por WhatsApp.</string>
+    <string name="create_subscription_cutoff_next">Próximo cobro: %1$s</string>
+    <string name="create_subscription_step2_eyebrow">Paso 3 · Detalles</string>
     <string name="create_subscription_step2_title">Monto y fecha</string>
     <string name="create_subscription_amount_label">MONTO TOTAL POR CICLO</string>
     <string name="create_subscription_suggested_chip">Usar sugerido · S/ %1$s</string>
@@ -427,15 +435,9 @@
     <string name="create_subscription_cycle_custom">Otro</string>
     <string name="create_subscription_cutoff_label">DÍA DE CORTE</string>
     <string name="create_subscription_cutoff_selected">Día %1$d</string>
-    <string name="create_subscription_cutoff_hint">El cobro se registra el día %1$d de cada mes.</string>
 
-    <string name="create_subscription_step3_eyebrow">Paso 3 · Compartir</string>
-    <string name="create_subscription_step3_title">¿Compartes esta cuenta?</string>
-    <string name="create_subscription_shared_off">Solo para mí</string>
-    <string name="create_subscription_shared_on">Compartida con otros</string>
-    <string name="create_subscription_shared_off_desc">Solo tú verás esta suscripción en tu tracker.</string>
-    <string name="create_subscription_shared_on_desc">Agrega a las personas que pagan contigo.</string>
-    <string name="create_subscription_shared_toggle_cd">Compartir suscripción</string>
+    <string name="create_subscription_step3_eyebrow">Paso 4 · Miembros</string>
+    <string name="create_subscription_step3_title">¿Con quién la compartes?</string>
     <string name="create_subscription_members_empty">Aún no has agregado a nadie</string>
     <string name="create_subscription_add_member">+ Agregar miembro</string>
     <string name="create_subscription_add_member_sheet_title">Agregar miembro</string>
