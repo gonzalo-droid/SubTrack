@@ -8,6 +8,7 @@ import com.gondroid.subtrack.domain.usecase.subscription.GetAllSubscriptionsAlph
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionStatsUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.SearchSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.SubscriptionFilter
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,7 +27,8 @@ sealed interface SubscriptionListUiState {
         val stats: SubscriptionStats,
         val subscriptions: List<Subscription>,
         val searchQuery: String,
-        val selectedFilter: SubscriptionFilter
+        val selectedFilter: SubscriptionFilter,
+        val currentUserId: String?
     ) : SubscriptionListUiState
 }
 
@@ -35,7 +37,8 @@ sealed interface SubscriptionListUiState {
 class SubscriptionListViewModel @Inject constructor(
     private val getAllSubscriptionsAlphabetical: GetAllSubscriptionsAlphabeticalUseCase,
     private val searchSubscriptions: SearchSubscriptionsUseCase,
-    private val getSubscriptionStats: GetSubscriptionStatsUseCase
+    private val getSubscriptionStats: GetSubscriptionStatsUseCase,
+    getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val searchQuery = MutableStateFlow("")
@@ -45,13 +48,15 @@ class SubscriptionListViewModel @Inject constructor(
         getAllSubscriptionsAlphabetical(),
         searchQuery.debounce(250),
         selectedFilter,
-        getSubscriptionStats()
-    ) { allSubs, query, filter, stats ->
+        getSubscriptionStats(),
+        getCurrentUser()
+    ) { allSubs, query, filter, stats, user ->
         SubscriptionListUiState.Success(
             stats = stats,
             subscriptions = searchSubscriptions(allSubs, query, filter),
             searchQuery = query,
-            selectedFilter = filter
+            selectedFilter = filter,
+            currentUserId = user?.id
         )
     }.stateIn(
         scope = viewModelScope,

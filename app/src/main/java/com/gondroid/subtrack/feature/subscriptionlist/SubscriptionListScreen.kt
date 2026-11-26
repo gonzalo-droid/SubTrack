@@ -66,7 +66,6 @@ fun SubscriptionListScreen(
         when (val state = uiState) {
             SubscriptionListUiState.Loading -> Unit
             is SubscriptionListUiState.Success -> {
-                val currentUserId = "usr_gonzalo"
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = 88.dp),
                     verticalArrangement = Arrangement.spacedBy(Spacing.s),
@@ -116,7 +115,7 @@ fun SubscriptionListScreen(
                         items(state.subscriptions, key = { it.id }) { sub ->
                             SubscriptionRow(
                                 subscription = sub,
-                                isAdmin = sub.ownerId == currentUserId,
+                                isAdmin = sub.ownerId == state.currentUserId,
                                 onClick = { onNavigateToDetail(sub.id) },
                                 modifier = Modifier.padding(horizontal = Spacing.base)
                             )
