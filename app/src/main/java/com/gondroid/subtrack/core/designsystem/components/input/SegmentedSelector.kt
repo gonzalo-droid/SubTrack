@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.core.designsystem.components.input
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -76,7 +77,7 @@ fun <T> SegmentedSelector(
             modifier = Modifier
                 .width(itemWidth)
                 .height(36.dp)
-                .offset(x = indicatorOffset)
+                .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
                 .clip(IndicatorShape)
                 .border(1.dp, BorderDefault, IndicatorShape)
                 .background(BgSurfaceEl)

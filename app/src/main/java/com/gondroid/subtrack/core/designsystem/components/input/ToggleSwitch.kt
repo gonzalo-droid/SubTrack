@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.core.designsystem.components.input
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -101,7 +102,7 @@ fun ToggleSwitch(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .offset(x = thumbOffset)
+                    .offset { IntOffset(thumbOffset.roundToPx(), 0) }
                     .shadow(elevation = Elevation.subtle, shape = SubTrackShapes.circle)
                     .size(ThumbSize)
                     .clip(SubTrackShapes.circle)

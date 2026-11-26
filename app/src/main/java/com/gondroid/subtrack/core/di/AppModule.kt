@@ -1,7 +1,6 @@
 package com.gondroid.subtrack.core.di
 
 import android.content.Context
-import com.gondroid.subtrack.core.preferences.UserPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,10 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides @Singleton
-    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences =
-        UserPreferences.getInstance(context)
 
     @Provides @Singleton
     fun provideDatabase(@ApplicationContext context: Context): SubTrackDatabase =

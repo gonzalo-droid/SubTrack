@@ -32,17 +32,17 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 @Composable
 fun ValueSlideLayout(
     progressCurrent: Int,
-    progressTotal: Int = 3,
     eyebrow: String,
     eyebrowColor: Color,
     title: String,
     description: AnnotatedString,
     visualContent: @Composable BoxScope.() -> Unit,
     primaryCta: String,
-    primaryCtaAccent: Color? = null,
     onPrimaryClick: () -> Unit,
     onSkip: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    progressTotal: Int = 3,
+    primaryCtaAccent: Color? = null
 ) {
     Column(
         modifier = modifier

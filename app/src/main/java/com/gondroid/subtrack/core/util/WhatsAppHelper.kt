@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.core.util
 
+import androidx.core.net.toUri
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -26,13 +27,13 @@ object WhatsAppHelper {
     fun openWhatsApp(context: Context, phone: String, message: String): Int? {
         val cleanPhone = phone.replace(Regex("[^\\d+]"), "")
         if (cleanPhone.length < 7) return R.string.whatsapp_invalid_phone
-        return launch(context, Uri.parse("https://wa.me/$cleanPhone?text=${Uri.encode(message)}"))
+        return launch(context, "https://wa.me/$cleanPhone?text=${Uri.encode(message)}".toUri())
     }
 
     /** Opens WhatsApp with the message pre-filled and lets the user pick the chat. */
     @StringRes
     fun shareToWhatsApp(context: Context, message: String): Int? =
-        launch(context, Uri.parse("https://wa.me/?text=${Uri.encode(message)}"))
+        launch(context, "https://wa.me/?text=${Uri.encode(message)}".toUri())
 
     @StringRes
     private fun launch(context: Context, uri: Uri): Int? {
@@ -45,7 +46,7 @@ object WhatsAppHelper {
         } catch (e: ActivityNotFoundException) {
             // WhatsApp not installed — open Play Store
             try {
-                val storeUri = Uri.parse("market://details?id=com.whatsapp")
+                val storeUri = "market://details?id=com.whatsapp".toUri()
                 context.startActivity(Intent(Intent.ACTION_VIEW, storeUri))
                 null
             } catch (e2: ActivityNotFoundException) {

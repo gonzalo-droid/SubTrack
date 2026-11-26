@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -118,7 +119,7 @@ private fun TrackerVisual() {
             val floatY by rememberFloatOffset(card.delayMs)
             OrbitServiceCard(
                 card = card,
-                modifier = Modifier.offset(x = positions[i].first, y = positions[i].second + floatY.dp)
+                modifier = Modifier.offset { IntOffset(positions[i].first.roundToPx(), (positions[i].second + floatY.dp).roundToPx()) }
             )
         }
     }

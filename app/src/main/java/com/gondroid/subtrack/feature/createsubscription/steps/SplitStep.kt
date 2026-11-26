@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,7 +87,7 @@ fun SplitStep(
         )
         Spacer(Modifier.height(Spacing.xs))
         Text(
-            stringResource(R.string.create_subscription_step4_subtitle, "%.2f".format(totalAmount), peopleCount),
+            pluralStringResource(R.plurals.create_subscription_step4_subtitle, peopleCount, "%.2f".format(totalAmount), peopleCount),
             style = SubTrackType.bodyM,
             color = TextSecondary
         )

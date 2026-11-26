@@ -84,13 +84,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun ProfileScreen(
     onNavigateToTemplates: () -> Unit,
     onNavigateToReferral: () -> Unit,
+    modifier: Modifier = Modifier,
     onNavigateToAliasEdit: () -> Unit = {},
     onNavigateToEditUser: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
     onNavigateToEditTemplate: (String?) -> Unit = {},
     onDebugOnboarding: () -> Unit = {},
-    onDebugData: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onDebugData: () -> Unit = {}
 ) {
     val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
