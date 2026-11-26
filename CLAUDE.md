@@ -106,7 +106,7 @@ Cuando recibas una tarea:
    - Unit tests: `./gradlew testDebugUnitTest`
    - Lint (debe quedar en 0 errores): `./gradlew lintDebug`
    - Screenshot tests: `./gradlew verifyRoborazziDebug` (regrabar con `recordRoborazziDebug` si el cambio visual es intencional)
-   - E2E: `maestro test .maestro/` con el emulador abierto (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
+   - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
 ## Nunca hagas esto
