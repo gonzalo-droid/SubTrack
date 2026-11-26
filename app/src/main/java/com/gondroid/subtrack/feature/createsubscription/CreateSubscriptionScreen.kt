@@ -139,9 +139,15 @@ fun CreateSubscriptionScreen(
         return
     }
 
-    BackHandler {
-        if (currentStep == WizardStep.SERVICE) showCancelDialog = true
-        else viewModel.previousStep()
+    val hasPreviousStep = previousWizardStep(currentStep, form.shared, form.isEditing) != null
+    // Leaving from the first step: creating asks to discard, editing just goes back.
+    val leave = { if (form.isEditing) onBack() else showCancelDialog = true }
+    val goBack = { if (hasPreviousStep) viewModel.previousStep() else leave() }
+
+    BackHandler(onBack = goBack)
+
+    LaunchedEffect(uiState) {
+        (uiState as? CreateSubscriptionUiState.Error)?.let { messenger.show(it.message) }
     }
 
     if (showCancelDialog) {
@@ -172,7 +178,7 @@ fun CreateSubscriptionScreen(
             stepIndex = stepIndex,
             totalSteps = totalSteps,
             showProgress = !form.isEditing,
-            onCancel = { showCancelDialog = true }
+            onCancel = leave
         )
 
         Box(modifier = Modifier.weight(1f)) {
@@ -240,12 +246,9 @@ fun CreateSubscriptionScreen(
             isSubmitting = uiState is CreateSubscriptionUiState.Submitting,
             amountDisplay = if (form.totalAmount.isNotBlank()) "S/ ${form.totalAmount}" else null,
             serviceDisplay = form.resolvedServiceName.ifBlank { null },
-            isFirstStep = currentStep == WizardStep.SERVICE,
+            isFirstStep = !hasPreviousStep,
             onNext = viewModel::nextStep,
-            onBack = {
-                if (currentStep == WizardStep.SERVICE) showCancelDialog = true
-                else viewModel.previousStep()
-            }
+            onBack = goBack
         )
     }
 }

@@ -119,11 +119,13 @@ private fun PersonDetailContent(person: PersonSummary) {
                 .padding(Spacing.m),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            PersonStatItem(
-                label = stringResource(R.string.people_detail_punctuality),
-                value = "${person.punctualityPercent}%"
-            )
-            Box(modifier = Modifier.height(32.dp).width(1.dp).background(BorderDefault))
+            person.punctualityPercent?.let { punctuality ->
+                PersonStatItem(
+                    label = stringResource(R.string.people_detail_punctuality),
+                    value = "$punctuality%"
+                )
+                Box(modifier = Modifier.height(32.dp).width(1.dp).background(BorderDefault))
+            }
             PersonStatItem(
                 label = stringResource(R.string.people_detail_monthly),
                 value = "S/ ${"%.2f".format(person.totalMonthlyContribution)}"

@@ -27,7 +27,7 @@ class GetSubscriptionStatsUseCase @Inject constructor(
                 }
             }
             val pendingMembers = shared
-                .filter { it.ownerId == user?.id }
+                .filter { it.ownerId == user?.id && !it.isPaused }
                 .flatMap { it.members }
                 .count { it.currentStatus.isUnpaid }
             SubscriptionStats(

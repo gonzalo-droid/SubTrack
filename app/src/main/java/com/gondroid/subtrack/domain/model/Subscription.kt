@@ -21,7 +21,10 @@ data class Subscription(
     val members: List<Member> = emptyList(),
     val archivedMembers: List<Member> = emptyList(),
     val lastActivityAt: Long? = null,
-    /** Paused subscriptions stay listed but don't count toward totals or upcoming cutoffs. */
+    /**
+     * Paused subscriptions stay in the Suscripciones list (with a PAUSADA badge) but leave the
+     * dashboard and never generate money: no totals, cutoffs, collections or debts.
+     */
     val isPaused: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long

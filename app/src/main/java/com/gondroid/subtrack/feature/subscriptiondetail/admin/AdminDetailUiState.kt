@@ -30,7 +30,7 @@ fun buildAdminDetailData(
     monthlyHistory: List<MonthlyPaymentSummary>,
     adminName: String
 ): AdminDetailData {
-    val pendingMembers = activeMembers.filter { it.currentStatus.isUnpaid }
+    val pendingMembers = if (subscription.isPaused) emptyList() else activeMembers.filter { it.currentStatus.isUnpaid }
     return AdminDetailData(
         subscription = subscription,
         activeMembers = activeMembers,

@@ -35,7 +35,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import com.gondroid.subtrack.core.designsystem.components.feedback.STSnackbarHost
 import com.gondroid.subtrack.core.designsystem.components.feedback.rememberSnackbarMessenger
-import androidx.compose.runtime.LaunchedEffect
 // TODO: [hilt] Add @AndroidEntryPoint when Gradle plugin is configured
 
 private fun NavDestination?.isMainRoute(): Boolean =
@@ -83,12 +82,6 @@ private fun SplashScreen() {
 @Composable
 private fun MainApp(pendingRoute: Route?, onPendingRouteOpened: () -> Unit) {
     val navController = rememberNavController()
-    LaunchedEffect(pendingRoute) {
-        if (pendingRoute != null) {
-            navController.navigate(pendingRoute)
-            onPendingRouteOpened()
-        }
-    }
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val showBottomBar = currentDestination.isMainRoute()
 
@@ -104,6 +97,8 @@ private fun MainApp(pendingRoute: Route?, onPendingRouteOpened: () -> Unit) {
         CompositionLocalProvider(LocalSnackbarMessenger provides messenger) {
             SubTrackNavHost(
                 navController = navController,
+                pendingRoute = pendingRoute,
+                onPendingRouteOpened = onPendingRouteOpened,
                 modifier = Modifier.padding(innerPadding)
             )
         }

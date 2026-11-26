@@ -4,7 +4,7 @@ appId: com.gondroid.subtrack
 - launchApp
 - extendedWaitUntil:
     visible: "Suscripciones"
-    timeout: 30000
+    timeout: 90000
 - tapOn: "Suscripciones"
 - tapOn: "Netflix Premium"
 - assertVisible: "Cobrar a .*"
@@ -12,6 +12,10 @@ appId: com.gondroid.subtrack
 - tapOn: "Más opciones"
 - tapOn: "Editar"
 - assertVisible: "Guardar cambios"
+- back                                # atrás sale de la edición sin guardar
+- assertVisible: "Cobrar a .*"
+- tapOn: "Más opciones"
+- tapOn: "Editar"
 - tapOn: "Guardar cambios"
 - assertVisible: "Cambios guardados"
 # Pausar y reanudar

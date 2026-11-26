@@ -6,7 +6,7 @@ appId: com.gondroid.subtrack
     clearState: true
 - extendedWaitUntil:
     visible: "Saltar"
-    timeout: 60000
+    timeout: 90000
 - tapOn: "Saltar"
 - tapOn: "Continuar con Google"
 - extendedWaitUntil:

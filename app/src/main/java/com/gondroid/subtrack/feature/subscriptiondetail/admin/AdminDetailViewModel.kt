@@ -193,6 +193,7 @@ class AdminDetailViewModel @Inject constructor(
     }
 
     fun onBulkReminderSent(count: Int) {
+        if (count == 0) return
         viewModelScope.launch {
             _events.emit(AdminDetailEvent.BulkReminderSent(count))
         }

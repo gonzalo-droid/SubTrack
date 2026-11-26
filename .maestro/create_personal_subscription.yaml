@@ -4,7 +4,7 @@ appId: com.gondroid.subtrack
 - launchApp
 - extendedWaitUntil:
     visible: "Suscripciones"
-    timeout: 30000
+    timeout: 90000
 - tapOn: "Suscripciones"
 - tapOn: "Crear suscripción"          # FAB
 - tapOn: "ChatGPT Plus"

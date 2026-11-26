@@ -58,6 +58,23 @@ class SubscriptionUseCasesTest {
         assertTrue(summary.upcomingCutoffs.none { it.isPaused })
     }
 
+    @Test fun `paused subscriptions are left out of stats money but still counted as listed`() = runBlocking {
+        val users = object : com.gondroid.subtrack.domain.repository.UserRepository {
+            val me = com.gondroid.subtrack.domain.model.User("me", "Yo", "900", null, referralCode = "Y", createdAt = 0)
+            override fun getCurrentUser() = kotlinx.coroutines.flow.flowOf(me)
+            override suspend fun updateUser(user: com.gondroid.subtrack.domain.model.User) = Result.success(Unit)
+            override suspend fun getUserById(userId: String) = me.takeIf { it.id == userId }
+        }
+        val repo = FakeRepo(listOf(
+            sub("a", 10.0, shared = true, members = listOf(member("m1", 5.0))),
+            sub("b", 30.0, shared = true, members = listOf(member("m2", 15.0)), paused = true)
+        ))
+        val stats = GetSubscriptionStatsUseCase(repo, users)().first()
+        assertEquals(2, stats.totalCount)
+        assertEquals(10.0, stats.totalMonthlyAmount, 0.001)
+        assertEquals(1, stats.pendingMembersCount)
+    }
+
     @Test fun `pause and resume toggle the flag`() = runBlocking {
         val repo = FakeRepo(listOf(sub("a", 10.0)))
         PauseSubscriptionUseCase(repo)("a", paused = true)

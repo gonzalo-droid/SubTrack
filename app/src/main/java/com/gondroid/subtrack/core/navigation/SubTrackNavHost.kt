@@ -19,12 +19,15 @@ import com.gondroid.subtrack.feature.profile.templates.EditTemplateScreen
 import com.gondroid.subtrack.feature.profile.templates.TemplatesScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.SubscriptionDetailScreen
 import com.gondroid.subtrack.feature.subscriptionlist.SubscriptionListScreen
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun SubTrackNavHost(
     navController: NavHostController,
     modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
-    startDestination: Route = Route.Dashboard
+    startDestination: Route = Route.Dashboard,
+    pendingRoute: Route? = null,
+    onPendingRouteOpened: () -> Unit = {}
 ) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
 
@@ -138,6 +141,14 @@ fun SubTrackNavHost(
 
         composable<Route.Referral> {
             ReferralScreen(onBack = { navController.popBackStack() })
+        }
+    }
+
+    // Opened over the dashboard after the onboarding; runs once the graph above is set.
+    LaunchedEffect(pendingRoute) {
+        if (pendingRoute != null) {
+            navController.navigate(pendingRoute)
+            onPendingRouteOpened()
         }
     }
 }

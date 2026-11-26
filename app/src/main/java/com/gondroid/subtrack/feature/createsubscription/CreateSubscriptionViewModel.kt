@@ -32,6 +32,7 @@ import kotlin.math.abs
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.UpdateSubscriptionDetailsUseCase
 import com.gondroid.subtrack.core.preferences.UserPreferences
+import java.util.Locale
 
 @HiltViewModel
 class CreateSubscriptionViewModel @Inject constructor(
@@ -107,9 +108,15 @@ class CreateSubscriptionViewModel @Inject constructor(
     }
 
     private fun loadForEdit(id: String) {
+        // Edit mode starts right away so the screen never looks like (or acts as) a create.
+        _form.value = CreateSubscriptionFormState(editingId = id)
         _currentStep.value = WizardStep.DETAILS
         viewModelScope.launch {
-            val sub = getSubscriptionDetail(id).first() ?: return@launch
+            val sub = getSubscriptionDetail(id).first()
+            if (sub == null) {
+                _uiState.value = CreateSubscriptionUiState.Error("Suscripción no encontrada")
+                return@launch
+            }
             _form.value = CreateSubscriptionFormState(
                 editingId = sub.id,
                 selectedService = ServiceTemplate(
@@ -120,7 +127,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                     category = sub.category
                 ),
                 isShared = sub.isShared,
-                totalAmount = "%.2f".format(sub.totalAmount),
+                totalAmount = String.format(Locale.US, "%.2f", sub.totalAmount),
                 currency = sub.currency,
                 cycle = sub.cycle,
                 cutoffDay = sub.cutoffDay
@@ -163,7 +170,7 @@ class CreateSubscriptionViewModel @Inject constructor(
 
     fun applySuggestedAmount() {
         val suggested = _form.value.selectedService?.suggestedMonthly ?: return
-        _form.update { it.copy(totalAmount = "%.2f".format(suggested)) }
+        _form.update { it.copy(totalAmount = String.format(Locale.US, "%.2f", suggested)) }
     }
 
     fun updateCurrency(currency: String) {

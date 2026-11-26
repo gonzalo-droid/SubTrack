@@ -23,7 +23,7 @@ class GetMyDebtsUseCase @Inject constructor(
     ) { subscriptions, user ->
         if (user == null) return@combine emptyList()
         subscriptions
-            .filter { it.ownerId != user.id }
+            .filter { it.ownerId != user.id && !it.isPaused }
             .mapNotNull { sub ->
                 val me = sub.members.find { it.userId == user.id } ?: return@mapNotNull null
                 sub.ownerId to SubscriptionParticipation(
@@ -46,7 +46,7 @@ class GetMyDebtsUseCase @Inject constructor(
                     hasApp = true,
                     totalDebt = participations.filter { it.status.isOverdue }.sumOf { it.shareAmount },
                     totalMonthlyContribution = participations.sumOf { it.shareAmount },
-                    punctualityPercent = 100,
+                    punctualityPercent = null,
                     firstJoinedAt = entries.minOf { it.second },
                     lastActivityAt = null,
                     subscriptions = participations

@@ -9,6 +9,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -50,6 +51,14 @@ private fun STSnackbar(message: String) {
     ) {
         Text(message, style = SubTrackType.bodyS, color = TextPrimary)
     }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)
+@Composable
+private fun STSnackbarHostPreview() {
+    val hostState = remember { SnackbarHostState() }
+    LaunchedEffect(Unit) { hostState.showSnackbar("Plantilla duplicada") }
+    SubTrackTheme { STSnackbarHost(hostState) }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)

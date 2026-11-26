@@ -23,7 +23,7 @@ class GetAllPeopleWithSubscriptionsUseCase @Inject constructor(
         subscriptionRepository.getAllSubscriptions(),
         userRepository.getCurrentUser()
     ) { people, subscriptions, user ->
-        val ownedIds = subscriptions.filter { it.ownerId == user?.id }.map { it.id }.toSet()
+        val ownedIds = subscriptions.filter { it.ownerId == user?.id && !it.isPaused }.map { it.id }.toSet()
         people
             .filter { it.userId == null || it.userId != user?.id }
             .mapNotNull { person ->
