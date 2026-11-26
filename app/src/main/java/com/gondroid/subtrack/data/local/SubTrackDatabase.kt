@@ -13,7 +13,7 @@ import androidx.room.RoomDatabase
         UserAliasEntity::class
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class SubTrackDatabase : RoomDatabase() {
     abstract fun snapshotDao(): SnapshotDao

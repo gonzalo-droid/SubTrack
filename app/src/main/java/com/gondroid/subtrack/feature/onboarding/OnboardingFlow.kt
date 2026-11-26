@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gondroid.subtrack.core.designsystem.animation.ONBOARDING_TRANSITION_MS
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
@@ -34,7 +33,6 @@ fun OnboardingFlow(
     onComplete: (then: Route?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val vm: OnboardingViewModel = hiltViewModel()
 
     val step by vm.currentStep.collectAsStateWithLifecycle()

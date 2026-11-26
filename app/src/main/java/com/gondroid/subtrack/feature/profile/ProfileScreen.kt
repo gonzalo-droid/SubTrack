@@ -45,7 +45,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton

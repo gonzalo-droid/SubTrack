@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
-import com.gondroid.subtrack.core.designsystem.components.text.StatusPill
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault

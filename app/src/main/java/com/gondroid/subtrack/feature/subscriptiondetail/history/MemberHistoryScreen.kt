@@ -26,7 +26,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton

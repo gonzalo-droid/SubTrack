@@ -82,7 +82,7 @@ class ComponentScreenshotTest {
 
     @Test fun paymentHistoryAndLegend() = snap("payment_history") {
         androidx.compose.foundation.layout.Column {
-            PaymentHistoryRow(Payment("1", "s", "m", "2026-10", 8.97, PaymentStatus.LATE, 1_760_000_000_000, null, null))
+            PaymentHistoryRow(Payment("1", "s", "m", "2025-10", 8.97, PaymentStatus.LATE, 1_760_000_000_000, null, null))
             TimelineLegend()
         }
     }

@@ -59,7 +59,9 @@ class MemberHistoryViewModel @AssistedInject constructor(
     ) { active, archived, payments ->
         val member = (active + archived).find { it.id == memberId }
             ?: return@combine MemberHistoryUiState.NotFound
-        MemberHistoryUiState.Success(member.name, payments, punctuality(payments))
+        // Member ids are only unique within a subscription: keep this subscription's payments
+        val own = payments.filter { it.subscriptionId == subscriptionId }
+        MemberHistoryUiState.Success(member.name, own, punctuality(own))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MemberHistoryUiState.Loading)
 
     companion object {

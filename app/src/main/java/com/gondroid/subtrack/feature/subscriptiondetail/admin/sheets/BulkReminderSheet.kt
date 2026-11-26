@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +40,6 @@ import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
-import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault

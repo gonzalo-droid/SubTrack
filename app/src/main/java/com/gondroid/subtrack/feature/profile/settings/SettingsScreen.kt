@@ -38,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.BuildConfig
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
@@ -75,6 +74,8 @@ fun SettingsScreen(
     val messenger = LocalSnackbarMessenger.current
     val scope = rememberCoroutineScope()
     val exportChooserTitle = stringResource(R.string.settings_export_chooser)
+    val exportFileName = stringResource(R.string.settings_export_file_name)
+    val feedbackSubject = stringResource(R.string.settings_feedback_subject, BuildConfig.VERSION_NAME)
 
     SettingsContent(
         onBack = onBack,
@@ -93,7 +94,7 @@ fun SettingsScreen(
             scope.launch {
                 val send = Intent(Intent.ACTION_SEND).apply {
                     type = "text/csv"
-                    putExtra(Intent.EXTRA_SUBJECT, "subtrack.csv")
+                    putExtra(Intent.EXTRA_SUBJECT, exportFileName)
                     putExtra(Intent.EXTRA_TEXT, viewModel.buildExport())
                 }
                 context.startActivity(Intent.createChooser(send, exportChooserTitle))
@@ -101,7 +102,7 @@ fun SettingsScreen(
         },
         onFeedback = {
             val mail = Intent(Intent.ACTION_SENDTO, "mailto:".toUri()).apply {
-                putExtra(Intent.EXTRA_SUBJECT, "SubTrack ${BuildConfig.VERSION_NAME} · feedback")
+                putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
             }
             try {
                 context.startActivity(mail)

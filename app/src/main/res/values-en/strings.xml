@@ -322,6 +322,8 @@
     <string name="settings_data_section">Your data</string>
     <string name="settings_export_desc">Share your subscriptions as CSV</string>
     <string name="settings_export_chooser">Export subscriptions</string>
+    <string name="settings_export_file_name">subtrack.csv</string>
+    <string name="settings_feedback_subject">SubTrack %1$s · feedback</string>
     <string name="settings_feedback_no_app">No email app is installed</string>
     <string name="settings_version">Version</string>
     <string name="profile_support_feedback">Send feedback</string>

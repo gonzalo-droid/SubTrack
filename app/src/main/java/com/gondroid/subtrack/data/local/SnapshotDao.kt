@@ -33,7 +33,11 @@ interface SnapshotDao {
     @Query("DELETE FROM templates") suspend fun clearTemplates()
     @Query("DELETE FROM users") suspend fun clearUsers()
 
-    /** Members go with their subscriptions (ON DELETE CASCADE). */
+    /**
+     * Members go with their subscriptions (ON DELETE CASCADE). Careful if this becomes a per-row
+     * write: a REPLACE on `subscriptions` deletes that row first and cascades to its members, so
+     * use @Upsert there instead.
+     */
     @Transaction
     suspend fun replaceSubscriptions(subscriptions: List<SubscriptionEntity>, members: List<MemberEntity>) {
         clearSubscriptions()

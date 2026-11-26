@@ -42,7 +42,6 @@ import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
-import com.gondroid.subtrack.core.designsystem.theme.BorderStrong
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme

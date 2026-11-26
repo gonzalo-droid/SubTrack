@@ -28,6 +28,8 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.data.mock.MockData
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.activity.ComponentActivity
+import android.content.Context
+import android.content.ContextWrapper
 
 @Composable
 fun DebugScreen(
@@ -36,7 +38,7 @@ fun DebugScreen(
 ) {
     val context = LocalContext.current
     // Activity-scoped: the same instance MainActivity uses, so resetting shows the onboarding
-    val appStateVm: AppStateViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+    val appStateVm: AppStateViewModel = hiltViewModel(context.findActivity())
 
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(Spacing.l),
@@ -154,4 +156,11 @@ fun DebugScreen(
 @Composable
 private fun DebugScreenPreview() {
     SubTrackTheme { DebugScreen(onBack = {}) }
+}
+
+/** The hosting activity, unwrapping ContextWrappers (theme or locale wrappers). */
+private tailrec fun Context.findActivity(): ComponentActivity = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> error("DebugScreen must be hosted by a ComponentActivity")
 }

@@ -32,5 +32,5 @@ class ExportSubscriptionsCsvUseCase @Inject constructor(
 
     /** Quotes a field when it contains a comma, quote or newline (RFC 4180). */
     private fun csvField(value: String): String =
-        if (value.any { it == ',' || it == '"' || it == '\n' }) "\"" + value.replace("\"", "\"\"") + "\"" else value
+        if (value.any { it == ',' || it == '"' || it == '\n' || it == '\r' }) "\"" + value.replace("\"", "\"\"") + "\"" else value
 }

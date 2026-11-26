@@ -1,9 +1,14 @@
 package com.gondroid.subtrack.data.local
 
 import com.gondroid.subtrack.data.mock.MockDataStore
+import android.util.Log
+import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -22,11 +27,18 @@ import javax.inject.Singleton
 @Singleton
 class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    // A failed write (e.g. SQLite error) is logged and skipped instead of crashing the app
+    private val scope = CoroutineScope(
+        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> Log.e(TAG, "Persist failed", e) }
+    )
 
     fun start() {
         // Blocking on purpose: the first screen must read persisted data, not the demo seed.
-        runBlocking(Dispatchers.IO) { if (dao.userCount() == 0) seed() else load() }
+        // Seed only a truly empty database: an empty users table alone (e.g. after a logout)
+        // must not overwrite the user's subscriptions with the demo data.
+        runBlocking(Dispatchers.IO) {
+            if (dao.userCount() == 0 && dao.subscriptions().isEmpty()) seed() else load()
+        }
         persist(MockDataStore.subscriptions) { subs ->
             dao.replaceSubscriptions(subs.map { it.toEntity() }, subs.flatMap { it.memberEntities() })
         }
@@ -35,6 +47,10 @@ class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
         persist(MockDataStore.currentUser) { dao.replaceUser(it?.toEntity()) }
         persist(MockDataStore.userAlias) { dao.insertAlias(it.toEntity()) }
     }
+
+    /** Stops persisting; the app never calls it (the process ends instead), tests do. */
+    @VisibleForTesting
+    fun close() = scope.cancel()
 
     private suspend fun seed() {
         val subs = MockDataStore.subscriptions.value
@@ -56,6 +72,11 @@ class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
 
     /** Writes every value after the current one (already in sync) back to the database. */
     private fun <T> persist(flow: Flow<T>, write: suspend (T) -> Unit) {
-        scope.launch { flow.drop(1).collect { write(it) } }
+        // UNDISPATCHED: subscribe right now, so a change made before the IO thread starts isn't lost
+        scope.launch(start = CoroutineStart.UNDISPATCHED) { flow.drop(1).collect { write(it) } }
+    }
+
+    private companion object {
+        const val TAG = "LocalStoreSync"
     }
 }

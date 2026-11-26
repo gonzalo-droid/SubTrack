@@ -52,7 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
