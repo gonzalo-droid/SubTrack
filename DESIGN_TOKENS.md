@@ -35,7 +35,9 @@ Sistema de diseño de la app. **Fuente de verdad única**: todo color, tipograf�
 |---|---|---|
 | `text_primary` | `#F5F5F7` | Texto principal |
 | `text_secondary` | `#9A9AA3` | Texto descriptivo |
-| `text_tertiary` | `#5A5A63` | Labels, metadatos, captions |
+| `text_tertiary` | `#8A8A93` | Labels, metadatos, captions |
+
+> `text_tertiary` subió de `#5A5A63` (2.7:1 sobre `bg_app`) a `#8A8A93` (~5.4:1) para cumplir WCAG AA 4.5:1 en texto chico. La jerarquía con `text_secondary` se apoya ahora más en tamaño y peso que en color.
 
 ### Acentos (estados y color semántico)
 
