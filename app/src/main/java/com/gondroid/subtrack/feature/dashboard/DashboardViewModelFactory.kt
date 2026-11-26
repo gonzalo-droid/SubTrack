@@ -19,7 +19,7 @@ class DashboardViewModelFactory : ViewModelProvider.Factory {
         return DashboardViewModel(
             getSubscriptionsUseCase = GetSubscriptionsUseCase(subRepo),
             getUpcomingCutoffsUseCase = GetUpcomingCutoffsUseCase(subRepo),
-            getDebtorsUseCase = GetDebtorsUseCase(subRepo),
+            getDebtorsUseCase = GetDebtorsUseCase(subRepo, userRepo),
             getCurrentUserUseCase = GetCurrentUserUseCase(userRepo),
             getInsightsUseCase = GetInsightsUseCase(subRepo)
         ) as T

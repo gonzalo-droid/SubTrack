@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,38 +81,64 @@ import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberD
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.ExitRequestSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.RemoveMemberSheet
+import com.gondroid.subtrack.domain.util.daysUntilCutoff
+import com.gondroid.subtrack.domain.util.nextCutoff
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.gondroid.subtrack.core.designsystem.theme.AccentRed
+import com.gondroid.subtrack.core.designsystem.theme.BgSurface
+import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
+import com.gondroid.subtrack.domain.model.enums.isUnpaid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AdminDetailViewModel = viewModel(factory = AdminDetailViewModelFactory(subscriptionId))
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activeSheet by viewModel.activeSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val resources = LocalResources.current
+    val messenger = LocalSnackbarMessenger.current
 
     // Collect one-shot events
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             val msg = when (event) {
                 is AdminDetailEvent.MemberAdded ->
-                    context.getString(R.string.member_sheet_added_toast, event.name)
+                    resources.getString(R.string.member_sheet_added_toast, event.name)
                 is AdminDetailEvent.MemberMarkedAsPaid ->
-                    context.getString(R.string.member_sheet_paid_toast, event.name)
+                    resources.getString(R.string.member_sheet_paid_toast, event.name)
                 is AdminDetailEvent.MemberArchived ->
-                    context.getString(R.string.member_sheet_archived_toast, event.name)
+                    resources.getString(R.string.member_sheet_archived_toast, event.name)
                 is AdminDetailEvent.MemberForgiven ->
-                    context.getString(R.string.member_sheet_forgiven_toast, event.name)
+                    resources.getString(R.string.member_sheet_forgiven_toast, event.name)
                 is AdminDetailEvent.MemberUpdated ->
-                    context.getString(R.string.member_sheet_updated_toast, event.name)
-                is AdminDetailEvent.BulkReminderStarted ->
-                    context.getString(R.string.member_sheet_bulk_started_toast, 0)
+                    resources.getString(R.string.member_sheet_updated_toast, event.name)
+                is AdminDetailEvent.BulkReminderSent ->
+                    resources.getQuantityString(R.plurals.member_sheet_bulk_done, event.count, event.count)
+                is AdminDetailEvent.PausedChanged -> resources.getString(
+                    if (event.paused) R.string.subscription_paused_toast else R.string.subscription_resumed_toast
+                )
+                AdminDetailEvent.Deleted -> resources.getString(R.string.subscription_deleted_toast)
                 is AdminDetailEvent.Error -> event.message
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            messenger.show(msg)
         }
     }
 
@@ -129,7 +156,10 @@ fun AdminDetailScreen(
                 onAddMember = viewModel::openAddMember,
                 onMemberTap = viewModel::openEditMember,
                 onArchivedTap = viewModel::openEditMember,
-                onCobranzaTap = viewModel::openBulkReminder
+                onCobranzaTap = viewModel::openBulkReminder,
+                onEdit = onEdit,
+                onSetPaused = viewModel::setPaused,
+                onDelete = viewModel::deleteSubscription
             )
         }
 
@@ -177,20 +207,19 @@ fun AdminDetailScreen(
                                         memberName = member.name,
                                         serviceName = sub?.name ?: "",
                                         amount = "%.2f".format(member.shareAmount),
-                                        adminName = successState?.data?.subscription?.ownerId ?: ""
+                                        adminName = successState?.data?.adminName.orEmpty()
                                     )
-                                    WhatsAppHelper.openWhatsApp(context, member.phone, msg)
+                                    WhatsAppHelper.openWhatsApp(context, member.phone, msg)?.let(messenger::show)
                                     viewModel.closeSheet()
                                 },
                                 onMarkAsPaid = { viewModel.markAsPaid(member.id) },
                                 onEditData = { viewModel.openEditMemberData(member.id) },
                                 onViewHistory = {
                                     // TODO: [milestone-7] Navigate to member history screen
-                                    Toast.makeText(context, "Próximamente: historial", Toast.LENGTH_SHORT).show()
+                                    messenger.show(R.string.coming_soon_history)
                                 },
                                 onRemove = {
-                                    val hasPending = member.currentStatus == PaymentStatus.OVERDUE ||
-                                            member.currentStatus == PaymentStatus.PENDING
+                                    val hasPending = member.currentStatus.isUnpaid
                                     if (hasPending) {
                                         viewModel.openRemoveMember(member.id)
                                     } else {
@@ -236,8 +265,7 @@ fun AdminDetailScreen(
 
                     is ActiveSheet.BulkReminder -> {
                         val pending = successState?.data?.activeMembers?.filter {
-                            it.currentStatus == PaymentStatus.OVERDUE ||
-                                    it.currentStatus == PaymentStatus.PENDING
+                            it.currentStatus.isUnpaid
                         } ?: emptyList()
                         BulkReminderSheet(
                             pendingItems = pending.map {
@@ -248,9 +276,9 @@ fun AdminDetailScreen(
                                 )
                             },
                             templates = com.gondroid.subtrack.data.mock.MockData.templates,
-                            adminName = "Gonzalo",
-                            onDone = {
-                                viewModel.onBulkReminderSent()
+                            adminName = successState?.data?.adminName.orEmpty(),
+                            onDone = { sent ->
+                                viewModel.onBulkReminderSent(sent)
                                 viewModel.closeSheet()
                             }
                         )
@@ -272,10 +300,35 @@ private fun AdminDetailContent(
     onAddMember: () -> Unit,
     onMemberTap: (String) -> Unit,
     onArchivedTap: (String) -> Unit,
-    onCobranzaTap: () -> Unit
+    onCobranzaTap: () -> Unit,
+    onEdit: () -> Unit,
+    onSetPaused: (Boolean) -> Unit,
+    onDelete: () -> Unit
 ) {
-    val context = LocalContext.current
     val sub = data.subscription
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.subscription_delete_title, sub.name), color = TextPrimary) },
+            text = { Text(stringResource(R.string.subscription_delete_desc), color = TextSecondary) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteConfirm = false
+                    onDelete()
+                }) {
+                    Text(stringResource(R.string.subscription_menu_delete), color = AccentRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.common_cancel), color = TextSecondary)
+                }
+            },
+            containerColor = BgSurface
+        )
+    }
     val brandColor = sub.brandColor.toComposeColor()
 
     LazyColumn(
@@ -296,12 +349,11 @@ private fun AdminDetailContent(
                     contentDescription = stringResource(R.string.subscription_detail_back_cd),
                     onClick = onBack
                 )
-                STIconButton(
-                    icon = Icons.Outlined.MoreVert,
-                    contentDescription = stringResource(R.string.subscription_detail_overflow_cd),
-                    onClick = {
-                        Toast.makeText(context, "Próximamente: opciones", Toast.LENGTH_SHORT).show()
-                    }
+                SubscriptionMenu(
+                    isPaused = sub.isPaused,
+                    onEdit = onEdit,
+                    onSetPaused = onSetPaused,
+                    onDelete = { showDeleteConfirm = true }
                 )
             }
         }
@@ -324,15 +376,21 @@ private fun AdminDetailContent(
                 )
                 val activeCount = data.activeMembers.size + 1
                 Text(
-                    text = stringResource(
-                        R.string.subscription_detail_plan_label,
+                    text = pluralStringResource(
+                        R.plurals.subscription_detail_plan_label,
+                        activeCount,
                         sub.category.name.lowercase().replaceFirstChar { it.uppercase() },
                         activeCount
                     ),
                     style = SubTrackType.monoXS,
                     color = TextTertiary
                 )
-                Badge(text = stringResource(R.string.subscription_detail_admin_tag), variant = BadgeVariant.ADMIN)
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    Badge(text = stringResource(R.string.subscription_detail_admin_tag), variant = BadgeVariant.ADMIN)
+                    if (sub.isPaused) {
+                        Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+                    }
+                }
                 AmountDisplay(amount = sub.totalAmount, size = AmountSize.MEDIUM)
                 CutoffPill(cutoffDay = sub.cutoffDay)
             }
@@ -368,8 +426,7 @@ private fun AdminDetailContent(
                     STIconButton(
                         icon = Icons.Outlined.Add,
                         contentDescription = stringResource(R.string.member_sheet_add_step1_title),
-                        onClick = onAddMember,
-                        modifier = Modifier.size(28.dp)
+                        onClick = onAddMember
                     )
                 }
             }
@@ -395,6 +452,7 @@ private fun AdminDetailContent(
                 Spacer(Modifier.height(Spacing.m))
                 CobranzaBar(
                     pendingCount = data.pendingPaymentsCount,
+                    singlePendingName = data.singlePendingName,
                     totalAmount = data.pendingAmount,
                     onClick = onCobranzaTap,
                     modifier = Modifier.padding(horizontal = Spacing.base)
@@ -408,7 +466,7 @@ private fun AdminDetailContent(
         item {
             SectionHeader(
                 title = stringResource(R.string.subscription_detail_history_title),
-                trailing = stringResource(R.string.subscription_detail_history_months, data.monthlyHistory.size),
+                trailing = pluralStringResource(R.plurals.subscription_detail_history_months, data.monthlyHistory.size, data.monthlyHistory.size),
                 modifier = Modifier.padding(horizontal = Spacing.base)
             )
         }
@@ -445,15 +503,63 @@ private fun AdminDetailContent(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 @Composable
+private fun SubscriptionMenu(
+    isPaused: Boolean,
+    onEdit: () -> Unit,
+    onSetPaused: (Boolean) -> Unit,
+    onDelete: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        STIconButton(
+            icon = Icons.Outlined.MoreVert,
+            contentDescription = stringResource(R.string.subscription_detail_overflow_cd),
+            onClick = { expanded = true }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            containerColor = BgSurfaceEl
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.subscription_menu_edit), color = TextPrimary) },
+                leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, tint = TextSecondary) },
+                onClick = { expanded = false; onEdit() }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        stringResource(if (isPaused) R.string.subscription_menu_resume else R.string.subscription_menu_pause),
+                        color = TextPrimary
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        if (isPaused) Icons.Outlined.PlayArrow else Icons.Outlined.Pause,
+                        contentDescription = null,
+                        tint = TextSecondary
+                    )
+                },
+                onClick = { expanded = false; onSetPaused(!isPaused) }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.subscription_menu_delete), color = AccentRed) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null, tint = AccentRed) },
+                onClick = { expanded = false; onDelete() }
+            )
+        }
+    }
+}
+
+@Composable
 private fun CutoffPill(cutoffDay: Int) {
-    val today = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH)
-    val monthNames = listOf(
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    val next = nextCutoff(cutoffDay)
+    val dateStr = stringResource(
+        R.string.date_day_of_month,
+        next.get(java.util.Calendar.DAY_OF_MONTH),
+        stringArrayResource(R.array.month_names)[next.get(java.util.Calendar.MONTH)]
     )
-    val monthIndex = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH)
-    val dateStr = "$cutoffDay de ${monthNames[monthIndex]}"
-    val (bg, color, text) = if (cutoffDay == today) {
+    val (bg, color, text) = if (daysUntilCutoff(cutoffDay) == 0) {
         Triple(AccentAmberBg, AccentAmber, stringResource(R.string.subscription_detail_cutoff_today, dateStr))
     } else {
         Triple(
@@ -549,7 +655,7 @@ private fun previewData(includeArchived: Boolean = true): AdminDetailData {
         MonthlyPaymentSummary("2026-04", 10.98,
             active.map { MemberPaymentStatus(it.id, it.name, it.currentStatus) })
     )
-    return buildAdminDetailData(sub, active, archived, history)
+    return buildAdminDetailData(sub, active, archived, history, adminName = "Gonzalo")
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success – con archivados")
@@ -558,7 +664,8 @@ private fun AdminDetailSuccessPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = true),
-            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {}
+            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {},
+            onEdit = {}, onSetPaused = {}, onDelete = {}
         )
     }
 }
@@ -569,7 +676,8 @@ private fun AdminDetailNoArchivedPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = false),
-            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {}
+            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {},
+            onEdit = {}, onSetPaused = {}, onDelete = {}
         )
     }
 }

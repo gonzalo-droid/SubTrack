@@ -13,17 +13,21 @@ import com.gondroid.subtrack.feature.onboarding.OnboardingScreen
 import com.gondroid.subtrack.feature.people.PeopleScreen
 import com.gondroid.subtrack.feature.profile.ProfileScreen
 import com.gondroid.subtrack.feature.profile.alias.AliasEditScreen
+import com.gondroid.subtrack.feature.profile.editprofile.EditProfileScreen
 import com.gondroid.subtrack.feature.profile.referral.ReferralScreen
 import com.gondroid.subtrack.feature.profile.templates.EditTemplateScreen
 import com.gondroid.subtrack.feature.profile.templates.TemplatesScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.SubscriptionDetailScreen
 import com.gondroid.subtrack.feature.subscriptionlist.SubscriptionListScreen
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun SubTrackNavHost(
     navController: NavHostController,
     modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
-    startDestination: Route = Route.Dashboard
+    startDestination: Route = Route.Dashboard,
+    pendingRoute: Route? = null,
+    onPendingRouteOpened: () -> Unit = {}
 ) {
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
 
@@ -66,7 +70,7 @@ fun SubTrackNavHost(
                 onNavigateToTemplates = { navController.navigate(Route.Templates) },
                 onNavigateToReferral = { navController.navigate(Route.Referral) },
                 onNavigateToAliasEdit = { navController.navigate(Route.AliasEdit) },
-                onNavigateToEditUser = { /* TODO: [fase-futura] EditUserScreen */ },
+                onNavigateToEditUser = { navController.navigate(Route.EditUser) },
                 onNavigateToEditTemplate = { id -> navController.navigate(Route.EditTemplate(id)) },
                 onDebugOnboarding = {
                     navController.navigate(Route.Onboarding) {
@@ -75,6 +79,10 @@ fun SubTrackNavHost(
                 },
                 onDebugData = { navController.navigate(Route.Debug) }
             )
+        }
+
+        composable<Route.EditUser> {
+            EditProfileScreen(onBack = { navController.popBackStack() })
         }
 
         composable<Route.AliasEdit> {
@@ -89,7 +97,17 @@ fun SubTrackNavHost(
             val args = entry.toRoute<Route.SubscriptionDetail>()
             SubscriptionDetailScreen(
                 subscriptionId = args.id,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onEdit = { navController.navigate(Route.EditSubscription(args.id)) }
+            )
+        }
+
+        composable<Route.EditSubscription> { entry ->
+            val args = entry.toRoute<Route.EditSubscription>()
+            CreateSubscriptionScreen(
+                onBack = { navController.popBackStack() },
+                onCreated = {},
+                editSubscriptionId = args.id
             )
         }
 
@@ -99,7 +117,7 @@ fun SubTrackNavHost(
                 onBack = { navController.popBackStack() },
                 onCreated = { id ->
                     navController.navigate(Route.SubscriptionDetail(id)) {
-                        popUpTo(Route.CreateSubscription()) { inclusive = true }
+                        popUpTo<Route.CreateSubscription> { inclusive = true }
                     }
                 },
                 startWithShared = args.startWithShared
@@ -123,6 +141,14 @@ fun SubTrackNavHost(
 
         composable<Route.Referral> {
             ReferralScreen(onBack = { navController.popBackStack() })
+        }
+    }
+
+    // Opened over the dashboard after the onboarding; runs once the graph above is set.
+    LaunchedEffect(pendingRoute) {
+        if (pendingRoute != null) {
+            navController.navigate(pendingRoute)
+            onPendingRouteOpened()
         }
     }
 }

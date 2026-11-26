@@ -133,17 +133,6 @@ fun OnboardingSuccessScreen(
             )
         }
 
-        Spacer(Modifier.height(Spacing.m))
-
-        Text(
-            stringResource(R.string.onboarding_success_skip_home),
-            style = SubTrackType.bodyXS,
-            color = TextTertiary,
-            modifier = Modifier
-                .clickable(onClick = onGoHome)
-                .padding(vertical = Spacing.s)
-        )
-
         Spacer(Modifier.height(Spacing.xl))
     }
 }

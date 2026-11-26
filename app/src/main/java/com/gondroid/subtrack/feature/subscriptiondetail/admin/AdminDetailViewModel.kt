@@ -15,6 +15,7 @@ import com.gondroid.subtrack.domain.usecase.member.RemoveMemberUseCase
 import com.gondroid.subtrack.domain.usecase.member.UpdateMemberUseCase
 import com.gondroid.subtrack.domain.usecase.payment.GetPaymentHistoryUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
+import com.gondroid.subtrack.domain.usecase.subscription.DeleteSubscriptionUseCase
+import com.gondroid.subtrack.domain.usecase.subscription.PauseSubscriptionUseCase
 
 // ── Sheet navigation state ────────────────────────────────────────────────────
 
@@ -50,7 +53,9 @@ sealed interface AdminDetailEvent {
     data class MemberArchived(val name: String) : AdminDetailEvent
     data class MemberForgiven(val name: String) : AdminDetailEvent
     data class MemberUpdated(val name: String) : AdminDetailEvent
-    data object BulkReminderStarted : AdminDetailEvent
+    data class BulkReminderSent(val count: Int) : AdminDetailEvent
+    data class PausedChanged(val paused: Boolean) : AdminDetailEvent
+    data object Deleted : AdminDetailEvent
     data class Error(val message: String) : AdminDetailEvent
 }
 
@@ -64,24 +69,28 @@ class AdminDetailViewModel @Inject constructor(
     getMembersForSubscription: GetMembersForSubscriptionUseCase,
     getArchivedMembers: GetArchivedMembersUseCase,
     getPaymentHistory: GetPaymentHistoryUseCase,
+    getCurrentUser: GetCurrentUserUseCase,
     private val addMemberUseCase: AddMemberUseCase,
     private val updateMemberUseCase: UpdateMemberUseCase,
     private val archiveMemberUseCase: ArchiveMemberUseCase,
     private val removeMemberUseCase: RemoveMemberUseCase,
-    private val markMemberAsPaidUseCase: MarkMemberAsPaidUseCase
+    private val markMemberAsPaidUseCase: MarkMemberAsPaidUseCase,
+    private val pauseSubscriptionUseCase: PauseSubscriptionUseCase,
+    private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase
 ) : ViewModel() {
 
     val uiState: StateFlow<AdminDetailUiState> = combine(
         getSubscriptionDetail(subscriptionId),
         getMembersForSubscription(subscriptionId),
         getArchivedMembers(subscriptionId),
-        getPaymentHistory(subscriptionId, months = 3)
-    ) { subscription, activeMembers, archivedMembers, history ->
+        getPaymentHistory(subscriptionId, months = 3),
+        getCurrentUser()
+    ) { subscription, activeMembers, archivedMembers, history, user ->
         if (subscription == null) {
             AdminDetailUiState.NotFound
         } else {
             AdminDetailUiState.Success(
-                buildAdminDetailData(subscription, activeMembers, archivedMembers, history)
+                buildAdminDetailData(subscription, activeMembers, archivedMembers, history, user?.name.orEmpty())
             )
         }
     }.stateIn(
@@ -183,9 +192,29 @@ class AdminDetailViewModel @Inject constructor(
         }
     }
 
-    fun onBulkReminderSent() {
+    fun onBulkReminderSent(count: Int) {
+        if (count == 0) return
         viewModelScope.launch {
-            _events.emit(AdminDetailEvent.BulkReminderStarted)
+            _events.emit(AdminDetailEvent.BulkReminderSent(count))
+        }
+    }
+
+    // ── Subscription actions (⋮ menu) ─────────────────────────────────────────
+
+    fun setPaused(paused: Boolean) {
+        viewModelScope.launch {
+            pauseSubscriptionUseCase(subscriptionId, paused)
+                .onSuccess { _events.emit(AdminDetailEvent.PausedChanged(paused)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+        }
+    }
+
+    /** The detail router leaves the screen once the subscription disappears. */
+    fun deleteSubscription() {
+        viewModelScope.launch {
+            deleteSubscriptionUseCase(subscriptionId)
+                .onSuccess { _events.emit(AdminDetailEvent.Deleted) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
         }
     }
 

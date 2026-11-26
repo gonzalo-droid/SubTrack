@@ -1,0 +1,16 @@
+package com.gondroid.subtrack.domain.usecase.subscription
+
+import com.gondroid.subtrack.domain.repository.SubscriptionRepository
+import javax.inject.Inject
+
+class PauseSubscriptionUseCase @Inject constructor(
+    private val repository: SubscriptionRepository
+) {
+    suspend operator fun invoke(id: String, paused: Boolean): Result<Unit> {
+        val subscription = repository.getSubscriptionById(id)
+            ?: return Result.failure(NoSuchElementException("Subscription $id not found"))
+        return repository.updateSubscription(
+            subscription.copy(isPaused = paused, updatedAt = System.currentTimeMillis())
+        )
+    }
+}

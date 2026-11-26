@@ -13,11 +13,13 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.AdminDetailScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.member.MemberDetailScreen
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun SubscriptionDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val vm: SubscriptionDetailRouterViewModel = viewModel(
@@ -32,6 +34,7 @@ fun SubscriptionDetailScreen(
         is RoleState.Admin -> AdminDetailScreen(
             subscriptionId = state.subscriptionId,
             onBack = onBack,
+            onEdit = onEdit,
             modifier = modifier
         )
         is RoleState.MemberOf -> MemberDetailScreen(
@@ -40,8 +43,7 @@ fun SubscriptionDetailScreen(
             onBack = onBack,
             modifier = modifier
         )
-        is RoleState.NotFound -> {
-            onBack()
-        }
+        // Also reached right after the admin deletes the subscription
+        is RoleState.NotFound -> LaunchedEffect(Unit) { onBack() }
     }
 }

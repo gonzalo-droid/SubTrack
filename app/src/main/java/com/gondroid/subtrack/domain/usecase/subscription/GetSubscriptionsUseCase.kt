@@ -14,11 +14,12 @@ class GetSubscriptionsUseCase @Inject constructor(
             repository.getAllSubscriptions(),
             repository.getUpcomingSubscriptions()
         ) { all, upcoming ->
+            val active = all.filterNot { it.isPaused }
             SubscriptionsSummary(
-                totalMonthlySpend = all.sumOf { it.totalAmount },
-                personalSubscriptions = all.filter { !it.isShared },
-                sharedSubscriptions = all.filter { it.isShared },
-                upcomingCutoffs = upcoming
+                totalMonthlySpend = active.sumOf { it.totalAmount },
+                personalSubscriptions = active.filter { !it.isShared },
+                sharedSubscriptions = active.filter { it.isShared },
+                upcomingCutoffs = upcoming.filterNot { it.isPaused }
             )
         }
 }

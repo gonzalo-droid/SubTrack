@@ -1,0 +1,19 @@
+# Personas: título, selector "Te deben / Debes", sin el propio usuario en la lista.
+# Inicio: el FAB abre el asistente.
+appId: com.gondroid.subtrack
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 90000
+- tapOn: "Crear suscripción"          # FAB de Inicio
+- assertVisible: "1/3"
+- tapOn: "Cerrar asistente"
+- tapOn: "Descartar"
+- tapOn: "Personas"
+- assertVisible: "Te deben.*"
+- assertNotVisible: "Gonzalo Meza"    # tú no apareces en tu propia lista
+- assertVisible: "Ana Paredes"
+- tapOn: "Debes.*"
+- assertVisible: "María Rodríguez"    # admin de Disney+, donde eres miembro
+- assertVisible: "le debes|/mes"

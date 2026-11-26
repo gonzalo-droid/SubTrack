@@ -25,6 +25,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.ripple
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
@@ -45,32 +50,46 @@ fun STIconButton(
     iconTint: Color = TextSecondary,
     containerColor: Color = BgSurface
 ) {
-    Box(modifier = modifier) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(36.dp)
-                .clip(IconButtonShape)
-                .border(1.dp, BorderDefault, IconButtonShape)
-                .background(containerColor)
-                .clickable(role = Role.Button, onClick = onClick)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = contentDescription,
-                tint = iconTint,
-                modifier = Modifier.size(20.dp)
+    // The visible chip is 36dp; the touch target around it is 48dp.
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick
             )
-        }
-        if (showBadge) {
+    ) {
+        Box(Modifier.size(36.dp)) {
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = 3.dp, y = (-3).dp)
-                    .size(8.dp)
-                    .clip(SubTrackShapes.circle)
-                    .background(AccentRed)
-            )
+                    .matchParentSize()
+                    .clip(IconButtonShape)
+                    .border(1.dp, BorderDefault, IconButtonShape)
+                    .background(containerColor)
+                    .indication(interactionSource, ripple())
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    tint = iconTint,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            if (showBadge) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 3.dp, y = (-3).dp)
+                        .size(8.dp)
+                        .clip(SubTrackShapes.circle)
+                        .background(AccentRed)
+                )
+            }
         }
     }
 }

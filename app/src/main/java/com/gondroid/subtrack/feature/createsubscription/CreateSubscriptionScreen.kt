@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,17 +78,27 @@ import com.gondroid.subtrack.feature.createsubscription.steps.DetailsStep
 import com.gondroid.subtrack.feature.createsubscription.steps.MembersStep
 import com.gondroid.subtrack.feature.createsubscription.steps.ServiceStep
 import com.gondroid.subtrack.feature.createsubscription.steps.SplitStep
+import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.runtime.LaunchedEffect
+import android.os.Build
+import com.gondroid.subtrack.core.preferences.UserPreferences
+import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
 
 @Composable
 fun CreateSubscriptionScreen(
     onBack: () -> Unit,
     onCreated: (String) -> Unit,
     startWithShared: Boolean = false,
+    editSubscriptionId: String? = null,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CreateSubscriptionViewModel = viewModel(
-        factory = CreateSubscriptionViewModelFactory(startWithShared)
+        factory = CreateSubscriptionViewModelFactory(
+            UserPreferences.getInstance(LocalContext.current), startWithShared, editSubscriptionId
+        )
     )
+    val askNotificationPermission by viewModel.askNotificationPermission.collectAsStateWithLifecycle()
     val form by viewModel.formState.collectAsStateWithLifecycle()
     val currentStep by viewModel.currentStep.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -97,8 +108,24 @@ fun CreateSubscriptionScreen(
 
     var showCancelDialog by remember { mutableStateOf(false) }
 
-    // Success overlay
+    val messenger = LocalSnackbarMessenger.current
+    if (uiState is CreateSubscriptionUiState.Saved) {
+        LaunchedEffect(Unit) {
+            messenger.show(R.string.edit_subscription_saved)
+            onBack()
+        }
+    }
+
+    // Success overlay — preceded by the notification prompt the first time (D2)
     if (uiState is CreateSubscriptionUiState.Success) {
+        if (askNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            NotificationsPermissionScreen(
+                onGrant = viewModel::onNotificationPromptDone,
+                onSkip = viewModel::onNotificationPromptDone,
+                modifier = modifier
+            )
+            return
+        }
         val success = uiState as CreateSubscriptionUiState.Success
         SuccessScreen(
             serviceName = success.serviceName,
@@ -112,9 +139,25 @@ fun CreateSubscriptionScreen(
         return
     }
 
-    BackHandler {
-        if (currentStep == WizardStep.SERVICE) showCancelDialog = true
-        else viewModel.previousStep()
+    val hasPreviousStep = previousWizardStep(currentStep, form.shared, form.isEditing) != null
+    // Leaving from the first step: creating asks to discard, editing just goes back.
+    val leave = { if (form.isEditing) onBack() else showCancelDialog = true }
+    val goBack = { if (hasPreviousStep) viewModel.previousStep() else leave() }
+
+    BackHandler(onBack = goBack)
+
+    LaunchedEffect(uiState) {
+        when (val state = uiState) {
+            is CreateSubscriptionUiState.Error -> {
+                messenger.show(state.message)
+                viewModel.errorShown()
+            }
+            CreateSubscriptionUiState.NotFound -> {
+                messenger.show(R.string.edit_subscription_not_found)
+                onBack()
+            }
+            else -> Unit
+        }
     }
 
     if (showCancelDialog) {
@@ -144,7 +187,8 @@ fun CreateSubscriptionScreen(
         WizardTopBar(
             stepIndex = stepIndex,
             totalSteps = totalSteps,
-            onCancel = { showCancelDialog = true }
+            showProgress = !form.isEditing,
+            onCancel = leave
         )
 
         Box(modifier = Modifier.weight(1f)) {
@@ -168,7 +212,14 @@ fun CreateSubscriptionScreen(
                         onUpdateCustomName = viewModel::updateCustomServiceName,
                         onUpdateCustomColor = viewModel::updateCustomServiceColor
                     )
+                    WizardStep.WHO_PAYS -> WhoPaysStep(
+                        serviceName = form.resolvedServiceName,
+                        isShared = form.isShared,
+                        suggestsShared = form.selectedService?.suggestsShared == true,
+                        onSelect = viewModel::setShared
+                    )
                     WizardStep.DETAILS -> DetailsStep(
+                        isEditing = form.isEditing,
                         service = form.selectedService,
                         totalAmount = form.totalAmount,
                         currency = form.currency,
@@ -181,9 +232,7 @@ fun CreateSubscriptionScreen(
                         onCutoffDayChange = viewModel::updateCutoffDay
                     )
                     WizardStep.MEMBERS -> MembersStep(
-                        isShared = form.isShared,
                         members = form.members,
-                        onToggleShared = viewModel::toggleShared,
                         onAddMember = viewModel::addMember,
                         onRemoveMember = viewModel::removeMember
                     )
@@ -201,17 +250,15 @@ fun CreateSubscriptionScreen(
 
         WizardFooter(
             currentStep = currentStep,
-            isShared = form.isShared,
+            isShared = form.shared,
+            isEditing = form.isEditing,
             isValid = isValid,
             isSubmitting = uiState is CreateSubscriptionUiState.Submitting,
             amountDisplay = if (form.totalAmount.isNotBlank()) "S/ ${form.totalAmount}" else null,
             serviceDisplay = form.resolvedServiceName.ifBlank { null },
-            isFirstStep = currentStep == WizardStep.SERVICE,
+            isFirstStep = !hasPreviousStep,
             onNext = viewModel::nextStep,
-            onBack = {
-                if (currentStep == WizardStep.SERVICE) showCancelDialog = true
-                else viewModel.previousStep()
-            }
+            onBack = goBack
         )
     }
 }
@@ -220,6 +267,7 @@ fun CreateSubscriptionScreen(
 private fun WizardTopBar(
     stepIndex: Int,
     totalSteps: Int,
+    showProgress: Boolean,
     onCancel: () -> Unit
 ) {
     Column(
@@ -232,9 +280,12 @@ private fun WizardTopBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.Outlined.Close, contentDescription = "", onClick = onCancel)
-            Text("${stepIndex + 1}/$totalSteps", style = SubTrackType.monoS, color = TextTertiary)
+            STIconButton(icon = Icons.Outlined.Close, contentDescription = stringResource(R.string.cd_close_wizard), onClick = onCancel)
+            if (showProgress) {
+                Text("${stepIndex + 1}/$totalSteps", style = SubTrackType.monoS, color = TextTertiary)
+            }
         }
+        if (!showProgress) return@Column
         Spacer(Modifier.height(Spacing.s))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -257,6 +308,7 @@ private fun WizardTopBar(
 private fun WizardFooter(
     currentStep: WizardStep,
     isShared: Boolean,
+    isEditing: Boolean,
     isValid: Boolean,
     isSubmitting: Boolean,
     amountDisplay: String?,
@@ -265,9 +317,10 @@ private fun WizardFooter(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    val isFinalStep = currentStep == WizardStep.SPLIT || (currentStep == WizardStep.DETAILS && !isShared)
+    val isFinalStep = nextWizardStep(currentStep, isShared, isEditing) == null
     val buttonText = when {
         isSubmitting -> stringResource(R.string.common_loading)
+        isEditing -> stringResource(R.string.edit_subscription_save)
         isFinalStep && isShared -> stringResource(R.string.create_subscription_footer_create_shared)
         isFinalStep -> stringResource(R.string.create_subscription_footer_create)
         else -> stringResource(R.string.create_subscription_footer_continue)
@@ -353,7 +406,7 @@ private fun SuccessScreen(
         Spacer(Modifier.height(Spacing.s))
         Text(
             text = if (isShared)
-                stringResource(R.string.create_subscription_success_shared_desc, serviceName, memberCount)
+                pluralStringResource(R.plurals.create_subscription_success_shared_desc, memberCount, serviceName, memberCount)
             else
                 stringResource(R.string.create_subscription_success_personal_desc, serviceName),
             style = SubTrackType.bodyM,

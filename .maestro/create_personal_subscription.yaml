@@ -1,0 +1,31 @@
+# Suscripción personal: Servicio → ¿Quién paga? (Solo yo) → Detalles → éxito (3 pasos).
+appId: com.gondroid.subtrack
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 90000
+- tapOn: "Suscripciones"
+- tapOn: "Crear suscripción"          # FAB
+- tapOn: "ChatGPT Plus"
+- tapOn: "Continuar"
+- assertVisible: "¿Quién paga ChatGPT Plus?"
+- assertVisible: "2/3"
+- tapOn: "Solo yo"
+- tapOn: "Continuar"
+- assertVisible: "3/3"
+- tapOn: "Usar sugerido.*"
+- tapOn: "28"
+- scrollUntilVisible:
+    element: "Próximo cobro: 28 de .*"
+    direction: DOWN
+- tapOn: "← Anterior"
+- assertVisible: "¿Quién paga ChatGPT Plus?"   # atrás desde Detalles vuelve a Quién paga
+- tapOn: "Continuar"
+- tapOn: "Crear suscripción"
+- tapOn:                              # aviso de notificaciones (solo la primera vez)
+    text: "Saltar por ahora"
+    optional: true
+- assertVisible: "¡Listo!"
+- tapOn: "Listo"
+- assertVisible: "ChatGPT Plus"

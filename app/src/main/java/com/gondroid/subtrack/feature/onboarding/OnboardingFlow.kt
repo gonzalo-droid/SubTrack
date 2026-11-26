@@ -27,10 +27,13 @@ import com.gondroid.subtrack.feature.onboarding.screens.OnboardingSuccessScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueInsightsScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueShareScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueTrackerScreen
+import androidx.compose.ui.res.stringResource
+import com.gondroid.subtrack.R
 
 @Composable
 fun OnboardingFlow(
-    onComplete: () -> Unit,
+    /** Finishes the onboarding; [then] is an optional screen to open over the dashboard. */
+    onComplete: (then: Route?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -43,6 +46,7 @@ fun OnboardingFlow(
     val selectedService by vm.selectedService.collectAsStateWithLifecycle()
     val isCreating by vm.isCreatingSubscription.collectAsStateWithLifecycle()
     val createdServiceName by vm.createdServiceName.collectAsStateWithLifecycle()
+    val userFirstName by vm.userFirstName.collectAsStateWithLifecycle()
 
     AnimatedContent(
         targetState = step,
@@ -86,8 +90,9 @@ fun OnboardingFlow(
                 modifier = Modifier.fillMaxSize()
             )
             OnboardingStep.NOTIFICATIONS -> NotificationsPermissionScreen(
-                onGrant = vm::grantNotifications,
-                onSkip = vm::skipNotifications,
+                onGrant = vm::onNotificationPromptDone,
+                onSkip = vm::onNotificationPromptDone,
+                progressStep = 1,
                 modifier = Modifier.fillMaxSize()
             )
             OnboardingStep.FIRST_SUBSCRIPTION -> FirstSubscriptionScreen(
@@ -99,17 +104,14 @@ fun OnboardingFlow(
                 onSkip = vm::skipFirstSubscription,
                 modifier = Modifier.fillMaxSize()
             )
-            OnboardingStep.SUCCESS -> {
-                val user = com.gondroid.subtrack.data.mock.MockDataStore.currentUser.collectAsStateWithLifecycle().value
-                OnboardingSuccessScreen(
-                    userName = user?.name?.substringBefore(" ") ?: "amigo",
-                    createdServiceName = createdServiceName,
-                    onAddAnother = onComplete,
-                    onShareWithFriends = onComplete,
-                    onGoHome = onComplete,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+            OnboardingStep.SUCCESS -> OnboardingSuccessScreen(
+                userName = userFirstName ?: stringResource(R.string.onboarding_success_fallback_name),
+                createdServiceName = createdServiceName,
+                onAddAnother = { onComplete(Route.CreateSubscription()) },
+                onShareWithFriends = { onComplete(Route.CreateSubscription(startWithShared = true)) },
+                onGoHome = { onComplete(null) },
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

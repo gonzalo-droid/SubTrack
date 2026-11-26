@@ -17,7 +17,7 @@ val BorderStrong = Color(0x1FFFFFFF)
 // Text
 val TextPrimary = Color(0xFFF5F5F7)
 val TextSecondary = Color(0xFF9A9AA3)
-val TextTertiary = Color(0xFF5A5A63)
+val TextTertiary = Color(0xFF8A8A93)
 
 // Accents
 val AccentGreen = Color(0xFF32D74B)

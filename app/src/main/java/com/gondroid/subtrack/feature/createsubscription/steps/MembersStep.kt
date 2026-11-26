@@ -1,8 +1,5 @@
 package com.gondroid.subtrack.feature.createsubscription.steps
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,13 +24,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +43,6 @@ import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.SecondaryButton
 import com.gondroid.subtrack.core.designsystem.components.input.STTextField
-import com.gondroid.subtrack.core.designsystem.components.input.ToggleSwitch
 import com.gondroid.subtrack.core.designsystem.components.text.Eyebrow
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.BgSheet
@@ -64,9 +61,7 @@ import com.gondroid.subtrack.feature.createsubscription.WizardMemberData
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MembersStep(
-    isShared: Boolean,
     members: List<WizardMemberData>,
-    onToggleShared: (Boolean) -> Unit,
     onAddMember: (WizardMemberData) -> Unit,
     onRemoveMember: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -108,107 +103,59 @@ fun MembersStep(
         )
         Spacer(Modifier.height(Spacing.l))
 
-        // Shared toggle card
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(SubTrackShapes.l)
-                .background(BgSurface)
-                .border(1.dp, BorderDefault, SubTrackShapes.l)
-                .padding(Spacing.m)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        // Members list
+        if (members.isEmpty()) {
+            // Empty state
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(SubTrackShapes.l)
+                    .background(BgSurface)
+                    .border(1.dp, BorderDefault, SubTrackShapes.l)
+                    .padding(Spacing.xl)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("👥", style = SubTrackType.displayS)
+                    Spacer(Modifier.height(Spacing.s))
                     Text(
-                        text = if (isShared) stringResource(R.string.create_subscription_shared_on)
-                               else stringResource(R.string.create_subscription_shared_off),
-                        style = SubTrackType.titleL,
-                        color = TextPrimary
-                    )
-                    Spacer(Modifier.height(Spacing.xs))
-                    Text(
-                        text = if (isShared) stringResource(R.string.create_subscription_shared_on_desc)
-                               else stringResource(R.string.create_subscription_shared_off_desc),
-                        style = SubTrackType.bodyXS,
-                        color = TextSecondary
+                        stringResource(R.string.create_subscription_members_empty),
+                        style = SubTrackType.bodyM,
+                        color = TextTertiary
                     )
                 }
-                Spacer(Modifier.width(Spacing.m))
-                ToggleSwitch(
-                    checked = isShared,
-                    onCheckedChange = onToggleShared,
-                    contentDescription = stringResource(R.string.create_subscription_shared_toggle_cd)
-                )
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(SubTrackShapes.l)
+                    .background(BgSurface)
+                    .border(1.dp, BorderDefault, SubTrackShapes.l)
+            ) {
+                members.forEachIndexed { index, member ->
+                    MemberRow(
+                        member = member,
+                        onRemove = { onRemoveMember(member.id) }
+                    )
+                    if (index < members.lastIndex) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(BorderDefault)
+                        )
+                    }
+                }
             }
         }
 
-        // Members list (animated)
-        AnimatedVisibility(
-            visible = isShared,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Column {
-                Spacer(Modifier.height(Spacing.m))
-
-                if (members.isEmpty()) {
-                    // Empty state
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(SubTrackShapes.l)
-                            .background(BgSurface)
-                            .border(1.dp, BorderDefault, SubTrackShapes.l)
-                            .padding(Spacing.xl)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("👥", style = SubTrackType.displayS)
-                            Spacer(Modifier.height(Spacing.s))
-                            Text(
-                                stringResource(R.string.create_subscription_members_empty),
-                                style = SubTrackType.bodyM,
-                                color = TextTertiary
-                            )
-                        }
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(SubTrackShapes.l)
-                            .background(BgSurface)
-                            .border(1.dp, BorderDefault, SubTrackShapes.l)
-                    ) {
-                        members.forEachIndexed { index, member ->
-                            MemberRow(
-                                member = member,
-                                onRemove = { onRemoveMember(member.id) }
-                            )
-                            if (index < members.lastIndex) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(1.dp)
-                                        .background(BorderDefault)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(Spacing.m))
-                SecondaryButton(
-                    text = stringResource(R.string.create_subscription_add_member),
-                    onClick = { showAddSheet = true },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
+        Spacer(Modifier.height(Spacing.m))
+        SecondaryButton(
+            text = stringResource(R.string.create_subscription_add_member),
+            onClick = { showAddSheet = true },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(Modifier.height(Spacing.xl))
     }
@@ -234,6 +181,7 @@ private fun MemberRow(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
+                .minimumInteractiveComponentSize()
                 .size(28.dp)
                 .clip(SubTrackShapes.s)
                 .background(BgSurfaceEl)
@@ -331,26 +279,10 @@ private fun WizardAddMemberSheetContent(
 private fun MembersStepPreview() {
     SubTrackTheme {
         MembersStep(
-            isShared = true,
             members = listOf(
                 WizardMemberData(name = "María García", phone = "+51 912 345 678"),
                 WizardMemberData(name = "Carlos Ríos", phone = "+51 987 654 321")
             ),
-            onToggleShared = {},
-            onAddMember = {},
-            onRemoveMember = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)
-@Composable
-private fun MembersStepOffPreview() {
-    SubTrackTheme {
-        MembersStep(
-            isShared = false,
-            members = emptyList(),
-            onToggleShared = {},
             onAddMember = {},
             onRemoveMember = {}
         )

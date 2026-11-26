@@ -47,6 +47,8 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import kotlin.reflect.KClass
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.TextAutoSize
 
 private data class BottomNavItem(
     val route: Route,
@@ -120,7 +122,13 @@ fun BottomNavBar(navController: NavController) {
                         Text(
                             text = stringResource(item.labelRes),
                             style = SubTrackType.monoXS,
-                            color = iconColor
+                            color = iconColor,
+                            maxLines = 1,
+                            // Large font scales shrink the label instead of breaking "Suscripciones"
+                            autoSize = TextAutoSize.StepBased(
+                                minFontSize = 8.sp,
+                                maxFontSize = SubTrackType.monoXS.fontSize
+                            )
                         )
                     }
 

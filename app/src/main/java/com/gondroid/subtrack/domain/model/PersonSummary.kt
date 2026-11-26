@@ -9,7 +9,8 @@ data class PersonSummary(
     val hasApp: Boolean,
     val totalDebt: Double,
     val totalMonthlyContribution: Double,
-    val punctualityPercent: Int,
+    /** Null when there is no payment history to measure it (e.g. admins you pay). */
+    val punctualityPercent: Int?,
     val firstJoinedAt: Long,
     val lastActivityAt: Long?,
     val subscriptions: List<SubscriptionParticipation>

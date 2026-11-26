@@ -43,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -51,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.avatar.AvatarStack
@@ -87,7 +90,12 @@ import com.gondroid.subtrack.domain.model.DebtorInfo
 import com.gondroid.subtrack.domain.model.Insight
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
-import java.util.Calendar
+import com.gondroid.subtrack.domain.util.daysUntilCutoff
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import com.gondroid.subtrack.domain.model.enums.isOverdue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.outlined.Add
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -102,6 +110,7 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val messenger = LocalSnackbarMessenger.current
 
     when (val state = uiState) {
         is DashboardUiState.Loading -> DashboardSkeleton(modifier = modifier.fillMaxSize())
@@ -125,7 +134,7 @@ fun DashboardScreen(
                         amount = "%.2f".format(debtor.shareAmount),
                         adminName = state.data.user.name.substringBefore(" ")
                     )
-                    WhatsAppHelper.openWhatsApp(context, phone, msg)
+                    WhatsAppHelper.openWhatsApp(context, phone, msg)?.let(messenger::show)
                     viewModel.onReminderSent(memberId, subscriptionId)
                 }
             },
@@ -161,108 +170,121 @@ private fun DashboardContent(
 
     data class FilterTab(val label: String, val count: Int)
 
-    Column(modifier = modifier) {
-        // Fixed header
-        DashboardHeader(
-            user = data.user,
-            dayLabel = data.dayLabel,
-            onNotificationsClick = onNavigateToNotifications,
-            onAvatarClick = onNavigateToProfile
-        )
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Fixed header
+            DashboardHeader(
+                user = data.user,
+                dayLabel = data.dayLabel,
+                onNotificationsClick = onNavigateToNotifications,
+                onAvatarClick = onNavigateToProfile
+            )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = Spacing.huge),
-            verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 88.dp), // room for the FAB (56dp + margins)
+                verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            ) {
+                // ── Segmented selector ────────────────────────────────────────
+                item {
+                    val tabs = listOf(
+                        FilterTab(stringResource(R.string.dashboard_tab_all), data.personalCount + data.sharedCount),
+                        FilterTab(stringResource(R.string.dashboard_tab_personal), data.personalCount),
+                        FilterTab(stringResource(R.string.dashboard_tab_shared), data.sharedCount)
+                    )
+                    SegmentedSelector(
+                        options = tabs,
+                        selectedIndex = selectedFilter,
+                        onSelectionChange = { selectedFilter = it },
+                        labelProvider = { it.label },
+                        countProvider = { it.count },
+                        modifier = Modifier.padding(horizontal = Spacing.base).fillMaxWidth()
+                    )
+                }
+
+                // ── Dual hero row ─────────────────────────────────────────────
+                item {
+                    DualHeroRow(
+                        data = data,
+                        selectedFilter = selectedFilter,
+                        onSelectFilter = { selectedFilter = it },
+                        modifier = Modifier.padding(horizontal = Spacing.base)
+                    )
+                }
+
+                // ── Total summary ─────────────────────────────────────────────
+                item {
+                    TotalSummaryRow(
+                        totalAmount = data.totalMonthlySpend,
+                        netAmount = data.personalAmount,
+                        modifier = Modifier.padding(horizontal = Spacing.base)
+                    )
+                }
+
+                // ── Upcoming cutoffs ──────────────────────────────────────────
+                if (filteredUpcoming.isNotEmpty()) {
+                    item {
+                        UpcomingSection(
+                            subscriptions = filteredUpcoming,
+                            onNavigateToDetail = onNavigateToDetail
+                        )
+                    }
+                }
+
+                // ── Personal subscriptions ────────────────────────────────────
+                item {
+                    AnimatedVisibility(
+                        visible = showPersonal && data.personalSubscriptions.isNotEmpty(),
+                        enter = fadeIn(tween(200)) + expandVertically(tween(200)),
+                        exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
+                    ) {
+                        PersonalSubscriptionsSection(
+                            subscriptions = data.personalSubscriptions,
+                            onNavigateToDetail = onNavigateToDetail,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+
+                // ── Debtors ───────────────────────────────────────────────────
+                item {
+                    AnimatedVisibility(
+                        visible = showShared && data.debtors.isNotEmpty(),
+                        enter = fadeIn(tween(200)) + expandVertically(tween(200)),
+                        exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
+                    ) {
+                        DebtorsSection(
+                            debtors = data.debtors,
+                            sharedSubscriptions = data.sharedSubscriptions,
+                            onNavigateToDetail = onNavigateToDetail,
+                            onReminderTap = onReminderTap,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+
+                // ── Insight card ──────────────────────────────────────────────
+                data.insight?.let { insight ->
+                    item {
+                        DashboardInsightCard(
+                            insight = insight,
+                            onNavigateToDetail = onNavigateToDetail,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+            }
+        }
+
+        FloatingActionButton(
+            onClick = onNavigateToCreate,
+            containerColor = AccentGreen,
+            contentColor = Color.Black,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = Spacing.base, bottom = Spacing.base)
         ) {
-            // ── Segmented selector ────────────────────────────────────────
-            item {
-                val tabs = listOf(
-                    FilterTab(stringResource(R.string.dashboard_tab_all), data.personalCount + data.sharedCount),
-                    FilterTab(stringResource(R.string.dashboard_tab_personal), data.personalCount),
-                    FilterTab(stringResource(R.string.dashboard_tab_shared), data.sharedCount)
-                )
-                SegmentedSelector(
-                    options = tabs,
-                    selectedIndex = selectedFilter,
-                    onSelectionChange = { selectedFilter = it },
-                    labelProvider = { it.label },
-                    countProvider = { it.count },
-                    modifier = Modifier.padding(horizontal = Spacing.base).fillMaxWidth()
-                )
-            }
-
-            // ── Dual hero row ─────────────────────────────────────────────
-            item {
-                DualHeroRow(
-                    data = data,
-                    selectedFilter = selectedFilter,
-                    onSelectFilter = { selectedFilter = it },
-                    modifier = Modifier.padding(horizontal = Spacing.base)
-                )
-            }
-
-            // ── Total summary ─────────────────────────────────────────────
-            item {
-                TotalSummaryRow(
-                    totalAmount = data.totalMonthlySpend,
-                    netAmount = data.personalAmount,
-                    modifier = Modifier.padding(horizontal = Spacing.base)
-                )
-            }
-
-            // ── Upcoming cutoffs ──────────────────────────────────────────
-            if (filteredUpcoming.isNotEmpty()) {
-                item {
-                    UpcomingSection(
-                        subscriptions = filteredUpcoming,
-                        onNavigateToDetail = onNavigateToDetail
-                    )
-                }
-            }
-
-            // ── Personal subscriptions ────────────────────────────────────
-            item {
-                AnimatedVisibility(
-                    visible = showPersonal && data.personalSubscriptions.isNotEmpty(),
-                    enter = fadeIn(tween(200)) + expandVertically(tween(200)),
-                    exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
-                ) {
-                    PersonalSubscriptionsSection(
-                        subscriptions = data.personalSubscriptions,
-                        onNavigateToDetail = onNavigateToDetail,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
-
-            // ── Debtors ───────────────────────────────────────────────────
-            item {
-                AnimatedVisibility(
-                    visible = showShared && data.debtors.isNotEmpty(),
-                    enter = fadeIn(tween(200)) + expandVertically(tween(200)),
-                    exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
-                ) {
-                    DebtorsSection(
-                        debtors = data.debtors,
-                        sharedSubscriptions = data.sharedSubscriptions,
-                        onNavigateToDetail = onNavigateToDetail,
-                        onReminderTap = onReminderTap,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
-
-            // ── Insight card ──────────────────────────────────────────────
-            data.insight?.let { insight ->
-                item {
-                    DashboardInsightCard(
-                        insight = insight,
-                        onNavigateToDetail = onNavigateToDetail,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
+            Icon(Icons.Outlined.Add, contentDescription = stringResource(R.string.subscription_list_fab_cd))
         }
     }
 }
@@ -319,82 +341,109 @@ private fun DualHeroRow(
     onSelectFilter: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.s)
-    ) {
-        // Personal hero
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .clip(SubTrackShapes.xxl)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onSelectFilter(if (selectedFilter == 1) 0 else 1) }
+    // With large fonts (fontScale >= 1.3) two columns truncate the amounts: stack them.
+    if (LocalDensity.current.fontScale >= LARGE_FONT_SCALE) {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            HeroCard(
-                accentColor = AccentBlue,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Eyebrow(
-                    text = stringResource(R.string.dashboard_hero_personal),
-                    color = AccentBlue.copy(alpha = 0.8f)
-                )
-                Spacer(Modifier.height(Spacing.s))
-                AmountDisplay(amount = data.personalAmount, size = AmountSize.MEDIUM)
-                Spacer(Modifier.height(Spacing.xs))
-                val upcomingPersonal = data.upcomingCutoffs.count { !it.isShared }
-                Text(
-                    text = stringResource(
-                        R.string.dashboard_hero_services_upcoming,
-                        data.personalCount,
-                        upcomingPersonal
-                    ),
-                    style = SubTrackType.bodyS,
-                    color = TextSecondary
-                )
-            }
+            PersonalHero(data, selectedFilter, onSelectFilter, Modifier.fillMaxWidth())
+            SharedHero(data, selectedFilter, onSelectFilter, Modifier.fillMaxWidth())
         }
-
-        // Shared hero
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .clip(SubTrackShapes.xxl)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onSelectFilter(if (selectedFilter == 2) 0 else 2) }
+    } else {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            HeroCard(
-                accentColor = AccentGreen,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Eyebrow(
-                    text = stringResource(R.string.dashboard_hero_shared),
-                    color = AccentGreen.copy(alpha = 0.8f)
-                )
-                Spacer(Modifier.height(Spacing.s))
-                AmountDisplay(amount = data.sharedAmount, size = AmountSize.MEDIUM)
-                Spacer(Modifier.height(Spacing.xs))
-                Text(
-                    text = buildAnnotatedString {
-                        append(
-                            stringResource(
-                                R.string.dashboard_hero_services_debtors_prefix,
-                                data.sharedCount
-                            )
+            PersonalHero(data, selectedFilter, onSelectFilter, Modifier.weight(1f))
+            SharedHero(data, selectedFilter, onSelectFilter, Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun PersonalHero(
+    data: DashboardData,
+    selectedFilter: Int,
+    onSelectFilter: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(SubTrackShapes.xxl)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onSelectFilter(if (selectedFilter == 1) 0 else 1) }
+    ) {
+        HeroCard(
+            accentColor = AccentBlue,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Eyebrow(
+                text = stringResource(R.string.dashboard_hero_personal),
+                color = AccentBlue.copy(alpha = 0.8f)
+            )
+            Spacer(Modifier.height(Spacing.s))
+            AmountDisplay(amount = data.personalAmount, size = AmountSize.MEDIUM)
+            Spacer(Modifier.height(Spacing.xs))
+            val upcomingPersonal = data.upcomingCutoffs.count { !it.isShared }
+            Text(
+                text = stringResource(
+                    R.string.dashboard_hero_counts_format,
+                    pluralStringResource(R.plurals.dashboard_hero_services, data.personalCount, data.personalCount),
+                    pluralStringResource(R.plurals.dashboard_hero_upcoming, upcomingPersonal, upcomingPersonal)
+                ),
+                style = SubTrackType.bodyS,
+                color = TextSecondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun SharedHero(
+    data: DashboardData,
+    selectedFilter: Int,
+    onSelectFilter: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(SubTrackShapes.xxl)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onSelectFilter(if (selectedFilter == 2) 0 else 2) }
+    ) {
+        HeroCard(
+            accentColor = AccentGreen,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Eyebrow(
+                text = stringResource(R.string.dashboard_hero_shared),
+                color = AccentGreen.copy(alpha = 0.8f)
+            )
+            Spacer(Modifier.height(Spacing.s))
+            AmountDisplay(amount = data.sharedAmount, size = AmountSize.MEDIUM)
+            Spacer(Modifier.height(Spacing.xs))
+            Text(
+                text = buildAnnotatedString {
+                    append(
+                        pluralStringResource(
+                            R.plurals.dashboard_hero_services_debtors_prefix,
+                            data.sharedCount,
+                            data.sharedCount
                         )
-                        withStyle(
-                            androidx.compose.ui.text.SpanStyle(color = AccentAmber)
-                        ) { append("${data.debtorCount}") }
-                        append(stringResource(R.string.dashboard_hero_debtors_suffix))
-                    },
-                    style = SubTrackType.bodyS,
-                    color = TextSecondary
-                )
-            }
+                    )
+                    withStyle(
+                        androidx.compose.ui.text.SpanStyle(color = AccentAmber)
+                    ) { append("${data.debtorCount}") }
+                    append(pluralStringResource(R.plurals.dashboard_hero_debtors_suffix, data.debtorCount))
+                },
+                style = SubTrackType.bodyS,
+                color = TextSecondary
+            )
         }
     }
 }
@@ -407,6 +456,7 @@ private fun TotalSummaryRow(
     netAmount: Double,
     modifier: Modifier = Modifier
 ) {
+    val largeFont = LocalDensity.current.fontScale >= LARGE_FONT_SCALE
     SurfaceCard(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -426,22 +476,37 @@ private fun TotalSummaryRow(
             )
             Spacer(Modifier.weight(1f))
             AmountDisplay(amount = totalAmount, size = AmountSize.SMALL)
-            Spacer(Modifier.width(Spacing.s))
-            HorizontalDivider(
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(1.dp),
-                color = BorderDefault
-            )
-            Spacer(Modifier.width(Spacing.s))
-            Badge(
-                text = stringResource(R.string.dashboard_net_badge),
-                variant = BadgeVariant.ADMIN
-            )
-            Spacer(Modifier.width(6.dp))
-            AmountDisplay(amount = netAmount, size = AmountSize.SMALL, color = AccentGreen)
+            if (!largeFont) {
+                Spacer(Modifier.width(Spacing.s))
+                HorizontalDivider(
+                    modifier = Modifier
+                        .height(16.dp)
+                        .width(1.dp),
+                    color = BorderDefault
+                )
+                Spacer(Modifier.width(Spacing.s))
+                NetAmount(netAmount)
+            }
+        }
+        if (largeFont) {
+            Spacer(Modifier.height(Spacing.s))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) { NetAmount(netAmount) }
         }
     }
+}
+
+@Composable
+private fun NetAmount(netAmount: Double) {
+    Badge(
+        text = stringResource(R.string.dashboard_net_badge),
+        variant = BadgeVariant.ADMIN
+    )
+    Spacer(Modifier.width(6.dp))
+    AmountDisplay(amount = netAmount, size = AmountSize.SMALL, color = AccentGreen)
 }
 
 // ── Upcoming cutoffs section ──────────────────────────────────────────────────
@@ -490,7 +555,7 @@ private fun UpcomingCutoffCard(
     val urgencyText = when {
         daysUntil == 0 -> stringResource(R.string.dashboard_cutoff_today)
         daysUntil == 1 -> stringResource(R.string.dashboard_cutoff_tomorrow)
-        else -> stringResource(R.string.dashboard_cutoff_days, daysUntil)
+        else -> pluralStringResource(R.plurals.dashboard_cutoff_days, daysUntil, daysUntil)
     }
 
     Column(
@@ -499,7 +564,7 @@ private fun UpcomingCutoffCard(
             .clip(SubTrackShapes.l)
             .border(1.dp, borderColor, SubTrackShapes.l)
             .background(BgSurface)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(Spacing.m)
     ) {
         // Type chip
@@ -603,7 +668,7 @@ private fun PersonalSubRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = Spacing.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -675,7 +740,7 @@ private fun DebtorRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = Spacing.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -723,7 +788,7 @@ private fun DashboardInsightCard(
             .clip(SubTrackShapes.l)
             .border(1.dp, AccentBlue.copy(alpha = 0.2f), SubTrackShapes.l)
             .background(AccentBlueBg)
-            .clickable { onNavigateToDetail(insight.subscriptionId) }
+            .clickable(role = Role.Button) { onNavigateToDetail(insight.subscriptionId) }
             .padding(Spacing.m),
         verticalAlignment = Alignment.Top
     ) {
@@ -736,8 +801,9 @@ private fun DashboardInsightCard(
         Spacer(Modifier.width(Spacing.s))
         Column {
             Text(
-                text = stringResource(
-                    R.string.dashboard_insight_unused,
+                text = pluralStringResource(
+                    R.plurals.dashboard_insight_unused,
+                    insight.daysSinceActivity,
                     insight.subscriptionName,
                     insight.daysSinceActivity
                 ),
@@ -833,16 +899,7 @@ private fun DashboardEmptyState(
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
-private fun daysUntilCutoff(cutoffDay: Int): Int {
-    val cal = Calendar.getInstance()
-    val today = cal.get(Calendar.DAY_OF_MONTH)
-    return if (cutoffDay >= today) {
-        cutoffDay - today
-    } else {
-        val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        daysInMonth - today + cutoffDay
-    }
-}
+private const val LARGE_FONT_SCALE = 1.3f
 
 // ── Previews ──────────────────────────────────────────────────────────────────
 
@@ -861,6 +918,7 @@ private fun DashboardEmptyPreview() {
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success")
+@Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success — letra grande", fontScale = 1.5f)
 @Composable
 private fun DashboardSuccessPreview() {
     SubTrackTheme {
@@ -904,10 +962,7 @@ private fun previewDashboardData(): DashboardData {
     val shared = subs.filter { it.isShared }
     val debtors = shared.flatMap { sub ->
         sub.members
-            .filter {
-                it.currentStatus == com.gondroid.subtrack.domain.model.enums.PaymentStatus.OVERDUE ||
-                it.currentStatus == com.gondroid.subtrack.domain.model.enums.PaymentStatus.LATE
-            }
+            .filter { it.currentStatus.isOverdue }
             .map { member ->
                 DebtorInfo(
                     memberId = member.id,

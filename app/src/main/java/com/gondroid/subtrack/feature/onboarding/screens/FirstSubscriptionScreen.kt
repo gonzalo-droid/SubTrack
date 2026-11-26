@@ -29,9 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
@@ -78,13 +83,14 @@ fun FirstSubscriptionScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProgressDots(totalSteps = 2, currentStep = 1)
+            ProgressDots(totalSteps = 2, currentStep = 0)
             Text(
                 stringResource(R.string.onboarding_skip),
                 style = SubTrackType.bodyS,
                 color = TextSecondary,
                 modifier = Modifier
-                    .clickable(onClick = onSkip)
+                    .clickable(role = Role.Button, onClick = onSkip)
+                    .minimumInteractiveComponentSize()
                     .padding(start = Spacing.m, top = Spacing.xs, bottom = Spacing.xs)
             )
         }
@@ -97,18 +103,17 @@ fun FirstSubscriptionScreen(
             style = SubTrackType.displayS,
             color = TextPrimary
         )
-        Row {
-            Text(
-                stringResource(R.string.onboarding_first_sub_title_accent),
-                style = SubTrackType.displayS,
-                color = AccentGreen
-            )
-            Text(
-                stringResource(R.string.onboarding_first_sub_title_line2),
-                style = SubTrackType.displayS,
-                color = TextPrimary
-            )
-        }
+        val accent = stringResource(R.string.onboarding_first_sub_title_accent)
+        val line2 = stringResource(R.string.onboarding_first_sub_title_line2)
+        Text(
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = AccentGreen)) { append(accent) }
+                append(" ")
+                append(line2)
+            },
+            style = SubTrackType.displayS,
+            color = TextPrimary
+        )
         Spacer(Modifier.height(Spacing.xs))
         Text(
             stringResource(R.string.onboarding_first_sub_subtitle),

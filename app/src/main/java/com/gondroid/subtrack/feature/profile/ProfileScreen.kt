@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -164,7 +165,7 @@ private fun ProfileContent(
                     style = SubTrackType.headlineL,
                     color = TextPrimary
                 )
-                STIconButton(icon = Icons.Outlined.Settings, contentDescription = "", onClick = {})
+                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = {})
             }
         }
 
@@ -190,7 +191,7 @@ private fun ProfileContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
-                Avatar(name = data.user.name, size = 48.dp)
+                Avatar(name = data.user.name, size = 48.dp, imageUrl = data.user.profileImageUrl)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(data.user.name, style = SubTrackType.titleL, color = TextPrimary)
                     Text(data.user.email ?: "", style = SubTrackType.monoXS, color = TextTertiary)
@@ -770,7 +771,7 @@ private fun ReferralEntryCard(
         Column(modifier = Modifier.weight(1f)) {
             Text(stringResource(R.string.profile_referral_title), style = SubTrackType.titleL, color = TextPrimary)
             Text(
-                text = stringResource(R.string.profile_referral_months, monthsEarned),
+                text = pluralStringResource(R.plurals.profile_referral_months, monthsEarned, monthsEarned),
                 style = SubTrackType.monoXS,
                 color = AccentAmber
             )

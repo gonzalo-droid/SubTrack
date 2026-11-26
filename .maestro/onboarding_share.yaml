@@ -1,0 +1,28 @@
+# Onboarding completo desde cero. Verifica que el permiso de avisos se pida DESPUÉS de crear
+# la primera suscripción (D2) y que "Compartir con amigos" abra el asistente en modo compartido.
+appId: com.gondroid.subtrack
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 90000
+- tapOn: "Saltar"
+- tapOn: "Continuar con Google"
+- extendedWaitUntil:
+    visible: "Continuar con .* →"
+    timeout: 15000
+- assertNotVisible: "Activar notificaciones"   # ya no se pide antes de crear nada
+- tapOn: "Continuar con .* →"
+- extendedWaitUntil:
+    visible: "Activar notificaciones"
+    timeout: 15000
+- tapOn: "Saltar por ahora"
+- assertVisible: "¡Listo, .*!"
+- tapOn: "Compartir con amigos"
+- extendedWaitUntil:
+    visible: "1/5"                             # asistente abierto en modo compartido
+    timeout: 15000
+- tapOn: "Cerrar asistente"
+- tapOn: "Descartar"
+- assertVisible: "Suscripciones"

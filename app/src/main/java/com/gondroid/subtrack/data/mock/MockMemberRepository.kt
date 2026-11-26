@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.map
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.gondroid.subtrack.domain.model.enums.isOverdue
 
 @Singleton
 class MockMemberRepository @Inject constructor() : MemberRepository {
@@ -154,7 +155,7 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
                 else (punctual * 100 / decidedPayments.size)
 
                 val totalDebt = acc.participations
-                    .filter { it.status == PaymentStatus.OVERDUE || it.status == PaymentStatus.LATE }
+                    .filter { it.status.isOverdue }
                     .sumOf { it.shareAmount }
 
                 PersonSummary(

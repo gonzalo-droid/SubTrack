@@ -1,0 +1,34 @@
+# Menú ⋮ del detalle admin: editar el monto, pausar/reanudar y eliminar (con confirmación).
+appId: com.gondroid.subtrack
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 90000
+- tapOn: "Suscripciones"
+- tapOn: "Netflix Premium"
+- assertVisible: "Cobrar a .*"
+# Editar
+- tapOn: "Más opciones"
+- tapOn: "Editar"
+- assertVisible: "Guardar cambios"
+- back                                # atrás sale de la edición sin guardar
+- assertVisible: "Cobrar a .*"
+- tapOn: "Más opciones"
+- tapOn: "Editar"
+- tapOn: "Guardar cambios"
+- assertVisible: "Cambios guardados"
+# Pausar y reanudar
+- tapOn: "Más opciones"
+- tapOn: "Pausar"
+- assertVisible: "PAUSADA"
+- tapOn: "Más opciones"
+- tapOn: "Reanudar"
+- assertNotVisible: "PAUSADA"
+# Eliminar
+- tapOn: "Más opciones"
+- tapOn: "Eliminar"
+- assertVisible: "¿Eliminar Netflix Premium?"
+- tapOn: "Eliminar"                    # botón del diálogo
+- assertVisible: "Suscripción eliminada"
+- assertNotVisible: "Netflix Premium"

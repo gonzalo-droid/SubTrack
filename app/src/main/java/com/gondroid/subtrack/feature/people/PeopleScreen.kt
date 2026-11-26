@@ -29,6 +29,10 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.feature.people.components.PersonRow
+import com.gondroid.subtrack.core.designsystem.components.input.SegmentedSelector
+import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun PeopleScreen(
@@ -44,18 +48,47 @@ fun PeopleScreen(
         when (val state = uiState) {
             PeopleUiState.Loading -> Unit
             is PeopleUiState.Success -> {
+                val tabLabels = mapOf(
+                    PeopleTab.OWED_TO_ME to stringResource(R.string.people_tab_owed_to_me),
+                    PeopleTab.I_OWE to stringResource(R.string.people_tab_i_owe)
+                )
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = Spacing.xl),
                     verticalArrangement = Arrangement.spacedBy(Spacing.s),
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.people_title),
+                            style = SubTrackType.headlineL,
+                            color = TextPrimary,
+                            modifier = Modifier
+                                .padding(horizontal = Spacing.base)
+                                .padding(top = Spacing.l)
+                                .semantics { heading() }
+                        )
+                    }
                     stickyHeader {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(BgApp)
-                                .padding(horizontal = Spacing.base, vertical = Spacing.m)
+                                .padding(horizontal = Spacing.base, vertical = Spacing.m),
+                            verticalArrangement = Arrangement.spacedBy(Spacing.s)
                         ) {
+                            SegmentedSelector(
+                                options = PeopleTab.entries,
+                                selectedIndex = state.tab.ordinal,
+                                onSelectionChange = { viewModel.selectTab(PeopleTab.entries[it]) },
+                                labelProvider = { tabLabels.getValue(it) },
+                                countProvider = {
+                                    when (it) {
+                                        PeopleTab.OWED_TO_ME -> state.owedToMeCount
+                                        PeopleTab.I_OWE -> state.iOweCount
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
                             STTextField(
                                 value = state.searchQuery,
                                 onValueChange = viewModel::updateSearchQuery,
@@ -74,20 +107,24 @@ fun PeopleScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = if (state.searchQuery.isBlank())
-                                        stringResource(R.string.people_empty)
-                                    else
-                                        stringResource(R.string.people_empty_search),
+                                    text = when {
+                                        state.searchQuery.isNotBlank() -> stringResource(R.string.people_empty_search)
+                                        state.tab == PeopleTab.I_OWE -> stringResource(R.string.people_empty_i_owe)
+                                        else -> stringResource(R.string.people_empty)
+                                    },
                                     style = SubTrackType.bodyM,
                                     color = TextTertiary
                                 )
                             }
                         }
                     } else {
-                        items(state.people, key = { it.phone }) { person ->
+                        items(state.people, key = { "${it.userId}-${it.phone}-${it.name}" }) { person ->
                             PersonRow(
                                 person = person,
                                 onClick = { viewModel.selectPerson(person) },
+                                debtLabel = stringResource(
+                                    if (state.tab == PeopleTab.I_OWE) R.string.people_i_owe_label else R.string.people_owes_label
+                                ),
                                 modifier = Modifier.padding(horizontal = Spacing.base)
                             )
                         }

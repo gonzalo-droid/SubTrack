@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +58,7 @@ import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 data class BulkReminderItem(
     val member: Member,
@@ -68,12 +71,24 @@ fun BulkReminderSheet(
     pendingItems: List<BulkReminderItem>,
     templates: List<Template>,
     adminName: String,
-    onDone: () -> Unit
+    onDone: (sentCount: Int) -> Unit
 ) {
     val context = LocalContext.current
+    val messenger = LocalSnackbarMessenger.current
     var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
     var selectedTemplateId by remember { mutableStateOf(templates.firstOrNull { it.isDefault }?.id ?: templates.firstOrNull()?.id) }
     var sendingIndex by remember { mutableIntStateOf(-1) }
+    var sentCount by remember { mutableIntStateOf(0) }
+
+    // A failed open closes the sheet so the error snackbar isn't hidden behind it.
+    fun send(phone: String, message: String): Boolean {
+        val error = WhatsAppHelper.openWhatsApp(context, phone, message)
+        if (error == null) sentCount++ else {
+            messenger.show(error)
+            onDone(sentCount)
+        }
+        return error == null
+    }
 
     val pendingMembers = pendingItems.map { it.member }
     val selectedMembers = pendingMembers.filter { it.id in selectedMemberIds }
@@ -84,7 +99,7 @@ fun BulkReminderSheet(
         // Sending mode: show current member + next button
         val currentItem = selectedItems.getOrNull(sendingIndex)
         if (currentItem == null) {
-            onDone()
+            LaunchedEffect(Unit) { onDone(sentCount) }
             return
         }
         val current = currentItem.member
@@ -115,11 +130,10 @@ fun BulkReminderSheet(
                     text = if (sendingIndex + 1 < selectedItems.size)
                         stringResource(R.string.member_sheet_bulk_next, sendingIndex + 2, selectedItems.size)
                     else
-                        stringResource(R.string.member_sheet_bulk_done, selectedItems.size),
+                        pluralStringResource(R.plurals.member_sheet_bulk_done, selectedItems.size, selectedItems.size),
                     onClick = {
                         val nextItem = selectedItems.getOrNull(sendingIndex + 1)
                         if (nextItem != null) {
-                            sendingIndex++
                             val next = nextItem.member
                             val msg = template?.let {
                                 WhatsAppHelper.buildReminderMessage(
@@ -129,9 +143,9 @@ fun BulkReminderSheet(
                                     adminName = adminName
                                 )
                             } ?: ""
-                            WhatsAppHelper.openWhatsApp(context, next.phone, msg)
+                            if (send(next.phone, msg)) sendingIndex++
                         } else {
-                            onDone()
+                            onDone(sentCount)
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -153,8 +167,9 @@ fun BulkReminderSheet(
                 color = TextPrimary
             )
             Text(
-                text = stringResource(
-                    R.string.member_sheet_bulk_subtitle,
+                text = pluralStringResource(
+                    R.plurals.member_sheet_bulk_subtitle,
+                    selectedMembers.size,
                     selectedMembers.size,
                     "%.2f".format(selectedMembers.sumOf { it.shareAmount })
                 ),
@@ -283,7 +298,7 @@ fun BulkReminderSheet(
             Spacer(Modifier.height(Spacing.m))
 
             PrimaryButton(
-                text = stringResource(R.string.member_sheet_bulk_send, selectedItems.size),
+                text = pluralStringResource(R.plurals.member_sheet_bulk_send, selectedItems.size, selectedItems.size),
                 onClick = {
                     if (selectedItems.isNotEmpty() && template != null) {
                         val firstItem = selectedItems.first()
@@ -294,8 +309,7 @@ fun BulkReminderSheet(
                             amount = "%.2f".format(first.shareAmount),
                             adminName = adminName
                         )
-                        WhatsAppHelper.openWhatsApp(context, first.phone, msg)
-                        sendingIndex = 0
+                        if (send(first.phone, msg)) sendingIndex = 0
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),

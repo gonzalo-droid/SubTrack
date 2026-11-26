@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.AvatarStack
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
@@ -39,6 +40,8 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.util.toComposeColor
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
+import com.gondroid.subtrack.core.designsystem.components.text.Badge
+import com.gondroid.subtrack.core.designsystem.components.text.BadgeVariant
 
 @Composable
 fun SubscriptionRow(
@@ -53,7 +56,7 @@ fun SubscriptionRow(
             .clip(SubTrackShapes.l)
             .background(BgSurface)
             .border(1.dp, BorderDefault, SubTrackShapes.l)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(Spacing.m),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
@@ -76,6 +79,9 @@ fun SubscriptionRow(
                     color = TextPrimary,
                     modifier = Modifier.weight(1f, fill = false)
                 )
+                if (subscription.isPaused) {
+                    Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+                }
                 if (subscription.isShared) {
                     Text(
                         text = if (isAdmin) stringResource(R.string.subscription_list_tag_admin)

@@ -1,0 +1,33 @@
+# Suscripción compartida: Spotify viene preseleccionado como compartido (plan familiar).
+# Servicio → ¿Quién paga? → Detalles → Miembros → División → éxito (5 pasos).
+appId: com.gondroid.subtrack
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 90000
+- tapOn: "Suscripciones"
+- tapOn: "Crear suscripción"          # FAB
+- tapOn: "Spotify"
+- tapOn: "Continuar"
+- assertVisible: "¿Quién paga Spotify?"
+- assertVisible: "2/5"                # "La comparto" ya viene marcada
+- tapOn: "Continuar"
+- tapOn: "Usar sugerido.*"
+- tapOn: "Continuar"
+- assertVisible: "¿Con quién la compartes?"
+- tapOn: "+ Agregar miembro"
+- tapOn: "Ej. María García"
+- inputText: "Lucia Torres"
+- tapOn: "+51 9XX XXX XXX"
+- inputText: "987654321"
+- hideKeyboard
+- tapOn: "Agregar"
+- assertVisible: "Lucia Torres"
+- tapOn: "Continuar"
+- assertVisible: "Partes iguales"
+- tapOn: "Crear y enviar invitaciones"
+- tapOn:                              # aviso de notificaciones (solo la primera vez)
+    text: "Saltar por ahora"
+    optional: true
+- assertVisible: "¡Listo!"

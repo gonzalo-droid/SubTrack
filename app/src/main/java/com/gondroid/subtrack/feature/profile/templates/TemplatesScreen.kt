@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.profile.templates
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -72,6 +71,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,12 +86,14 @@ fun TemplatesScreen(
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val messenger = LocalSnackbarMessenger.current
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is TemplatesEvent.Duplicated -> Toast.makeText(context, context.getString(R.string.template_duplicated), Toast.LENGTH_SHORT).show()
-                is TemplatesEvent.Deleted -> Toast.makeText(context, context.getString(R.string.template_deleted), Toast.LENGTH_SHORT).show()
-                is TemplatesEvent.Error -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is TemplatesEvent.Duplicated -> messenger.show(R.string.template_duplicated)
+                is TemplatesEvent.Deleted -> messenger.show(R.string.template_deleted)
+                is TemplatesEvent.Error -> messenger.show(event.message)
             }
         }
     }
@@ -145,11 +147,11 @@ fun TemplatesScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "", onClick = onBack)
+            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.common_back), onClick = onBack)
             Text(stringResource(R.string.template_screen_title), style = SubTrackType.headlineS, color = TextPrimary)
             STIconButton(
                 icon = Icons.Outlined.Add,
-                contentDescription = "",
+                contentDescription = stringResource(R.string.cd_new_template),
                 onClick = { onEditTemplate(null) }
             )
         }

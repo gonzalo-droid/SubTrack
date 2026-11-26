@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,13 +49,19 @@ import com.gondroid.subtrack.core.util.toComposeColor
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.semantics.Role
+import com.gondroid.subtrack.domain.util.nextCutoff
+import java.util.Calendar
 
 private val CURRENCIES = listOf("PEN", "USD")
 private val CYCLES = listOf(BillingCycle.MONTHLY, BillingCycle.YEARLY)
-private val DAYS = (1..31).toList()
 
 @Composable
 fun DetailsStep(
+    isEditing: Boolean,
     service: ServiceTemplate?,
     totalAmount: String,
     currency: String,
@@ -77,7 +81,11 @@ fun DetailsStep(
             .padding(horizontal = Spacing.base)
     ) {
         Spacer(Modifier.height(Spacing.m))
-        Eyebrow(text = stringResource(R.string.create_subscription_step2_eyebrow))
+        Eyebrow(
+            text = stringResource(
+                if (isEditing) R.string.edit_subscription_eyebrow else R.string.create_subscription_step2_eyebrow
+            )
+        )
         Spacer(Modifier.height(Spacing.xs))
         Text(
             stringResource(R.string.create_subscription_step2_title),
@@ -235,37 +243,59 @@ fun DetailsStep(
                 )
             }
             Spacer(Modifier.height(Spacing.s))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.xs)
-            ) {
-                items(DAYS) { day ->
-                    val isSelected = day == cutoffDay
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .clip(SubTrackShapes.s)
-                            .background(if (isSelected) AccentGreen.copy(alpha = 0.15f) else BgSurfaceEl)
-                            .border(1.dp, if (isSelected) AccentGreen.copy(alpha = 0.5f) else BorderDefault, SubTrackShapes.s)
-                            .clickable { onCutoffDayChange(day) }
-                            .padding(horizontal = Spacing.s, vertical = Spacing.xs)
-                    ) {
-                        Text(
-                            "$day",
-                            style = SubTrackType.monoS,
-                            color = if (isSelected) AccentGreen else TextTertiary
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.height(Spacing.xs))
+            DayGrid(selectedDay = cutoffDay, onSelect = onCutoffDayChange)
+            Spacer(Modifier.height(Spacing.s))
+            val next = nextCutoff(cutoffDay)
             Text(
-                stringResource(R.string.create_subscription_cutoff_hint, cutoffDay),
+                stringResource(
+                    R.string.create_subscription_cutoff_next,
+                    stringResource(
+                        R.string.date_day_of_month,
+                        next.get(Calendar.DAY_OF_MONTH),
+                        stringArrayResource(R.array.month_names)[next.get(Calendar.MONTH)]
+                    )
+                ),
                 style = SubTrackType.bodyXS,
-                color = TextTertiary
+                color = TextSecondary
             )
         }
 
         Spacer(Modifier.height(Spacing.xl))
+    }
+}
+
+/** Month-calendar style day picker: 7 columns, 48dp tall cells. */
+@Composable
+private fun DayGrid(selectedDay: Int, onSelect: (Int) -> Unit) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+        modifier = Modifier.selectableGroup()
+    ) {
+        (1..31).chunked(7).forEach { week ->
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                week.forEach { day ->
+                    val isSelected = day == selectedDay
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .clip(SubTrackShapes.s)
+                            .background(if (isSelected) AccentGreen.copy(alpha = 0.15f) else BgSurfaceEl)
+                            .border(1.dp, if (isSelected) AccentGreen.copy(alpha = 0.5f) else BorderDefault, SubTrackShapes.s)
+                            .selectable(selected = isSelected, role = Role.RadioButton) { onSelect(day) }
+                    ) {
+                        Text(
+                            "$day",
+                            style = SubTrackType.monoS,
+                            color = if (isSelected) AccentGreen else TextSecondary
+                        )
+                    }
+                }
+                // Keep the last row's cells the same width as the others
+                repeat(7 - week.size) { Spacer(Modifier.weight(1f)) }
+            }
+        }
     }
 }
 
@@ -274,6 +304,7 @@ fun DetailsStep(
 private fun DetailsStepPreview() {
     SubTrackTheme {
         DetailsStep(
+            isEditing = false,
             service = ServiceTemplate("tpl_netflix", "Netflix", "#E50914", "N", 54.90, SubscriptionCategory.STREAMING),
             totalAmount = "54.90",
             currency = "PEN",
