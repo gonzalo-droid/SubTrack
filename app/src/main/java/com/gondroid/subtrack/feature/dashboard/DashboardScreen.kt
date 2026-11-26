@@ -87,7 +87,7 @@ import com.gondroid.subtrack.domain.model.DebtorInfo
 import com.gondroid.subtrack.domain.model.Insight
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
-import java.util.Calendar
+import com.gondroid.subtrack.domain.util.daysUntilCutoff
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -832,17 +832,6 @@ private fun DashboardEmptyState(
 }
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
-
-private fun daysUntilCutoff(cutoffDay: Int): Int {
-    val cal = Calendar.getInstance()
-    val today = cal.get(Calendar.DAY_OF_MONTH)
-    return if (cutoffDay >= today) {
-        cutoffDay - today
-    } else {
-        val daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        daysInMonth - today + cutoffDay
-    }
-}
 
 // ── Previews ──────────────────────────────────────────────────────────────────
 

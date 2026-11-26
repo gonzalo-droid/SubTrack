@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,6 +82,8 @@ import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberD
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.ExitRequestSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.RemoveMemberSheet
+import com.gondroid.subtrack.domain.util.daysUntilCutoff
+import com.gondroid.subtrack.domain.util.nextCutoff
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -446,14 +450,13 @@ private fun AdminDetailContent(
 
 @Composable
 private fun CutoffPill(cutoffDay: Int) {
-    val today = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_MONTH)
-    val monthNames = listOf(
-        "enero", "febrero", "marzo", "abril", "mayo", "junio",
-        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    val next = nextCutoff(cutoffDay)
+    val dateStr = stringResource(
+        R.string.date_day_of_month,
+        next.get(java.util.Calendar.DAY_OF_MONTH),
+        stringArrayResource(R.array.month_names)[next.get(java.util.Calendar.MONTH)]
     )
-    val monthIndex = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH)
-    val dateStr = "$cutoffDay de ${monthNames[monthIndex]}"
-    val (bg, color, text) = if (cutoffDay == today) {
+    val (bg, color, text) = if (daysUntilCutoff(cutoffDay) == 0) {
         Triple(AccentAmberBg, AccentAmber, stringResource(R.string.subscription_detail_cutoff_today, dateStr))
     } else {
         Triple(
