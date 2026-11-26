@@ -56,12 +56,13 @@ fun PersonRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
-        Avatar(name = person.name, size = 44.dp)
+        val displayName = person.name.ifBlank { stringResource(R.string.people_unknown_admin) }
+        Avatar(name = displayName, size = 44.dp)
 
         Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = person.name,
+                    text = displayName,
                     style = SubTrackType.titleL,
                     color = TextPrimary,
                     modifier = Modifier.weight(1f, fill = false)

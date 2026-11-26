@@ -73,6 +73,12 @@ class PeopleUseCasesTest {
         assertEquals(listOf("disney"), owner.subscriptions.map { it.subscriptionId })
     }
 
+    @Test fun `an admin without a user record still shows up with a blank name`() = runBlocking {
+        val ghost = listOf(shared("spotify", "ghost", member("me-in-spotify", "me", PaymentStatus.PENDING)))
+        val debts = GetMyDebtsUseCase(FakeSubs(ghost), FakeUsers())().first()
+        assertEquals(listOf("" to "ghost"), debts.map { it.name to it.userId })
+    }
+
     @Test fun `paused subscriptions create no debts`() = runBlocking {
         val paused = subs.map { it.copy(isPaused = true) }
         assertEquals(emptyList<Any>(), GetDebtorsUseCase(FakeSubs(paused), FakeUsers())().first())

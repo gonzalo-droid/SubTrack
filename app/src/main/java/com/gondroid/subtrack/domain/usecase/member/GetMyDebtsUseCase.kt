@@ -36,13 +36,14 @@ class GetMyDebtsUseCase @Inject constructor(
                 ) to me.joinedAt
             }
             .groupBy({ it.first.first }, { it })
-            .mapNotNull { (ownerId, entries) ->
-                val owner = userRepository.getUserById(ownerId) ?: return@mapNotNull null
+            .map { (ownerId, entries) ->
+                // An admin we can't resolve still counts; the UI shows a fallback name for a blank one.
+                val owner = userRepository.getUserById(ownerId)
                 val participations = entries.map { it.first.second }
                 PersonSummary(
-                    userId = owner.id,
-                    name = owner.name,
-                    phone = owner.phone,
+                    userId = ownerId,
+                    name = owner?.name.orEmpty(),
+                    phone = owner?.phone.orEmpty(),
                     hasApp = true,
                     totalDebt = participations.filter { it.status.isOverdue }.sumOf { it.shareAmount },
                     totalMonthlyContribution = participations.sumOf { it.shareAmount },

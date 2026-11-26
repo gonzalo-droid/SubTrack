@@ -94,7 +94,7 @@ class EditTemplateViewModel @Inject constructor(
         viewModelScope.launch {
             saveTemplate(editing.form.toTemplate())
                 .onSuccess { _events.emit(EditTemplateEvent.Saved) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message ?: "Error al guardar")) }
+                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
             _uiState.value = editing
         }
     }
@@ -108,7 +108,7 @@ class EditTemplateViewModel @Inject constructor(
         viewModelScope.launch {
             deleteTemplate(editing.form.id)
                 .onSuccess { _events.emit(EditTemplateEvent.Deleted) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
         }
     }
 

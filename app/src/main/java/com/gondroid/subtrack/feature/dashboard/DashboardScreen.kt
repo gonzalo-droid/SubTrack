@@ -182,7 +182,7 @@ private fun DashboardContent(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 88.dp), // room for the FAB (56dp + margins)
+                contentPadding = PaddingValues(bottom = FabClearance),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
                 // ── Segmented selector ────────────────────────────────────────
@@ -900,6 +900,9 @@ private fun DashboardEmptyState(
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
 private const val LARGE_FONT_SCALE = 1.3f
+
+/** Bottom room so the last row clears the FAB: 56dp FAB + 16dp margin + 16dp gap. */
+private val FabClearance = Spacing.huge + Spacing.xxl + Spacing.s
 
 // ── Previews ──────────────────────────────────────────────────────────────────
 

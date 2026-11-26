@@ -45,9 +45,12 @@ class CreateSubscriptionViewModel @Inject constructor(
 ) : ViewModel() {
 
     /** D2: the notification permission is asked right after the first subscription is created. */
-    val askNotificationPermission: StateFlow<Boolean> = userPreferences.notificationPermissionRequested
-        .map { requested -> !requested }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    /** Null until DataStore answers, so the success screen doesn't flash before the prompt. */
+    val askNotificationPermission: StateFlow<Boolean?> = userPreferences.notificationPermissionRequested
+        .map<Boolean, Boolean?> { requested -> !requested }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private var startsShared = false
 
     fun onNotificationPromptDone() {
         viewModelScope.launch { userPreferences.setNotificationPermissionRequested(true) }
@@ -103,6 +106,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     fun init(startWithShared: Boolean, editSubscriptionId: String?) {
+        startsShared = startWithShared
         if (startWithShared) _form.update { it.copy(isShared = true) }
         if (editSubscriptionId != null) loadForEdit(editSubscriptionId)
     }
@@ -243,7 +247,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         viewModelScope.launch {
             updateSubscriptionDetails(id, form.totalAmountDouble, form.currency, form.cycle, form.cutoffDay)
                 .onSuccess { _uiState.value = CreateSubscriptionUiState.Saved }
-                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message ?: "Error al guardar") }
+                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message) }
         }
     }
 
@@ -306,7 +310,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                         memberCount = members.size
                     )
                 }
-                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message ?: "Error al crear") }
+                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message) }
         }
     }
 
@@ -316,7 +320,8 @@ class CreateSubscriptionViewModel @Inject constructor(
     }
 
     fun resetWizard() {
-        _form.value = CreateSubscriptionFormState()
+        // "Crear otra" keeps the shared mode the wizard was opened with
+        _form.value = CreateSubscriptionFormState(isShared = true.takeIf { startsShared })
         _currentStep.value = WizardStep.SERVICE
         _uiState.value = CreateSubscriptionUiState.Idle
     }

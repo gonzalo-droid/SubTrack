@@ -39,7 +39,8 @@ sealed interface AuthState {
     data object Idle : AuthState
     data object Authenticating : AuthState
     data class Authenticated(val user: User) : AuthState
-    data class Error(val message: String) : AuthState
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : AuthState
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -102,7 +103,7 @@ class OnboardingViewModel(
                     _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
                 }
                 .onFailure { error ->
-                    _authState.value = AuthState.Error(error.message ?: "Error al autenticar")
+                    _authState.value = AuthState.Error(error.message)
                 }
         }
     }

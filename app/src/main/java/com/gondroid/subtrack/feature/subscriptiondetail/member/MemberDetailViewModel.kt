@@ -49,7 +49,8 @@ sealed interface MemberActionSheet {
 sealed interface MemberDetailEvent {
     data object PaymentMarked : MemberDetailEvent
     data object ExitRequested : MemberDetailEvent
-    data class Error(val message: String) : MemberDetailEvent
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : MemberDetailEvent
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -93,7 +94,7 @@ class MemberDetailViewModel(
                     _events.emit(MemberDetailEvent.PaymentMarked)
                     closeSheet()
                 }
-                .onFailure { _events.emit(MemberDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(MemberDetailEvent.Error(it.message)) }
         }
     }
 
@@ -104,7 +105,7 @@ class MemberDetailViewModel(
                     _events.emit(MemberDetailEvent.ExitRequested)
                     closeSheet()
                 }
-                .onFailure { _events.emit(MemberDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(MemberDetailEvent.Error(it.message)) }
         }
     }
 

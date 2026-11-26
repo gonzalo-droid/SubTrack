@@ -84,6 +84,7 @@ import androidx.compose.runtime.LaunchedEffect
 import android.os.Build
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
+import androidx.compose.material3.CircularProgressIndicator
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -118,7 +119,8 @@ fun CreateSubscriptionScreen(
 
     // Success overlay — preceded by the notification prompt the first time (D2)
     if (uiState is CreateSubscriptionUiState.Success) {
-        if (askNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (askNotificationPermission == null) return // DataStore not read yet: one frame at most
+        if (askNotificationPermission == true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             NotificationsPermissionScreen(
                 onGrant = viewModel::onNotificationPromptDone,
                 onSkip = viewModel::onNotificationPromptDone,
@@ -149,7 +151,7 @@ fun CreateSubscriptionScreen(
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is CreateSubscriptionUiState.Error -> {
-                messenger.show(state.message)
+                messenger.show(state.message, R.string.common_error_generic)
                 viewModel.errorShown()
             }
             CreateSubscriptionUiState.NotFound -> {
@@ -218,7 +220,12 @@ fun CreateSubscriptionScreen(
                         suggestsShared = form.selectedService?.suggestsShared == true,
                         onSelect = viewModel::setShared
                     )
-                    WizardStep.DETAILS -> DetailsStep(
+                    // Editing: inputs stay hidden until the subscription loads, so typing can't be overwritten
+                    WizardStep.DETAILS -> if (form.isEditing && form.selectedService == null) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = AccentGreen)
+                        }
+                    } else DetailsStep(
                         isEditing = form.isEditing,
                         service = form.selectedService,
                         totalAmount = form.totalAmount,

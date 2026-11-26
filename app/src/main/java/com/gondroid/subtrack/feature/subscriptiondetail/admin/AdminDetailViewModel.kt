@@ -56,7 +56,8 @@ sealed interface AdminDetailEvent {
     data class BulkReminderSent(val count: Int) : AdminDetailEvent
     data class PausedChanged(val paused: Boolean) : AdminDetailEvent
     data object Deleted : AdminDetailEvent
-    data class Error(val message: String) : AdminDetailEvent
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : AdminDetailEvent
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -138,7 +139,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberAdded(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -149,7 +150,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberUpdated(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -188,7 +189,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberMarkedAsPaid(memberName))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -205,7 +206,7 @@ class AdminDetailViewModel @Inject constructor(
         viewModelScope.launch {
             pauseSubscriptionUseCase(subscriptionId, paused)
                 .onSuccess { _events.emit(AdminDetailEvent.PausedChanged(paused)) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -214,7 +215,7 @@ class AdminDetailViewModel @Inject constructor(
         viewModelScope.launch {
             deleteSubscriptionUseCase(subscriptionId)
                 .onSuccess { _events.emit(AdminDetailEvent.Deleted) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 

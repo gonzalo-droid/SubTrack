@@ -129,7 +129,7 @@ fun EditTemplateScreen(
                     onBack()
                 }
                 is EditTemplateEvent.Deleted -> onBack()
-                is EditTemplateEvent.Error -> messenger.show(event.message)
+                is EditTemplateEvent.Error -> messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }

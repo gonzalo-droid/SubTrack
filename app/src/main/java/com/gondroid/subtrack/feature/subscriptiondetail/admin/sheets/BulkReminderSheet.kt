@@ -59,6 +59,7 @@ import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.runtime.saveable.rememberSaveable
 
 data class BulkReminderItem(
     val member: Member,
@@ -77,8 +78,9 @@ fun BulkReminderSheet(
     val messenger = LocalSnackbarMessenger.current
     var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
     var selectedTemplateId by remember { mutableStateOf(templates.firstOrNull { it.isDefault }?.id ?: templates.firstOrNull()?.id) }
-    var sendingIndex by remember { mutableIntStateOf(-1) }
-    var sentCount by remember { mutableIntStateOf(0) }
+    // Saveable so a rotation mid-send keeps the position and the count
+    var sendingIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var sentCount by rememberSaveable { mutableIntStateOf(0) }
 
     // A failed open closes the sheet so the error snackbar isn't hidden behind it.
     fun send(phone: String, message: String): Boolean {
@@ -135,14 +137,12 @@ fun BulkReminderSheet(
                         val nextItem = selectedItems.getOrNull(sendingIndex + 1)
                         if (nextItem != null) {
                             val next = nextItem.member
-                            val msg = template?.let {
-                                WhatsAppHelper.buildReminderMessage(
-                                    memberName = next.name,
-                                    serviceName = nextItem.subscriptionName,
-                                    amount = "%.2f".format(next.shareAmount),
-                                    adminName = adminName
-                                )
-                            } ?: ""
+                            val msg = WhatsAppHelper.buildReminderMessage(
+                                memberName = next.name,
+                                serviceName = nextItem.subscriptionName,
+                                amount = "%.2f".format(next.shareAmount),
+                                adminName = adminName
+                            )
                             if (send(next.phone, msg)) sendingIndex++
                         } else {
                             onDone(sentCount)

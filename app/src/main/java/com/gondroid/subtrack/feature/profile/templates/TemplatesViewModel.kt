@@ -20,7 +20,8 @@ import javax.inject.Inject
 sealed interface TemplatesEvent {
     data class Duplicated(val name: String) : TemplatesEvent
     data class Deleted(val name: String) : TemplatesEvent
-    data class Error(val message: String) : TemplatesEvent
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : TemplatesEvent
 }
 
 @HiltViewModel
@@ -62,7 +63,7 @@ class TemplatesViewModel @Inject constructor(
                 ?.templates?.find { it.id == templateId }?.name ?: ""
             duplicateTemplate(templateId)
                 .onSuccess { _events.emit(TemplatesEvent.Duplicated(name)) }
-                .onFailure { _events.emit(TemplatesEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(TemplatesEvent.Error(it.message)) }
             closeActions()
         }
     }
@@ -73,7 +74,7 @@ class TemplatesViewModel @Inject constructor(
                 ?.templates?.find { it.id == templateId }?.name ?: ""
             deleteTemplate(templateId)
                 .onSuccess { _events.emit(TemplatesEvent.Deleted(name)) }
-                .onFailure { _events.emit(TemplatesEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(TemplatesEvent.Error(it.message)) }
             closeActions()
         }
     }

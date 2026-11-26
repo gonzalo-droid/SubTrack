@@ -115,6 +115,7 @@ fun AdminDetailScreen(
     val context = LocalContext.current
     val resources = LocalResources.current
     val messenger = LocalSnackbarMessenger.current
+    var deleting by remember { mutableStateOf(false) }
 
     // Collect one-shot events
     LaunchedEffect(Unit) {
@@ -136,7 +137,7 @@ fun AdminDetailScreen(
                     if (event.paused) R.string.subscription_paused_toast else R.string.subscription_resumed_toast
                 )
                 AdminDetailEvent.Deleted -> resources.getString(R.string.subscription_deleted_toast)
-                is AdminDetailEvent.Error -> event.message
+                is AdminDetailEvent.Error -> event.message ?: resources.getString(R.string.common_error_generic)
             }
             messenger.show(msg)
         }
@@ -149,7 +150,8 @@ fun AdminDetailScreen(
     ) {
         when (val state = uiState) {
             AdminDetailUiState.Loading -> AdminDetailSkeleton(modifier = Modifier.padding(top = Spacing.s))
-            AdminDetailUiState.NotFound -> AdminDetailNotFound(onBack = onBack)
+            // Right after deleting, the router leaves this screen; don't flash "not found" meanwhile.
+            AdminDetailUiState.NotFound -> if (!deleting) AdminDetailNotFound(onBack = onBack)
             is AdminDetailUiState.Success -> AdminDetailContent(
                 data = state.data,
                 onBack = onBack,
@@ -159,7 +161,10 @@ fun AdminDetailScreen(
                 onCobranzaTap = viewModel::openBulkReminder,
                 onEdit = onEdit,
                 onSetPaused = viewModel::setPaused,
-                onDelete = viewModel::deleteSubscription
+                onDelete = {
+                    deleting = true
+                    viewModel.deleteSubscription()
+                }
             )
         }
 
@@ -264,9 +269,7 @@ fun AdminDetailScreen(
                         )
 
                     is ActiveSheet.BulkReminder -> {
-                        val pending = successState?.data?.activeMembers?.filter {
-                            it.currentStatus.isUnpaid
-                        } ?: emptyList()
+                        val pending = successState?.data?.pendingMembers.orEmpty()
                         BulkReminderSheet(
                             pendingItems = pending.map {
                                 com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.BulkReminderItem(

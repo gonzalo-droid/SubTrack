@@ -622,6 +622,7 @@
     <string name="people_has_app_tag">APP</string>
     <string name="people_owes_label">debe</string>
     <string name="people_i_owe_label">le debes</string>
+    <string name="people_unknown_admin">Admin</string>
     <string name="people_title">Personas</string>
     <string name="people_tab_owed_to_me">Te deben</string>
     <string name="people_tab_i_owe">Debes</string>

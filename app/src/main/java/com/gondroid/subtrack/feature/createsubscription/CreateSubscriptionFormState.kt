@@ -78,5 +78,6 @@ sealed interface CreateSubscriptionUiState {
     data object Saved : CreateSubscriptionUiState
     data object NotFound : CreateSubscriptionUiState
     data class Success(val createdId: String, val isShared: Boolean, val serviceName: String, val memberCount: Int) : CreateSubscriptionUiState
-    data class Error(val message: String) : CreateSubscriptionUiState
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : CreateSubscriptionUiState
 }

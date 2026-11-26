@@ -93,7 +93,7 @@ fun TemplatesScreen(
             when (event) {
                 is TemplatesEvent.Duplicated -> messenger.show(R.string.template_duplicated)
                 is TemplatesEvent.Deleted -> messenger.show(R.string.template_deleted)
-                is TemplatesEvent.Error -> messenger.show(event.message)
+                is TemplatesEvent.Error -> messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }

@@ -129,7 +129,7 @@ fun AuthOnboardingScreen(
         // Error message
         if (authState is AuthState.Error) {
             Text(
-                authState.message,
+                authState.message ?: stringResource(R.string.common_error_generic),
                 style = SubTrackType.bodyXS,
                 color = com.gondroid.subtrack.core.designsystem.theme.AccentRed,
                 textAlign = TextAlign.Center

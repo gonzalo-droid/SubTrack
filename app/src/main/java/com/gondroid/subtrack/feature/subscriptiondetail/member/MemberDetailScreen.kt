@@ -105,7 +105,7 @@ fun MemberDetailScreen(
                 is MemberDetailEvent.ExitRequested ->
                     messenger.show(R.string.member_detail_exit_requested)
                 is MemberDetailEvent.Error ->
-                    messenger.show(event.message)
+                    messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }
