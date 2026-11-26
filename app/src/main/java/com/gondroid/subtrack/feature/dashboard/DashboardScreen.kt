@@ -92,6 +92,10 @@ import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import com.gondroid.subtrack.domain.model.enums.isOverdue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.outlined.Add
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -945,10 +949,7 @@ private fun previewDashboardData(): DashboardData {
     val shared = subs.filter { it.isShared }
     val debtors = shared.flatMap { sub ->
         sub.members
-            .filter {
-                it.currentStatus == com.gondroid.subtrack.domain.model.enums.PaymentStatus.OVERDUE ||
-                it.currentStatus == com.gondroid.subtrack.domain.model.enums.PaymentStatus.LATE
-            }
+            .filter { it.currentStatus.isOverdue }
             .map { member ->
                 DebtorInfo(
                     memberId = member.id,

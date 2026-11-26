@@ -99,6 +99,7 @@ import androidx.compose.runtime.setValue
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
+import com.gondroid.subtrack.domain.model.enums.isUnpaid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -218,8 +219,7 @@ fun AdminDetailScreen(
                                     messenger.show(R.string.coming_soon_history)
                                 },
                                 onRemove = {
-                                    val hasPending = member.currentStatus == PaymentStatus.OVERDUE ||
-                                            member.currentStatus == PaymentStatus.PENDING
+                                    val hasPending = member.currentStatus.isUnpaid
                                     if (hasPending) {
                                         viewModel.openRemoveMember(member.id)
                                     } else {
@@ -265,8 +265,7 @@ fun AdminDetailScreen(
 
                     is ActiveSheet.BulkReminder -> {
                         val pending = successState?.data?.activeMembers?.filter {
-                            it.currentStatus == PaymentStatus.OVERDUE ||
-                                    it.currentStatus == PaymentStatus.PENDING
+                            it.currentStatus.isUnpaid
                         } ?: emptyList()
                         BulkReminderSheet(
                             pendingItems = pending.map {

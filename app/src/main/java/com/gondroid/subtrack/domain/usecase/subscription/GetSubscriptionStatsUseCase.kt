@@ -2,12 +2,12 @@ package com.gondroid.subtrack.domain.usecase.subscription
 
 import com.gondroid.subtrack.domain.model.SubscriptionStats
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
-import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
+import com.gondroid.subtrack.domain.model.enums.isUnpaid
 
 class GetSubscriptionStatsUseCase @Inject constructor(
     private val subscriptionRepository: SubscriptionRepository,
@@ -29,10 +29,7 @@ class GetSubscriptionStatsUseCase @Inject constructor(
             val pendingMembers = shared
                 .filter { it.ownerId == user?.id }
                 .flatMap { it.members }
-                .count {
-                    it.currentStatus == PaymentStatus.PENDING ||
-                    it.currentStatus == PaymentStatus.OVERDUE
-                }
+                .count { it.currentStatus.isUnpaid }
             SubscriptionStats(
                 totalCount = subs.size,
                 personalCount = personal.size,

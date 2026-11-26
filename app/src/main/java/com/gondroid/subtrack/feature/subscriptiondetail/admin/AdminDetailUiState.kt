@@ -3,7 +3,7 @@ package com.gondroid.subtrack.feature.subscriptiondetail.admin
 import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.MonthlyPaymentSummary
 import com.gondroid.subtrack.domain.model.Subscription
-import com.gondroid.subtrack.domain.model.enums.PaymentStatus
+import com.gondroid.subtrack.domain.model.enums.isUnpaid
 
 data class AdminDetailData(
     val subscription: Subscription,
@@ -23,9 +23,6 @@ sealed interface AdminDetailUiState {
     data object NotFound : AdminDetailUiState
 }
 
-private fun isPending(status: PaymentStatus) =
-    status == PaymentStatus.PENDING || status == PaymentStatus.OVERDUE
-
 fun buildAdminDetailData(
     subscription: Subscription,
     activeMembers: List<Member>,
@@ -33,7 +30,7 @@ fun buildAdminDetailData(
     monthlyHistory: List<MonthlyPaymentSummary>,
     adminName: String
 ): AdminDetailData {
-    val pendingMembers = activeMembers.filter { isPending(it.currentStatus) }
+    val pendingMembers = activeMembers.filter { it.currentStatus.isUnpaid }
     return AdminDetailData(
         subscription = subscription,
         activeMembers = activeMembers,
