@@ -146,8 +146,8 @@ fun CreateSubscriptionScreen(
 
     LaunchedEffect(uiState) {
         when (val state = uiState) {
-            is CreateSubscriptionUiState.Error -> {
-                messenger.show(state.message, R.string.common_error_generic)
+            CreateSubscriptionUiState.Error -> {
+                messenger.show(R.string.common_error_generic)
                 viewModel.errorShown()
             }
             CreateSubscriptionUiState.NotFound -> {

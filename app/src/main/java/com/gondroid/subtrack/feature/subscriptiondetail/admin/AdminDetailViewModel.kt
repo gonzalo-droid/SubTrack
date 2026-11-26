@@ -58,8 +58,8 @@ sealed interface AdminDetailEvent {
     data class BulkReminderSent(val count: Int) : AdminDetailEvent
     data class PausedChanged(val paused: Boolean) : AdminDetailEvent
     data object Deleted : AdminDetailEvent
-    /** Null message: the UI shows the generic error from strings.xml. */
-    data class Error(val message: String?) : AdminDetailEvent
+    /** Generic failure; the UI shows common_error_generic, never the exception text. */
+    data object Error : AdminDetailEvent
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -146,7 +146,7 @@ class AdminDetailViewModel @AssistedInject constructor(
                     _events.emit(AdminDetailEvent.MemberAdded(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error) }
         }
     }
 
@@ -157,7 +157,7 @@ class AdminDetailViewModel @AssistedInject constructor(
                     _events.emit(AdminDetailEvent.MemberUpdated(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error) }
         }
     }
 
@@ -196,7 +196,7 @@ class AdminDetailViewModel @AssistedInject constructor(
                     _events.emit(AdminDetailEvent.MemberMarkedAsPaid(memberName))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error) }
         }
     }
 
@@ -213,7 +213,7 @@ class AdminDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             pauseSubscriptionUseCase(subscriptionId, paused)
                 .onSuccess { _events.emit(AdminDetailEvent.PausedChanged(paused)) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error) }
         }
     }
 
@@ -222,7 +222,7 @@ class AdminDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             deleteSubscriptionUseCase(subscriptionId)
                 .onSuccess { _events.emit(AdminDetailEvent.Deleted) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(AdminDetailEvent.Error) }
         }
     }
 

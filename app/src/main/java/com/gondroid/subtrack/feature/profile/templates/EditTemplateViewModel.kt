@@ -101,7 +101,7 @@ class EditTemplateViewModel @AssistedInject constructor(
         viewModelScope.launch {
             saveTemplate(editing.form.toTemplate())
                 .onSuccess { _events.emit(EditTemplateEvent.Saved) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
+                .onFailure { _events.emit(EditTemplateEvent.Error) }
             _uiState.value = editing
         }
     }
@@ -109,13 +109,13 @@ class EditTemplateViewModel @AssistedInject constructor(
     fun delete() {
         val editing = _uiState.value as? EditTemplateUiState.Editing ?: return
         if (editing.form.isDefault) {
-            viewModelScope.launch { _events.emit(EditTemplateEvent.Error("No se pueden eliminar plantillas por defecto")) }
+            viewModelScope.launch { _events.emit(EditTemplateEvent.CannotDeleteDefault) }
             return
         }
         viewModelScope.launch {
             deleteTemplate(editing.form.id)
                 .onSuccess { _events.emit(EditTemplateEvent.Deleted) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
+                .onFailure { _events.emit(EditTemplateEvent.Error) }
         }
     }
 

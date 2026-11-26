@@ -142,7 +142,7 @@ fun AdminDetailScreen(
                     if (event.paused) R.string.subscription_paused_toast else R.string.subscription_resumed_toast
                 )
                 AdminDetailEvent.Deleted -> resources.getString(R.string.subscription_deleted_toast)
-                is AdminDetailEvent.Error -> event.message ?: resources.getString(R.string.common_error_generic)
+                AdminDetailEvent.Error -> resources.getString(R.string.common_error_generic)
             }
             messenger.show(msg)
         }

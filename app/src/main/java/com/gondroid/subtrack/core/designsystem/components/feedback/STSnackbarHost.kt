@@ -76,11 +76,6 @@ class SnackbarMessenger(
     fun show(@StringRes messageRes: Int) {
         resources?.getString(messageRes)?.let(post)
     }
-
-    /** Shows [message], or [fallbackRes] when there is none (errors without a message). */
-    fun show(message: String?, @StringRes fallbackRes: Int) {
-        if (message != null) post(message) else show(fallbackRes)
-    }
 }
 
 /** Creates the messenger MainApp provides through [LocalSnackbarMessenger]. */
