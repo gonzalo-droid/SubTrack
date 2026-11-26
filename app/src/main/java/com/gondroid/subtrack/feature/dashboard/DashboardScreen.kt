@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -323,83 +324,109 @@ private fun DualHeroRow(
     onSelectFilter: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.s)
-    ) {
-        // Personal hero
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .clip(SubTrackShapes.xxl)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onSelectFilter(if (selectedFilter == 1) 0 else 1) }
+    // With large fonts (fontScale >= 1.3) two columns truncate the amounts: stack them.
+    if (LocalDensity.current.fontScale >= LARGE_FONT_SCALE) {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            HeroCard(
-                accentColor = AccentBlue,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Eyebrow(
-                    text = stringResource(R.string.dashboard_hero_personal),
-                    color = AccentBlue.copy(alpha = 0.8f)
-                )
-                Spacer(Modifier.height(Spacing.s))
-                AmountDisplay(amount = data.personalAmount, size = AmountSize.MEDIUM)
-                Spacer(Modifier.height(Spacing.xs))
-                val upcomingPersonal = data.upcomingCutoffs.count { !it.isShared }
-                Text(
-                    text = stringResource(
-                        R.string.dashboard_hero_counts_format,
-                        pluralStringResource(R.plurals.dashboard_hero_services, data.personalCount, data.personalCount),
-                        pluralStringResource(R.plurals.dashboard_hero_upcoming, upcomingPersonal, upcomingPersonal)
-                    ),
-                    style = SubTrackType.bodyS,
-                    color = TextSecondary
-                )
-            }
+            PersonalHero(data, selectedFilter, onSelectFilter, Modifier.fillMaxWidth())
+            SharedHero(data, selectedFilter, onSelectFilter, Modifier.fillMaxWidth())
         }
-
-        // Shared hero
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .clip(SubTrackShapes.xxl)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { onSelectFilter(if (selectedFilter == 2) 0 else 2) }
+    } else {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            HeroCard(
-                accentColor = AccentGreen,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Eyebrow(
-                    text = stringResource(R.string.dashboard_hero_shared),
-                    color = AccentGreen.copy(alpha = 0.8f)
-                )
-                Spacer(Modifier.height(Spacing.s))
-                AmountDisplay(amount = data.sharedAmount, size = AmountSize.MEDIUM)
-                Spacer(Modifier.height(Spacing.xs))
-                Text(
-                    text = buildAnnotatedString {
-                        append(
-                            pluralStringResource(
-                                R.plurals.dashboard_hero_services_debtors_prefix,
-                                data.sharedCount,
-                                data.sharedCount
-                            )
+            PersonalHero(data, selectedFilter, onSelectFilter, Modifier.weight(1f))
+            SharedHero(data, selectedFilter, onSelectFilter, Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun PersonalHero(
+    data: DashboardData,
+    selectedFilter: Int,
+    onSelectFilter: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(SubTrackShapes.xxl)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onSelectFilter(if (selectedFilter == 1) 0 else 1) }
+    ) {
+        HeroCard(
+            accentColor = AccentBlue,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Eyebrow(
+                text = stringResource(R.string.dashboard_hero_personal),
+                color = AccentBlue.copy(alpha = 0.8f)
+            )
+            Spacer(Modifier.height(Spacing.s))
+            AmountDisplay(amount = data.personalAmount, size = AmountSize.MEDIUM)
+            Spacer(Modifier.height(Spacing.xs))
+            val upcomingPersonal = data.upcomingCutoffs.count { !it.isShared }
+            Text(
+                text = stringResource(
+                    R.string.dashboard_hero_counts_format,
+                    pluralStringResource(R.plurals.dashboard_hero_services, data.personalCount, data.personalCount),
+                    pluralStringResource(R.plurals.dashboard_hero_upcoming, upcomingPersonal, upcomingPersonal)
+                ),
+                style = SubTrackType.bodyS,
+                color = TextSecondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun SharedHero(
+    data: DashboardData,
+    selectedFilter: Int,
+    onSelectFilter: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(SubTrackShapes.xxl)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onSelectFilter(if (selectedFilter == 2) 0 else 2) }
+    ) {
+        HeroCard(
+            accentColor = AccentGreen,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Eyebrow(
+                text = stringResource(R.string.dashboard_hero_shared),
+                color = AccentGreen.copy(alpha = 0.8f)
+            )
+            Spacer(Modifier.height(Spacing.s))
+            AmountDisplay(amount = data.sharedAmount, size = AmountSize.MEDIUM)
+            Spacer(Modifier.height(Spacing.xs))
+            Text(
+                text = buildAnnotatedString {
+                    append(
+                        pluralStringResource(
+                            R.plurals.dashboard_hero_services_debtors_prefix,
+                            data.sharedCount,
+                            data.sharedCount
                         )
-                        withStyle(
-                            androidx.compose.ui.text.SpanStyle(color = AccentAmber)
-                        ) { append("${data.debtorCount}") }
-                        append(pluralStringResource(R.plurals.dashboard_hero_debtors_suffix, data.debtorCount))
-                    },
-                    style = SubTrackType.bodyS,
-                    color = TextSecondary
-                )
-            }
+                    )
+                    withStyle(
+                        androidx.compose.ui.text.SpanStyle(color = AccentAmber)
+                    ) { append("${data.debtorCount}") }
+                    append(pluralStringResource(R.plurals.dashboard_hero_debtors_suffix, data.debtorCount))
+                },
+                style = SubTrackType.bodyS,
+                color = TextSecondary
+            )
         }
     }
 }
@@ -412,6 +439,7 @@ private fun TotalSummaryRow(
     netAmount: Double,
     modifier: Modifier = Modifier
 ) {
+    val largeFont = LocalDensity.current.fontScale >= LARGE_FONT_SCALE
     SurfaceCard(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -431,22 +459,37 @@ private fun TotalSummaryRow(
             )
             Spacer(Modifier.weight(1f))
             AmountDisplay(amount = totalAmount, size = AmountSize.SMALL)
-            Spacer(Modifier.width(Spacing.s))
-            HorizontalDivider(
-                modifier = Modifier
-                    .height(16.dp)
-                    .width(1.dp),
-                color = BorderDefault
-            )
-            Spacer(Modifier.width(Spacing.s))
-            Badge(
-                text = stringResource(R.string.dashboard_net_badge),
-                variant = BadgeVariant.ADMIN
-            )
-            Spacer(Modifier.width(6.dp))
-            AmountDisplay(amount = netAmount, size = AmountSize.SMALL, color = AccentGreen)
+            if (!largeFont) {
+                Spacer(Modifier.width(Spacing.s))
+                HorizontalDivider(
+                    modifier = Modifier
+                        .height(16.dp)
+                        .width(1.dp),
+                    color = BorderDefault
+                )
+                Spacer(Modifier.width(Spacing.s))
+                NetAmount(netAmount)
+            }
+        }
+        if (largeFont) {
+            Spacer(Modifier.height(Spacing.s))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) { NetAmount(netAmount) }
         }
     }
+}
+
+@Composable
+private fun NetAmount(netAmount: Double) {
+    Badge(
+        text = stringResource(R.string.dashboard_net_badge),
+        variant = BadgeVariant.ADMIN
+    )
+    Spacer(Modifier.width(6.dp))
+    AmountDisplay(amount = netAmount, size = AmountSize.SMALL, color = AccentGreen)
 }
 
 // ── Upcoming cutoffs section ──────────────────────────────────────────────────
@@ -839,6 +882,8 @@ private fun DashboardEmptyState(
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
+private const val LARGE_FONT_SCALE = 1.3f
+
 // ── Previews ──────────────────────────────────────────────────────────────────
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Loading")
@@ -856,6 +901,7 @@ private fun DashboardEmptyPreview() {
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success")
+@Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success — letra grande", fontScale = 1.5f)
 @Composable
 private fun DashboardSuccessPreview() {
     SubTrackTheme {
