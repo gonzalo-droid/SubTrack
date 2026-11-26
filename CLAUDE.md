@@ -12,7 +12,7 @@ Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **
 - **UI**: Jetpack Compose + Material 3
 - **minSdk**: 24 · **targetSdk**: 34+ · **compileSdk**: 34+
 - **Arquitectura**: Clean Architecture (data / domain / presentation) con MVVM
-- **DI**: Hilt
+- **DI**: Hilt 2.60.1 (activo). Pantallas con `hiltViewModel()`; los ViewModels con argumentos de navegación usan assisted injection (`hiltViewModel<VM, VM.Factory>(creationCallback = { it.create(...) })`). No crear `ViewModelProvider.Factory` manuales.
 - **Async**: Coroutines + Flow
 - **Navegación**: Navigation Compose type-safe (con `@Serializable`)
 - **Persistencia local**: Room (fase 2)
@@ -54,7 +54,7 @@ No dejes clases, imports o dependencies sin usar. Si algo queda para después, m
 
 ### 8. Strings
 - Todo texto visible al usuario va en `strings.xml` con nombre descriptivo (ej. `dashboard_greeting_format`, `subscription_shared_tag`)
-- Español es el default. Inglés se agrega después.
+- Español es el default (`values/`). Inglés en `values-en/`: todo string nuevo va en los dos archivos con el mismo `name`.
 
 ### 9. Commits atómicos
 Si el usuario pide trabajar en una feature específica, haz commits pequeños y descriptivos. Un commit = un cambio lógico.
@@ -103,6 +103,10 @@ Cuando recibas una tarea:
 3. Si hay ambigüedad o decisión importante: **presenta opciones**
 4. Implementa cambios mínimos y atómicos
 5. **Valida**: compila, ejecuta previews si aplica, revisa que no rompiste nada
+   - Unit tests: `./gradlew testDebugUnitTest`
+   - Lint (debe quedar en 0 errores): `./gradlew lintDebug`
+   - Screenshot tests: `./gradlew verifyRoborazziDebug` (regrabar con `recordRoborazziDebug` si el cambio visual es intencional)
+   - E2E: `maestro test .maestro/` con el emulador abierto (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
 ## Nunca hagas esto
