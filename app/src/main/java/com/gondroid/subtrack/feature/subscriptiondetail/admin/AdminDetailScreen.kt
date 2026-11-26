@@ -84,6 +84,8 @@ import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.ExitRequest
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.RemoveMemberSheet
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
 import com.gondroid.subtrack.domain.util.nextCutoff
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.ui.platform.LocalResources
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,26 +98,28 @@ fun AdminDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activeSheet by viewModel.activeSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val resources = LocalResources.current
+    val messenger = LocalSnackbarMessenger.current
 
     // Collect one-shot events
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             val msg = when (event) {
                 is AdminDetailEvent.MemberAdded ->
-                    context.getString(R.string.member_sheet_added_toast, event.name)
+                    resources.getString(R.string.member_sheet_added_toast, event.name)
                 is AdminDetailEvent.MemberMarkedAsPaid ->
-                    context.getString(R.string.member_sheet_paid_toast, event.name)
+                    resources.getString(R.string.member_sheet_paid_toast, event.name)
                 is AdminDetailEvent.MemberArchived ->
-                    context.getString(R.string.member_sheet_archived_toast, event.name)
+                    resources.getString(R.string.member_sheet_archived_toast, event.name)
                 is AdminDetailEvent.MemberForgiven ->
-                    context.getString(R.string.member_sheet_forgiven_toast, event.name)
+                    resources.getString(R.string.member_sheet_forgiven_toast, event.name)
                 is AdminDetailEvent.MemberUpdated ->
-                    context.getString(R.string.member_sheet_updated_toast, event.name)
+                    resources.getString(R.string.member_sheet_updated_toast, event.name)
                 is AdminDetailEvent.BulkReminderSent ->
-                    context.resources.getQuantityString(R.plurals.member_sheet_bulk_done, event.count, event.count)
+                    resources.getQuantityString(R.plurals.member_sheet_bulk_done, event.count, event.count)
                 is AdminDetailEvent.Error -> event.message
             }
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            messenger.show(msg)
         }
     }
 
@@ -183,14 +187,14 @@ fun AdminDetailScreen(
                                         amount = "%.2f".format(member.shareAmount),
                                         adminName = successState?.data?.adminName.orEmpty()
                                     )
-                                    WhatsAppHelper.openWhatsApp(context, member.phone, msg)
+                                    WhatsAppHelper.openWhatsApp(context, member.phone, msg)?.let(messenger::show)
                                     viewModel.closeSheet()
                                 },
                                 onMarkAsPaid = { viewModel.markAsPaid(member.id) },
                                 onEditData = { viewModel.openEditMemberData(member.id) },
                                 onViewHistory = {
                                     // TODO: [milestone-7] Navigate to member history screen
-                                    Toast.makeText(context, "Próximamente: historial", Toast.LENGTH_SHORT).show()
+                                    messenger.show(R.string.coming_soon_history)
                                 },
                                 onRemove = {
                                     val hasPending = member.currentStatus == PaymentStatus.OVERDUE ||

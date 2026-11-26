@@ -4,7 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
+import androidx.annotation.StringRes
+import com.gondroid.subtrack.R
 
 object WhatsAppHelper {
 
@@ -20,33 +21,35 @@ object WhatsAppHelper {
         "Hola $memberName! 👋 Te escribo para recordarte que este mes toca pagar el $serviceName. " +
         "Son S/$amount. ¿Puedes hacerme la transferencia esta semana? ¡Gracias! — $adminName"
 
-    fun openWhatsApp(context: Context, phone: String, message: String) {
+    /** Returns a string resource describing the error, or null if WhatsApp (or the store) opened. */
+    @StringRes
+    fun openWhatsApp(context: Context, phone: String, message: String): Int? {
         val cleanPhone = phone.replace(Regex("[^\\d+]"), "")
-        if (cleanPhone.length < 7) {
-            Toast.makeText(context, "Número de teléfono inválido", Toast.LENGTH_SHORT).show()
-            return
-        }
-        launch(context, Uri.parse("https://wa.me/$cleanPhone?text=${Uri.encode(message)}"))
+        if (cleanPhone.length < 7) return R.string.whatsapp_invalid_phone
+        return launch(context, Uri.parse("https://wa.me/$cleanPhone?text=${Uri.encode(message)}"))
     }
 
     /** Opens WhatsApp with the message pre-filled and lets the user pick the chat. */
-    fun shareToWhatsApp(context: Context, message: String) {
+    @StringRes
+    fun shareToWhatsApp(context: Context, message: String): Int? =
         launch(context, Uri.parse("https://wa.me/?text=${Uri.encode(message)}"))
-    }
 
-    private fun launch(context: Context, uri: Uri) {
+    @StringRes
+    private fun launch(context: Context, uri: Uri): Int? {
         val whatsAppIntent = Intent(Intent.ACTION_VIEW, uri).apply {
             setPackage("com.whatsapp")
         }
-        try {
+        return try {
             context.startActivity(whatsAppIntent)
+            null
         } catch (e: ActivityNotFoundException) {
             // WhatsApp not installed — open Play Store
             try {
                 val storeUri = Uri.parse("market://details?id=com.whatsapp")
                 context.startActivity(Intent(Intent.ACTION_VIEW, storeUri))
+                null
             } catch (e2: ActivityNotFoundException) {
-                Toast.makeText(context, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
+                R.string.whatsapp_not_installed
             }
         }
     }

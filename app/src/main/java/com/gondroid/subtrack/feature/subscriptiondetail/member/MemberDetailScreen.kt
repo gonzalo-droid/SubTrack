@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.member
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -78,6 +77,7 @@ import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,15 +95,17 @@ fun MemberDetailScreen(
     val activeSheet by vm.activeSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val messenger = LocalSnackbarMessenger.current
+
     LaunchedEffect(Unit) {
         vm.events.collect { event ->
             when (event) {
                 is MemberDetailEvent.PaymentMarked ->
-                    Toast.makeText(context, "Pago registrado", Toast.LENGTH_SHORT).show()
+                    messenger.show(R.string.member_detail_payment_marked)
                 is MemberDetailEvent.ExitRequested ->
-                    Toast.makeText(context, "Solicitud enviada", Toast.LENGTH_SHORT).show()
+                    messenger.show(R.string.member_detail_exit_requested)
                 is MemberDetailEvent.Error ->
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    messenger.show(event.message)
             }
         }
     }
@@ -159,6 +161,7 @@ private fun MemberDetailContent(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val messenger = LocalSnackbarMessenger.current
 
     LazyColumn(
         modifier = modifier
@@ -357,7 +360,7 @@ private fun MemberDetailContent(
                                         adminName = view.adminInfo.name,
                                         serviceName = view.serviceName
                                     )
-                                    WhatsAppHelper.openWhatsApp(context, view.adminInfo.phone, msg)
+                                    WhatsAppHelper.openWhatsApp(context, view.adminInfo.phone, msg)?.let(messenger::show)
                                 }
                                 .padding(horizontal = Spacing.s, vertical = Spacing.xs)
                         )

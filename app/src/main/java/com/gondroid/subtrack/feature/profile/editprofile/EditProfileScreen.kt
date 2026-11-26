@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.profile.editprofile
 
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,6 +52,7 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 @Composable
 fun EditProfileScreen(
@@ -63,15 +63,13 @@ fun EditProfileScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val messenger = LocalSnackbarMessenger.current
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is EditProfileEvent.Saved -> {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.edit_profile_saved_toast),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    messenger.show(R.string.edit_profile_saved_toast)
                     onBack()
                 }
             }

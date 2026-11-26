@@ -101,6 +101,9 @@
     <!-- Subscription detail — top nav -->
     <string name="subscription_detail_back_cd">Volver</string>
     <string name="subscription_detail_overflow_cd">Más opciones</string>
+    <string name="member_detail_payment_marked">Pago registrado</string>
+    <string name="member_detail_exit_requested">Solicitud enviada</string>
+    <string name="coming_soon_history">Próximamente: historial</string>
 
     <!-- Subscription detail — hero -->
     <string name="subscription_detail_admin_tag">ADMIN</string>

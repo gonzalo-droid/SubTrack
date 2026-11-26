@@ -58,6 +58,7 @@ import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 data class BulkReminderItem(
     val member: Member,
@@ -73,6 +74,7 @@ fun BulkReminderSheet(
     onDone: (sentCount: Int) -> Unit
 ) {
     val context = LocalContext.current
+    val messenger = LocalSnackbarMessenger.current
     var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
     var selectedTemplateId by remember { mutableStateOf(templates.firstOrNull { it.isDefault }?.id ?: templates.firstOrNull()?.id) }
     var sendingIndex by remember { mutableIntStateOf(-1) }
@@ -131,7 +133,7 @@ fun BulkReminderSheet(
                                     adminName = adminName
                                 )
                             } ?: ""
-                            WhatsAppHelper.openWhatsApp(context, next.phone, msg)
+                            WhatsAppHelper.openWhatsApp(context, next.phone, msg)?.let(messenger::show)
                         } else {
                             onDone(selectedItems.size)
                         }
@@ -297,7 +299,7 @@ fun BulkReminderSheet(
                             amount = "%.2f".format(first.shareAmount),
                             adminName = adminName
                         )
-                        WhatsAppHelper.openWhatsApp(context, first.phone, msg)
+                        WhatsAppHelper.openWhatsApp(context, first.phone, msg)?.let(messenger::show)
                         sendingIndex = 0
                     }
                 },

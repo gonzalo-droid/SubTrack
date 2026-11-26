@@ -30,6 +30,11 @@ import com.gondroid.subtrack.core.navigation.BottomNavBar
 import com.gondroid.subtrack.core.navigation.Route
 import com.gondroid.subtrack.core.navigation.SubTrackNavHost
 import com.gondroid.subtrack.feature.onboarding.OnboardingFlow
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import com.gondroid.subtrack.core.designsystem.components.feedback.STSnackbarHost
+import com.gondroid.subtrack.core.designsystem.components.feedback.rememberSnackbarMessenger
 // TODO: [hilt] Add @AndroidEntryPoint when Gradle plugin is configured
 
 private fun NavDestination?.isMainRoute(): Boolean =
@@ -77,14 +82,20 @@ private fun MainApp() {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val showBottomBar = currentDestination.isMainRoute()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val messenger = rememberSnackbarMessenger(snackbarHostState)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BgApp,
-        bottomBar = { if (showBottomBar) BottomNavBar(navController) }
+        bottomBar = { if (showBottomBar) BottomNavBar(navController) },
+        snackbarHost = { STSnackbarHost(snackbarHostState) }
     ) { innerPadding ->
-        SubTrackNavHost(
-            navController = navController,
-            modifier = Modifier.padding(innerPadding)
-        )
+        CompositionLocalProvider(LocalSnackbarMessenger provides messenger) {
+            SubTrackNavHost(
+                navController = navController,
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
     }
 }

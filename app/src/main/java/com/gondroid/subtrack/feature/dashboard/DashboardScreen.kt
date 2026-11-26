@@ -90,6 +90,7 @@ import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
 
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 // ── Public entry point ────────────────────────────────────────────────────────
 
 @Composable
@@ -104,6 +105,7 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val messenger = LocalSnackbarMessenger.current
     when (val state = uiState) {
         is DashboardUiState.Loading -> DashboardSkeleton(modifier = modifier.fillMaxSize())
         is DashboardUiState.Empty -> DashboardEmptyState(
@@ -126,7 +128,7 @@ fun DashboardScreen(
                         amount = "%.2f".format(debtor.shareAmount),
                         adminName = state.data.user.name.substringBefore(" ")
                     )
-                    WhatsAppHelper.openWhatsApp(context, phone, msg)
+                    WhatsAppHelper.openWhatsApp(context, phone, msg)?.let(messenger::show)
                     viewModel.onReminderSent(memberId, subscriptionId)
                 }
             },

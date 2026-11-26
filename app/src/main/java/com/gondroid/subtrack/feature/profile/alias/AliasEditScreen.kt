@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.profile.alias
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -53,6 +52,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 @Composable
 fun AliasEditScreen(
@@ -63,11 +63,13 @@ fun AliasEditScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val messenger = LocalSnackbarMessenger.current
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is AliasEditEvent.Saved -> {
-                    Toast.makeText(context, context.getString(R.string.alias_saved_toast), Toast.LENGTH_SHORT).show()
+                    messenger.show(R.string.alias_saved_toast)
                     onBack()
                 }
             }

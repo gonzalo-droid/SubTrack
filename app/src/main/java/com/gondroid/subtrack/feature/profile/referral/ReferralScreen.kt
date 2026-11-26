@@ -40,15 +40,12 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +57,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -95,8 +93,8 @@ import com.gondroid.subtrack.core.util.generateQrBitmap
 import com.gondroid.subtrack.domain.model.ReferralInfo
 import com.gondroid.subtrack.domain.model.ReferralRecord
 import com.gondroid.subtrack.domain.model.enums.ReferralStatus
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,9 +104,9 @@ fun ReferralScreen(
 ) {
     val viewModel: ReferralViewModel = viewModel(factory = ReferralViewModelFactory())
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val resources = LocalResources.current
+    val messenger = LocalSnackbarMessenger.current
 
     var showHowItWorks by remember { mutableStateOf(false) }
     var showQrSheet by remember { mutableStateOf(false) }
@@ -129,11 +127,11 @@ fun ReferralScreen(
                     onCopyCode = {
                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         clipboard.setPrimaryClip(ClipData.newPlainText("referral_code", info.code))
-                        scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.referral_code_copied)) }
+                        messenger.show(R.string.referral_code_copied)
                     },
                     onShareWhatsApp = {
-                        val msg = context.getString(R.string.referral_share_wa_message, info.code)
-                        WhatsAppHelper.shareToWhatsApp(context, msg)
+                        val msg = resources.getString(R.string.referral_share_wa_message, info.code)
+                        WhatsAppHelper.shareToWhatsApp(context, msg)?.let(messenger::show)
                     },
                     onShareLink = {
                         val sendIntent = Intent(Intent.ACTION_SEND).apply {
@@ -177,11 +175,6 @@ fun ReferralScreen(
                 }
             }
         }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(Spacing.base)
-        )
     }
 }
 

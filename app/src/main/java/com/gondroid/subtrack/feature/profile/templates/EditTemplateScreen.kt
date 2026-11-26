@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.profile.templates
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -80,6 +79,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.util.TemplateRenderer
 import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 
 private val COMMON_EMOJIS = listOf(
     "💬", "✅", "🔔", "💳", "📱", "🎵",
@@ -119,15 +119,17 @@ fun EditTemplateScreen(
         }
     }
 
+    val messenger = LocalSnackbarMessenger.current
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is EditTemplateEvent.Saved -> {
-                    Toast.makeText(context, context.getString(R.string.edit_template_saved_toast), Toast.LENGTH_SHORT).show()
+                    messenger.show(R.string.edit_template_saved_toast)
                     onBack()
                 }
                 is EditTemplateEvent.Deleted -> onBack()
-                is EditTemplateEvent.Error -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is EditTemplateEvent.Error -> messenger.show(event.message)
             }
         }
     }
