@@ -2,7 +2,7 @@ package com.gondroid.subtrack.feature.subscriptiondetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockDataStore
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -22,7 +22,8 @@ sealed interface RoleState {
 @HiltViewModel(assistedFactory = SubscriptionDetailRouterViewModel.Factory::class)
 class SubscriptionDetailRouterViewModel @AssistedInject constructor(
     @Assisted private val subscriptionId: String,
-    getSubscriptionDetail: GetSubscriptionDetailUseCase
+    getSubscriptionDetail: GetSubscriptionDetailUseCase,
+    getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
 
     @AssistedFactory
@@ -30,10 +31,9 @@ class SubscriptionDetailRouterViewModel @AssistedInject constructor(
         fun create(subscriptionId: String): SubscriptionDetailRouterViewModel
     }
 
-
     val roleState = combine(
         getSubscriptionDetail(subscriptionId),
-        MockDataStore.currentUser
+        getCurrentUser()
     ) { sub, user ->
         when {
             sub == null || user == null -> RoleState.NotFound
