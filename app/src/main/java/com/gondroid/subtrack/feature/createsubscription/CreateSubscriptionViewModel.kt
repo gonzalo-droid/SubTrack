@@ -3,9 +3,9 @@ package com.gondroid.subtrack.feature.createsubscription
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockDataStore
 import com.gondroid.subtrack.data.mock.MockServiceTemplateRepository
 import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
+import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.Subscription
@@ -15,12 +15,15 @@ import com.gondroid.subtrack.domain.model.enums.SplitType
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
 import com.gondroid.subtrack.domain.usecase.servicetemplate.GetPopularServicesUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.CreateSubscriptionUseCase
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,7 +33,8 @@ import kotlin.math.abs
 @HiltViewModel
 class CreateSubscriptionViewModel @Inject constructor(
     private val createSubscription: CreateSubscriptionUseCase,
-    private val getPopularServices: GetPopularServicesUseCase
+    private val getPopularServices: GetPopularServicesUseCase,
+    private val getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
 
     private val _form = MutableStateFlow(CreateSubscriptionFormState())
@@ -45,18 +49,11 @@ class CreateSubscriptionViewModel @Inject constructor(
     val popularServices: List<ServiceTemplate> = getPopularServices()
 
     val totalSteps: StateFlow<Int> = _form
-        .combine(_currentStep) { form, _ -> if (form.isShared) 4 else 2 }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, 2)
+        .map { wizardSteps(it.shared).size }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, wizardSteps(false).size)
 
     val currentStepIndex: StateFlow<Int> = _form
-        .combine(_currentStep) { form, step ->
-            when (step) {
-                WizardStep.SERVICE  -> 0
-                WizardStep.DETAILS  -> 1
-                WizardStep.MEMBERS  -> 2
-                WizardStep.SPLIT    -> if (form.isShared) 3 else 2
-            }
-        }
+        .combine(_currentStep) { form, step -> wizardSteps(form.shared).indexOf(step) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     val isCurrentStepValid: StateFlow<Boolean> = _form
@@ -66,6 +63,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                     val s = form.selectedService
                     s != null && (s.id != "tpl_other" || form.customServiceName.isNotBlank())
                 }
+                WizardStep.WHO_PAYS -> form.isShared != null
                 WizardStep.DETAILS -> {
                     val amount = form.totalAmount.toDoubleOrNull()
                     amount != null && amount > 0 && form.cutoffDay in 1..31
@@ -95,7 +93,13 @@ class CreateSubscriptionViewModel @Inject constructor(
     // ── Step 1 ───────────────────────────────────────────────────────────────
 
     fun selectService(template: ServiceTemplate) {
-        _form.update { it.copy(selectedService = template, customServiceName = "") }
+        _form.update {
+            it.copy(
+                selectedService = template,
+                customServiceName = "",
+                isShared = it.isShared ?: true.takeIf { template.suggestsShared }
+            )
+        }
     }
 
     fun updateCustomServiceName(name: String) {
@@ -107,7 +111,13 @@ class CreateSubscriptionViewModel @Inject constructor(
         _form.update { it.copy(selectedService = s.copy(brandColor = color)) }
     }
 
-    // ── Step 2 ───────────────────────────────────────────────────────────────
+    // ── Who pays ─────────────────────────────────────────────────────────────
+
+    fun setShared(isShared: Boolean) {
+        _form.update { it.copy(isShared = isShared) }
+    }
+
+    // ── Details ──────────────────────────────────────────────────────────────
 
     fun updateAmount(amount: String) {
         _form.update { it.copy(totalAmount = amount) }
@@ -130,11 +140,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         _form.update { it.copy(cutoffDay = day.coerceIn(1, 31)) }
     }
 
-    // ── Step 3 ───────────────────────────────────────────────────────────────
-
-    fun toggleShared(isShared: Boolean) {
-        _form.update { it.copy(isShared = isShared) }
-    }
+    // ── Members ──────────────────────────────────────────────────────────────
 
     fun addMember(member: WizardMemberData) {
         _form.update { it.copy(members = it.members + member) }
@@ -144,7 +150,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         _form.update { it.copy(members = it.members.filter { m -> m.id != memberId }) }
     }
 
-    // ── Step 4 ───────────────────────────────────────────────────────────────
+    // ── Split ────────────────────────────────────────────────────────────────
 
     fun selectSplitType(type: SplitType) {
         val form = _form.value
@@ -171,23 +177,12 @@ class CreateSubscriptionViewModel @Inject constructor(
     // ── Navigation ───────────────────────────────────────────────────────────
 
     fun nextStep() {
-        val form = _form.value
-        when (_currentStep.value) {
-            WizardStep.SERVICE  -> _currentStep.value = WizardStep.DETAILS
-            WizardStep.DETAILS  -> if (form.isShared) _currentStep.value = WizardStep.MEMBERS else submit()
-            WizardStep.MEMBERS  -> _currentStep.value = WizardStep.SPLIT
-            WizardStep.SPLIT    -> submit()
-        }
+        val next = nextWizardStep(_currentStep.value, _form.value.shared)
+        if (next == null) submit() else _currentStep.value = next
     }
 
     fun previousStep() {
-        val form = _form.value
-        when (_currentStep.value) {
-            WizardStep.SERVICE  -> Unit
-            WizardStep.DETAILS  -> _currentStep.value = WizardStep.SERVICE
-            WizardStep.MEMBERS  -> _currentStep.value = WizardStep.DETAILS
-            WizardStep.SPLIT    -> if (form.isShared) _currentStep.value = WizardStep.MEMBERS else _currentStep.value = WizardStep.DETAILS
-        }
+        previousWizardStep(_currentStep.value, _form.value.shared)?.let { _currentStep.value = it }
     }
 
     // ── Submit ───────────────────────────────────────────────────────────────
@@ -198,9 +193,9 @@ class CreateSubscriptionViewModel @Inject constructor(
         viewModelScope.launch {
             val subscriptionId = "sub_${System.currentTimeMillis()}"
             val totalAmount = form.totalAmountDouble
-            val ownerId = MockDataStore.currentUser.value?.id ?: "usr_gonzalo"
+            val ownerId = getCurrentUser().first()?.id.orEmpty()
 
-            val members = if (form.isShared) {
+            val members = if (form.shared) {
                 form.members.map { m ->
                     val share = when (form.splitType) {
                         SplitType.EQUAL -> totalAmount / (form.members.size + 1)
@@ -232,7 +227,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                 cycle = form.cycle,
                 cutoffDay = form.cutoffDay,
                 ownerId = ownerId,
-                isShared = form.isShared,
+                isShared = form.shared,
                 splitType = form.splitType,
                 category = form.selectedService?.category ?: SubscriptionCategory.OTHER,
                 members = members,
@@ -244,7 +239,7 @@ class CreateSubscriptionViewModel @Inject constructor(
                 .onSuccess { id ->
                     _uiState.value = CreateSubscriptionUiState.Success(
                         createdId = id,
-                        isShared = form.isShared,
+                        isShared = form.shared,
                         serviceName = form.resolvedServiceName,
                         memberCount = members.size
                     )
@@ -269,7 +264,8 @@ class CreateSubscriptionViewModelFactory(
         val serviceRepo = MockServiceTemplateRepository()
         return CreateSubscriptionViewModel(
             createSubscription = CreateSubscriptionUseCase(subRepo),
-            getPopularServices = GetPopularServicesUseCase(serviceRepo)
+            getPopularServices = GetPopularServicesUseCase(serviceRepo),
+            getCurrentUser = GetCurrentUserUseCase(MockUserRepository())
         ).also { it.init(startWithShared) } as T
     }
 }

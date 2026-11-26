@@ -446,7 +446,7 @@
     <string name="create_subscription_add_member_phone_label">TELÉFONO</string>
     <string name="create_subscription_add_member_confirm">Agregar</string>
 
-    <string name="create_subscription_step4_eyebrow">Paso 4 · División</string>
+    <string name="create_subscription_step4_eyebrow">Paso 5 · División</string>
     <string name="create_subscription_step4_title">¿Cómo dividen?</string>
     <string name="create_subscription_step4_subtitle">S/ %1$s entre %2$d personas</string>
     <string name="create_subscription_split_equal">Partes iguales</string>

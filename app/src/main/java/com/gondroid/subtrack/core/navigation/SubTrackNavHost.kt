@@ -104,7 +104,7 @@ fun SubTrackNavHost(
                 onBack = { navController.popBackStack() },
                 onCreated = { id ->
                     navController.navigate(Route.SubscriptionDetail(id)) {
-                        popUpTo(Route.CreateSubscription()) { inclusive = true }
+                        popUpTo<Route.CreateSubscription> { inclusive = true }
                     }
                 },
                 startWithShared = args.startWithShared

@@ -78,6 +78,7 @@ import com.gondroid.subtrack.feature.createsubscription.steps.DetailsStep
 import com.gondroid.subtrack.feature.createsubscription.steps.MembersStep
 import com.gondroid.subtrack.feature.createsubscription.steps.ServiceStep
 import com.gondroid.subtrack.feature.createsubscription.steps.SplitStep
+import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -169,6 +170,12 @@ fun CreateSubscriptionScreen(
                         onUpdateCustomName = viewModel::updateCustomServiceName,
                         onUpdateCustomColor = viewModel::updateCustomServiceColor
                     )
+                    WizardStep.WHO_PAYS -> WhoPaysStep(
+                        serviceName = form.resolvedServiceName,
+                        isShared = form.isShared,
+                        suggestsShared = form.selectedService?.suggestsShared == true,
+                        onSelect = viewModel::setShared
+                    )
                     WizardStep.DETAILS -> DetailsStep(
                         service = form.selectedService,
                         totalAmount = form.totalAmount,
@@ -182,9 +189,7 @@ fun CreateSubscriptionScreen(
                         onCutoffDayChange = viewModel::updateCutoffDay
                     )
                     WizardStep.MEMBERS -> MembersStep(
-                        isShared = form.isShared,
                         members = form.members,
-                        onToggleShared = viewModel::toggleShared,
                         onAddMember = viewModel::addMember,
                         onRemoveMember = viewModel::removeMember
                     )
@@ -202,7 +207,7 @@ fun CreateSubscriptionScreen(
 
         WizardFooter(
             currentStep = currentStep,
-            isShared = form.isShared,
+            isShared = form.shared,
             isValid = isValid,
             isSubmitting = uiState is CreateSubscriptionUiState.Submitting,
             amountDisplay = if (form.totalAmount.isNotBlank()) "S/ ${form.totalAmount}" else null,
@@ -266,7 +271,7 @@ private fun WizardFooter(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    val isFinalStep = currentStep == WizardStep.SPLIT || (currentStep == WizardStep.DETAILS && !isShared)
+    val isFinalStep = nextWizardStep(currentStep, isShared) == null
     val buttonText = when {
         isSubmitting -> stringResource(R.string.common_loading)
         isFinalStep && isShared -> stringResource(R.string.create_subscription_footer_create_shared)

@@ -9,5 +9,7 @@ data class ServiceTemplate(
     val defaultLogoChar: String,
     val suggestedMonthly: Double? = null,
     val category: SubscriptionCategory,
-    val isPopular: Boolean = true
+    val isPopular: Boolean = true,
+    /** Usually bought as a family/shared plan, so the wizard preselects "La comparto". */
+    val suggestsShared: Boolean = false
 )
