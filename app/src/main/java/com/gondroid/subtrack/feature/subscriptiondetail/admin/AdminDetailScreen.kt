@@ -100,6 +100,7 @@ import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.domain.model.enums.isUnpaid
+import com.gondroid.subtrack.feature.subscriptiondetail.admin.components.TimelineLegend
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -477,6 +478,11 @@ private fun AdminDetailContent(
 
         items(data.monthlyHistory, key = { it.monthKey }) { summary ->
             TimelineItem(summary = summary, modifier = Modifier.padding(horizontal = Spacing.base))
+        }
+        if (data.monthlyHistory.isNotEmpty()) {
+            item {
+                TimelineLegend(Modifier.padding(horizontal = Spacing.base).padding(top = Spacing.xs))
+            }
         }
 
         // Archived section

@@ -56,7 +56,6 @@ import com.gondroid.subtrack.feature.onboarding.AuthState
 fun AuthOnboardingScreen(
     authState: AuthState,
     onGoogleSignIn: () -> Unit,
-    onAppleSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rotation by rememberRotation()
@@ -149,20 +148,7 @@ fun AuthOnboardingScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(Spacing.s))
-
-        // Apple button
-        AuthButton(
-            icon = { Icon(CustomIcons.Apple, null, modifier = Modifier.size(20.dp), tint = Color.White) },
-            text = stringResource(R.string.onboarding_auth_apple),
-            containerColor = Color(0xFF1A1A1E),
-            contentColor = Color.White,
-            enabled = !isLoading,
-            onClick = onAppleSignIn,
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, BorderStrong, SubTrackShapes.l)
-        )
+        // Android only signs in with Google; Apple sign-in belongs to the iOS app (B3).
 
         Spacer(Modifier.height(Spacing.m))
 
@@ -219,7 +205,6 @@ private fun AuthOnboardingPreview() {
         AuthOnboardingScreen(
             authState = AuthState.Idle,
             onGoogleSignIn = {},
-            onAppleSignIn = {}
         )
     }
 }

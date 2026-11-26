@@ -539,7 +539,6 @@
     <string name="onboarding_auth_title">Crea tu cuenta</string>
     <string name="onboarding_auth_subtitle">Inicia sesión con un tap. Tus datos están seguros.</string>
     <string name="onboarding_auth_google">Continuar con Google</string>
-    <string name="onboarding_auth_apple">Continuar con Apple</string>
     <string name="onboarding_auth_terms">Al continuar aceptas nuestros Términos de servicio y Política de privacidad.</string>
 
     <!-- Onboarding — Notifications -->
@@ -639,6 +638,11 @@
     <string name="people_detail_since">Desde</string>
     <string name="people_detail_subs_title">Suscripciones</string>
     <string name="people_detail_archived_label">Archivados</string>
+
+    <string name="timeline_legend_paid">Pagó</string>
+    <string name="timeline_legend_owes">Debe</string>
+    <string name="timeline_legend_none">Sin registro</string>
+    <string name="timeline_dot_cd">%1$s: %2$s</string>
 
     <!-- Member history screen -->
     <string name="member_history_title">Historial de pagos</string>

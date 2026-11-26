@@ -69,8 +69,11 @@ fun ServiceLogo(
             )
         }
     } else {
-        val initial = serviceName.trim().firstOrNull()?.uppercase() ?: "?"
-        val fontSize = (size.value * 0.42f).sp
+        val initial = ServiceLogoRegistry.monogram(serviceId)
+            ?: serviceName.trim().firstOrNull()?.uppercase()
+            ?: "?"
+        // Two-letter monograms ("D+") get a smaller size so they fit small logos
+        val fontSize = (size.value * if (initial.length > 1) 0.32f else 0.42f).sp
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier

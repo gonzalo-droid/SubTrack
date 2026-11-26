@@ -86,7 +86,6 @@ fun OnboardingFlow(
             OnboardingStep.AUTH -> AuthOnboardingScreen(
                 authState = authState,
                 onGoogleSignIn = vm::authenticateWithGoogle,
-                onAppleSignIn = vm::authenticateWithApple,
                 modifier = Modifier.fillMaxSize()
             )
             OnboardingStep.NOTIFICATIONS -> NotificationsPermissionScreen(

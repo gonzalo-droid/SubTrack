@@ -11,10 +11,4 @@ class MockAuthRepository : AuthRepository {
         MockDataStore.currentUser.value = MockData.currentUser
         return Result.success(MockData.currentUser)
     }
-
-    override suspend fun signInWithApple(): Result<User> {
-        delay(1500)
-        MockDataStore.currentUser.value = MockData.currentUser
-        return Result.success(MockData.currentUser)
-    }
 }

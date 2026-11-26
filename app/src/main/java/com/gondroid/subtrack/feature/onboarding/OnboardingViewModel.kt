@@ -92,7 +92,6 @@ class OnboardingViewModel(
     // ── Auth ──────────────────────────────────────────────────────────────────
 
     fun authenticateWithGoogle() = authenticate { authenticateUser.withGoogle() }
-    fun authenticateWithApple() = authenticate { authenticateUser.withApple() }
 
     private fun authenticate(block: suspend () -> Result<User>) {
         viewModelScope.launch {

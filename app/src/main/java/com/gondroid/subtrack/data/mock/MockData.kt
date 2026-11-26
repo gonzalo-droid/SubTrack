@@ -15,30 +15,52 @@ import com.gondroid.subtrack.domain.model.enums.ReferralStatus
 import com.gondroid.subtrack.domain.model.enums.SplitType
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import java.util.Calendar
+import java.util.Locale
 
 object MockData {
 
     // ── Timestamps ──────────────────────────────────────────────────────────
+    // Recent history is relative to today (M6): "this month" is always the current month and
+    // the payment history covers the last months, so the demo never looks stale.
+    private val now = System.currentTimeMillis()
+
+    /** "yyyy-MM" for [offset] months from the current one (0 = this month, -1 = last month). */
+    private fun monthKey(offset: Int): String {
+        val cal = Calendar.getInstance().apply { add(Calendar.MONTH, offset) }
+        return String.format(Locale.US, "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
+    }
+
+    /** Timestamp for [day] of the month [offset] months away, never later than now. */
+    private fun dayOf(offset: Int, day: Int): Long {
+        val cal = Calendar.getInstance().apply {
+            add(Calendar.MONTH, offset)
+            set(Calendar.DAY_OF_MONTH, day.coerceAtMost(getActualMaximum(Calendar.DAY_OF_MONTH)))
+            set(Calendar.HOUR_OF_DAY, 12)
+        }
+        return minOf(cal.timeInMillis, now)
+    }
+
     private const val T_2025_01 = 1735689600000L  // 2025-01-01
-    private const val T_2026_01_10 = 1768204800000L  // 2026-01-10
-    private const val T_2026_02_15 = 1739577600000L  // 2026-02-15
-    private const val T_2026_03_20 = 1742428800000L  // 2026-03-20
-    private const val T_2026_04_01 = 1743465600000L  // 2026-04-01
+    private val T_2026_01_10 = dayOf(-3, 10)
+    private val T_2026_02_15 = dayOf(-2, 15)
+    private val T_2026_03_20 = dayOf(-1, 20)
+    private val T_2026_04_01 = dayOf(0, 1)
     private const val T_2025_03 = 1740787200000L  // 2025-03-01
     private const val T_2025_07 = 1751328000000L  // 2025-07-01
     private const val T_2025_10 = 1759305600000L  // 2025-10-01
-    private const val T_2025_11 = 1761984000000L  // 2025-11-01
-    private const val T_2026_02_01 = 1769904000000L
-    private const val T_2026_02_03 = 1770076800000L
-    private const val T_2026_02_05 = 1770249600000L
-    private const val T_2026_02_20 = 1771545600000L
-    private const val T_2026_03_02 = 1772409600000L
-    private const val T_2026_03_03 = 1772496000000L
-    private const val T_2026_03_04 = 1772582400000L
-    private const val T_2026_04_02 = 1775174400000L
-    private const val T_2026_04_05 = 1775433600000L
-    private const val T_2026_02_02 = 1769990400000L
-    private const val T_2026_03_01 = 1772323200000L
+    private val T_2025_11 = dayOf(-5, 1)
+    private val T_2026_02_01 = dayOf(-2, 1)
+    private val T_2026_02_03 = dayOf(-2, 3)
+    private val T_2026_02_05 = dayOf(-2, 5)
+    private val T_2026_02_20 = dayOf(-2, 20)
+    private val T_2026_03_02 = dayOf(-1, 2)
+    private val T_2026_03_03 = dayOf(-1, 3)
+    private val T_2026_03_04 = dayOf(-1, 4)
+    private val T_2026_04_02 = dayOf(0, 2)
+    private val T_2026_04_05 = dayOf(0, 5)
+    private val T_2026_02_02 = dayOf(-2, 2)
+    private val T_2026_03_01 = dayOf(-1, 1)
 
     // ── Usuario principal ────────────────────────────────────────────────────
     val currentUser = User(
@@ -205,6 +227,7 @@ object MockData {
             id = "sub_disney",
             name = "Disney+",
             brandColor = "#113CCF",
+            serviceTemplateId = "tpl_disney",
             totalAmount = 48.90,
             cycle = BillingCycle.MONTHLY,
             cutoffDay = 5,
@@ -240,7 +263,7 @@ object MockData {
             id = "pay_netflix_2026-02_maria",
             subscriptionId = "sub_netflix",
             memberId = "mem_maria",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 10.98,
             status = PaymentStatus.LATE,
             paidAt = T_2026_02_20,
@@ -251,7 +274,7 @@ object MockData {
             id = "pay_netflix_2026-02_carlos",
             subscriptionId = "sub_netflix",
             memberId = "mem_carlos",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 10.98,
             status = PaymentStatus.OVERDUE,
             paidAt = null,
@@ -262,7 +285,7 @@ object MockData {
             id = "pay_netflix_2026-02_lucia",
             subscriptionId = "sub_netflix",
             memberId = "mem_lucia",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_02_03,
@@ -273,7 +296,7 @@ object MockData {
             id = "pay_netflix_2026-02_roberto",
             subscriptionId = "sub_netflix",
             memberId = "mem_roberto",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_02_05,
@@ -285,7 +308,7 @@ object MockData {
             id = "pay_netflix_2026-03_maria",
             subscriptionId = "sub_netflix",
             memberId = "mem_maria",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_03_03,
@@ -296,7 +319,7 @@ object MockData {
             id = "pay_netflix_2026-03_lucia",
             subscriptionId = "sub_netflix",
             memberId = "mem_lucia",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_03_02,
@@ -307,7 +330,7 @@ object MockData {
             id = "pay_netflix_2026-03_roberto",
             subscriptionId = "sub_netflix",
             memberId = "mem_roberto",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_03_04,
@@ -319,7 +342,7 @@ object MockData {
             id = "pay_netflix_2026-04_maria",
             subscriptionId = "sub_netflix",
             memberId = "mem_maria",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 10.98,
             status = PaymentStatus.OVERDUE,
             paidAt = null,
@@ -330,7 +353,7 @@ object MockData {
             id = "pay_netflix_2026-04_lucia",
             subscriptionId = "sub_netflix",
             memberId = "mem_lucia",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 10.98,
             status = PaymentStatus.PAID,
             paidAt = T_2026_04_05,
@@ -341,7 +364,7 @@ object MockData {
             id = "pay_netflix_2026-04_roberto",
             subscriptionId = "sub_netflix",
             memberId = "mem_roberto",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 10.98,
             status = PaymentStatus.PENDING,
             paidAt = null,
@@ -353,7 +376,7 @@ object MockData {
             id = "pay_disney_2025-11_gonzalo",
             subscriptionId = "sub_disney",
             memberId = "mem_gonzalo_disney",
-            monthKey = "2025-11",
+            monthKey = monthKey(-5),
             amount = 12.25,
             status = PaymentStatus.PAID,
             paidAt = T_2025_11,
@@ -364,7 +387,7 @@ object MockData {
             id = "pay_disney_2026-02_gonzalo",
             subscriptionId = "sub_disney",
             memberId = "mem_gonzalo_disney",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 12.25,
             status = PaymentStatus.PAID,
             paidAt = T_2026_02_03,
@@ -375,7 +398,7 @@ object MockData {
             id = "pay_disney_2026-03_gonzalo",
             subscriptionId = "sub_disney",
             memberId = "mem_gonzalo_disney",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 12.25,
             status = PaymentStatus.LATE,
             paidAt = T_2026_03_20,
@@ -386,7 +409,7 @@ object MockData {
             id = "pay_disney_2026-04_gonzalo",
             subscriptionId = "sub_disney",
             memberId = "mem_gonzalo_disney",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 12.25,
             status = PaymentStatus.PENDING,
             paidAt = null,
@@ -398,7 +421,7 @@ object MockData {
             id = "pay_spotify_2026-02_ana",
             subscriptionId = "sub_spotify",
             memberId = "mem_ana",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 8.97,
             status = PaymentStatus.PAID,
             paidAt = T_2026_02_02,
@@ -409,7 +432,7 @@ object MockData {
             id = "pay_spotify_2026-02_diego",
             subscriptionId = "sub_spotify",
             memberId = "mem_diego",
-            monthKey = "2026-02",
+            monthKey = monthKey(-2),
             amount = 8.97,
             status = PaymentStatus.PAID,
             paidAt = T_2026_02_03,
@@ -421,7 +444,7 @@ object MockData {
             id = "pay_spotify_2026-03_ana",
             subscriptionId = "sub_spotify",
             memberId = "mem_ana",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 8.97,
             status = PaymentStatus.LATE,
             paidAt = T_2026_03_20,
@@ -432,7 +455,7 @@ object MockData {
             id = "pay_spotify_2026-03_diego",
             subscriptionId = "sub_spotify",
             memberId = "mem_diego",
-            monthKey = "2026-03",
+            monthKey = monthKey(-1),
             amount = 8.97,
             status = PaymentStatus.PAID,
             paidAt = T_2026_03_01,
@@ -444,7 +467,7 @@ object MockData {
             id = "pay_spotify_2026-04_ana",
             subscriptionId = "sub_spotify",
             memberId = "mem_ana",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 8.97,
             status = PaymentStatus.PENDING,
             paidAt = null,
@@ -455,7 +478,7 @@ object MockData {
             id = "pay_spotify_2026-04_diego",
             subscriptionId = "sub_spotify",
             memberId = "mem_diego",
-            monthKey = "2026-04",
+            monthKey = monthKey(0),
             amount = 8.97,
             status = PaymentStatus.PAID,
             paidAt = T_2026_04_02,

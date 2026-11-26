@@ -26,4 +26,15 @@ object ServiceLogoRegistry {
     )
 
     fun get(templateId: String?): ServiceLogoAsset? = templateId?.let { map[it] }
+
+    /**
+     * Brand monograms for services without an icon asset yet (B1). Official artwork needs the
+     * brand's press kit; until then these beat a generic first letter.
+     */
+    private val monograms: Map<String, String> = mapOf(
+        "tpl_disney" to "D+",
+        "tpl_prime" to "P"
+    )
+
+    fun monogram(templateId: String?): String? = templateId?.let { monograms[it] }
 }
