@@ -20,7 +20,7 @@ class GetSubscriptionStatsUseCase @Inject constructor(
         ) { subs, user ->
             val personal = subs.filter { !it.isShared }
             val shared = subs.filter { it.isShared }
-            val monthly = subs.sumOf { sub ->
+            val monthly = subs.filterNot { it.isPaused }.sumOf { sub ->
                 when (sub.cycle) {
                     BillingCycle.YEARLY -> sub.totalAmount / 12.0
                     else -> sub.totalAmount

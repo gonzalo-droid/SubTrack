@@ -61,6 +61,7 @@ private val CYCLES = listOf(BillingCycle.MONTHLY, BillingCycle.YEARLY)
 
 @Composable
 fun DetailsStep(
+    isEditing: Boolean,
     service: ServiceTemplate?,
     totalAmount: String,
     currency: String,
@@ -80,7 +81,11 @@ fun DetailsStep(
             .padding(horizontal = Spacing.base)
     ) {
         Spacer(Modifier.height(Spacing.m))
-        Eyebrow(text = stringResource(R.string.create_subscription_step2_eyebrow))
+        Eyebrow(
+            text = stringResource(
+                if (isEditing) R.string.edit_subscription_eyebrow else R.string.create_subscription_step2_eyebrow
+            )
+        )
         Spacer(Modifier.height(Spacing.xs))
         Text(
             stringResource(R.string.create_subscription_step2_title),
@@ -299,6 +304,7 @@ private fun DayGrid(selectedDay: Int, onSelect: (Int) -> Unit) {
 private fun DetailsStepPreview() {
     SubTrackTheme {
         DetailsStep(
+            isEditing = false,
             service = ServiceTemplate("tpl_netflix", "Netflix", "#E50914", "N", 54.90, SubscriptionCategory.STREAMING),
             totalAmount = "54.90",
             currency = "PEN",

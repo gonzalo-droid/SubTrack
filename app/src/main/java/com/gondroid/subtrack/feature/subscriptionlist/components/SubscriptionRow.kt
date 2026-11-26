@@ -40,6 +40,8 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.util.toComposeColor
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
+import com.gondroid.subtrack.core.designsystem.components.text.Badge
+import com.gondroid.subtrack.core.designsystem.components.text.BadgeVariant
 
 @Composable
 fun SubscriptionRow(
@@ -77,6 +79,9 @@ fun SubscriptionRow(
                     color = TextPrimary,
                     modifier = Modifier.weight(1f, fill = false)
                 )
+                if (subscription.isPaused) {
+                    Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+                }
                 if (subscription.isShared) {
                     Text(
                         text = if (isAdmin) stringResource(R.string.subscription_list_tag_admin)

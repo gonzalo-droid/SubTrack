@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -86,12 +85,27 @@ import com.gondroid.subtrack.domain.util.daysUntilCutoff
 import com.gondroid.subtrack.domain.util.nextCutoff
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.gondroid.subtrack.core.designsystem.theme.AccentRed
+import com.gondroid.subtrack.core.designsystem.theme.BgSurface
+import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AdminDetailViewModel = viewModel(factory = AdminDetailViewModelFactory(subscriptionId))
 ) {
@@ -117,6 +131,10 @@ fun AdminDetailScreen(
                     resources.getString(R.string.member_sheet_updated_toast, event.name)
                 is AdminDetailEvent.BulkReminderSent ->
                     resources.getQuantityString(R.plurals.member_sheet_bulk_done, event.count, event.count)
+                is AdminDetailEvent.PausedChanged -> resources.getString(
+                    if (event.paused) R.string.subscription_paused_toast else R.string.subscription_resumed_toast
+                )
+                AdminDetailEvent.Deleted -> resources.getString(R.string.subscription_deleted_toast)
                 is AdminDetailEvent.Error -> event.message
             }
             messenger.show(msg)
@@ -137,7 +155,10 @@ fun AdminDetailScreen(
                 onAddMember = viewModel::openAddMember,
                 onMemberTap = viewModel::openEditMember,
                 onArchivedTap = viewModel::openEditMember,
-                onCobranzaTap = viewModel::openBulkReminder
+                onCobranzaTap = viewModel::openBulkReminder,
+                onEdit = onEdit,
+                onSetPaused = viewModel::setPaused,
+                onDelete = viewModel::deleteSubscription
             )
         }
 
@@ -280,10 +301,35 @@ private fun AdminDetailContent(
     onAddMember: () -> Unit,
     onMemberTap: (String) -> Unit,
     onArchivedTap: (String) -> Unit,
-    onCobranzaTap: () -> Unit
+    onCobranzaTap: () -> Unit,
+    onEdit: () -> Unit,
+    onSetPaused: (Boolean) -> Unit,
+    onDelete: () -> Unit
 ) {
-    val context = LocalContext.current
     val sub = data.subscription
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.subscription_delete_title, sub.name), color = TextPrimary) },
+            text = { Text(stringResource(R.string.subscription_delete_desc), color = TextSecondary) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteConfirm = false
+                    onDelete()
+                }) {
+                    Text(stringResource(R.string.subscription_menu_delete), color = AccentRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.common_cancel), color = TextSecondary)
+                }
+            },
+            containerColor = BgSurface
+        )
+    }
     val brandColor = sub.brandColor.toComposeColor()
 
     LazyColumn(
@@ -304,12 +350,11 @@ private fun AdminDetailContent(
                     contentDescription = stringResource(R.string.subscription_detail_back_cd),
                     onClick = onBack
                 )
-                STIconButton(
-                    icon = Icons.Outlined.MoreVert,
-                    contentDescription = stringResource(R.string.subscription_detail_overflow_cd),
-                    onClick = {
-                        Toast.makeText(context, "Próximamente: opciones", Toast.LENGTH_SHORT).show()
-                    }
+                SubscriptionMenu(
+                    isPaused = sub.isPaused,
+                    onEdit = onEdit,
+                    onSetPaused = onSetPaused,
+                    onDelete = { showDeleteConfirm = true }
                 )
             }
         }
@@ -341,7 +386,12 @@ private fun AdminDetailContent(
                     style = SubTrackType.monoXS,
                     color = TextTertiary
                 )
-                Badge(text = stringResource(R.string.subscription_detail_admin_tag), variant = BadgeVariant.ADMIN)
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    Badge(text = stringResource(R.string.subscription_detail_admin_tag), variant = BadgeVariant.ADMIN)
+                    if (sub.isPaused) {
+                        Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+                    }
+                }
                 AmountDisplay(amount = sub.totalAmount, size = AmountSize.MEDIUM)
                 CutoffPill(cutoffDay = sub.cutoffDay)
             }
@@ -403,6 +453,7 @@ private fun AdminDetailContent(
                 Spacer(Modifier.height(Spacing.m))
                 CobranzaBar(
                     pendingCount = data.pendingPaymentsCount,
+                    singlePendingName = data.singlePendingName,
                     totalAmount = data.pendingAmount,
                     onClick = onCobranzaTap,
                     modifier = Modifier.padding(horizontal = Spacing.base)
@@ -453,7 +504,55 @@ private fun AdminDetailContent(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 @Composable
-                    singlePendingName = data.singlePendingName,
+private fun SubscriptionMenu(
+    isPaused: Boolean,
+    onEdit: () -> Unit,
+    onSetPaused: (Boolean) -> Unit,
+    onDelete: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        STIconButton(
+            icon = Icons.Outlined.MoreVert,
+            contentDescription = stringResource(R.string.subscription_detail_overflow_cd),
+            onClick = { expanded = true }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            containerColor = BgSurfaceEl
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.subscription_menu_edit), color = TextPrimary) },
+                leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, tint = TextSecondary) },
+                onClick = { expanded = false; onEdit() }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        stringResource(if (isPaused) R.string.subscription_menu_resume else R.string.subscription_menu_pause),
+                        color = TextPrimary
+                    )
+                },
+                leadingIcon = {
+                    Icon(
+                        if (isPaused) Icons.Outlined.PlayArrow else Icons.Outlined.Pause,
+                        contentDescription = null,
+                        tint = TextSecondary
+                    )
+                },
+                onClick = { expanded = false; onSetPaused(!isPaused) }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.subscription_menu_delete), color = AccentRed) },
+                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null, tint = AccentRed) },
+                onClick = { expanded = false; onDelete() }
+            )
+        }
+    }
+}
+
+@Composable
 private fun CutoffPill(cutoffDay: Int) {
     val next = nextCutoff(cutoffDay)
     val dateStr = stringResource(
@@ -566,7 +665,8 @@ private fun AdminDetailSuccessPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = true),
-            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {}
+            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {},
+            onEdit = {}, onSetPaused = {}, onDelete = {}
         )
     }
 }
@@ -577,7 +677,8 @@ private fun AdminDetailNoArchivedPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = false),
-            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {}
+            onBack = {}, onAddMember = {}, onMemberTap = {}, onArchivedTap = {}, onCobranzaTap = {},
+            onEdit = {}, onSetPaused = {}, onDelete = {}
         )
     }
 }

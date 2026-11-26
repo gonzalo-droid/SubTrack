@@ -16,6 +16,8 @@ import com.gondroid.subtrack.domain.usecase.member.UpdateMemberUseCase
 import com.gondroid.subtrack.domain.usecase.payment.GetPaymentHistoryUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
+import com.gondroid.subtrack.domain.usecase.subscription.DeleteSubscriptionUseCase
+import com.gondroid.subtrack.domain.usecase.subscription.PauseSubscriptionUseCase
 
 // TODO: [hilt] Remove when @HiltViewModel injection is active (AGP / Hilt plugin fixed)
 class AdminDetailViewModelFactory(
@@ -37,7 +39,9 @@ class AdminDetailViewModelFactory(
             updateMemberUseCase = UpdateMemberUseCase(memberRepo),
             archiveMemberUseCase = ArchiveMemberUseCase(memberRepo),
             removeMemberUseCase = RemoveMemberUseCase(memberRepo),
-            markMemberAsPaidUseCase = MarkMemberAsPaidUseCase(paymentRepo)
+            markMemberAsPaidUseCase = MarkMemberAsPaidUseCase(paymentRepo),
+            pauseSubscriptionUseCase = PauseSubscriptionUseCase(subRepo),
+            deleteSubscriptionUseCase = DeleteSubscriptionUseCase(subRepo)
         ) as T
     }
 }

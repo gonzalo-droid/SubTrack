@@ -29,12 +29,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.abs
+import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
+import com.gondroid.subtrack.domain.usecase.subscription.UpdateSubscriptionDetailsUseCase
 
 @HiltViewModel
 class CreateSubscriptionViewModel @Inject constructor(
     private val createSubscription: CreateSubscriptionUseCase,
     private val getPopularServices: GetPopularServicesUseCase,
-    private val getCurrentUser: GetCurrentUserUseCase
+    private val getCurrentUser: GetCurrentUserUseCase,
+    private val getSubscriptionDetail: GetSubscriptionDetailUseCase,
+    private val updateSubscriptionDetails: UpdateSubscriptionDetailsUseCase
 ) : ViewModel() {
 
     private val _form = MutableStateFlow(CreateSubscriptionFormState())
@@ -49,11 +53,11 @@ class CreateSubscriptionViewModel @Inject constructor(
     val popularServices: List<ServiceTemplate> = getPopularServices()
 
     val totalSteps: StateFlow<Int> = _form
-        .map { wizardSteps(it.shared).size }
+        .map { wizardSteps(it.shared, it.isEditing).size }
         .stateIn(viewModelScope, SharingStarted.Eagerly, wizardSteps(false).size)
 
     val currentStepIndex: StateFlow<Int> = _form
-        .combine(_currentStep) { form, step -> wizardSteps(form.shared).indexOf(step) }
+        .combine(_currentStep) { form, step -> wizardSteps(form.shared, form.isEditing).indexOf(step) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, 0)
 
     val isCurrentStepValid: StateFlow<Boolean> = _form
@@ -86,8 +90,31 @@ class CreateSubscriptionViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    fun init(startWithShared: Boolean) {
+    fun init(startWithShared: Boolean, editSubscriptionId: String?) {
         if (startWithShared) _form.update { it.copy(isShared = true) }
+        if (editSubscriptionId != null) loadForEdit(editSubscriptionId)
+    }
+
+    private fun loadForEdit(id: String) {
+        _currentStep.value = WizardStep.DETAILS
+        viewModelScope.launch {
+            val sub = getSubscriptionDetail(id).first() ?: return@launch
+            _form.value = CreateSubscriptionFormState(
+                editingId = sub.id,
+                selectedService = ServiceTemplate(
+                    id = sub.serviceTemplateId ?: sub.id,
+                    name = sub.name,
+                    brandColor = sub.brandColor,
+                    defaultLogoChar = sub.name.take(1),
+                    category = sub.category
+                ),
+                isShared = sub.isShared,
+                totalAmount = "%.2f".format(sub.totalAmount),
+                currency = sub.currency,
+                cycle = sub.cycle,
+                cutoffDay = sub.cutoffDay
+            )
+        }
     }
 
     // ── Step 1 ───────────────────────────────────────────────────────────────
@@ -177,12 +204,29 @@ class CreateSubscriptionViewModel @Inject constructor(
     // ── Navigation ───────────────────────────────────────────────────────────
 
     fun nextStep() {
-        val next = nextWizardStep(_currentStep.value, _form.value.shared)
-        if (next == null) submit() else _currentStep.value = next
+        val form = _form.value
+        val next = nextWizardStep(_currentStep.value, form.shared, form.isEditing)
+        when {
+            next != null -> _currentStep.value = next
+            form.isEditing -> saveEdit()
+            else -> submit()
+        }
     }
 
     fun previousStep() {
-        previousWizardStep(_currentStep.value, _form.value.shared)?.let { _currentStep.value = it }
+        val form = _form.value
+        previousWizardStep(_currentStep.value, form.shared, form.isEditing)?.let { _currentStep.value = it }
+    }
+
+    private fun saveEdit() {
+        val form = _form.value
+        val id = form.editingId ?: return
+        _uiState.value = CreateSubscriptionUiState.Submitting
+        viewModelScope.launch {
+            updateSubscriptionDetails(id, form.totalAmountDouble, form.currency, form.cycle, form.cutoffDay)
+                .onSuccess { _uiState.value = CreateSubscriptionUiState.Saved }
+                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message ?: "Error al guardar") }
+        }
     }
 
     // ── Submit ───────────────────────────────────────────────────────────────
@@ -256,7 +300,8 @@ class CreateSubscriptionViewModel @Inject constructor(
 }
 
 class CreateSubscriptionViewModelFactory(
-    private val startWithShared: Boolean = false
+    private val startWithShared: Boolean = false,
+    private val editSubscriptionId: String? = null
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -265,7 +310,9 @@ class CreateSubscriptionViewModelFactory(
         return CreateSubscriptionViewModel(
             createSubscription = CreateSubscriptionUseCase(subRepo),
             getPopularServices = GetPopularServicesUseCase(serviceRepo),
-            getCurrentUser = GetCurrentUserUseCase(MockUserRepository())
-        ).also { it.init(startWithShared) } as T
+            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
+            getSubscriptionDetail = GetSubscriptionDetailUseCase(subRepo),
+            updateSubscriptionDetails = UpdateSubscriptionDetailsUseCase(subRepo)
+        ).also { it.init(startWithShared, editSubscriptionId) } as T
     }
 }

@@ -94,7 +94,17 @@ fun SubTrackNavHost(
             val args = entry.toRoute<Route.SubscriptionDetail>()
             SubscriptionDetailScreen(
                 subscriptionId = args.id,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onEdit = { navController.navigate(Route.EditSubscription(args.id)) }
+            )
+        }
+
+        composable<Route.EditSubscription> { entry ->
+            val args = entry.toRoute<Route.EditSubscription>()
+            CreateSubscriptionScreen(
+                onBack = { navController.popBackStack() },
+                onCreated = {},
+                editSubscriptionId = args.id
             )
         }
 

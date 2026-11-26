@@ -79,16 +79,19 @@ import com.gondroid.subtrack.feature.createsubscription.steps.MembersStep
 import com.gondroid.subtrack.feature.createsubscription.steps.ServiceStep
 import com.gondroid.subtrack.feature.createsubscription.steps.SplitStep
 import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun CreateSubscriptionScreen(
     onBack: () -> Unit,
     onCreated: (String) -> Unit,
     startWithShared: Boolean = false,
+    editSubscriptionId: String? = null,
     modifier: Modifier = Modifier
 ) {
     val viewModel: CreateSubscriptionViewModel = viewModel(
-        factory = CreateSubscriptionViewModelFactory(startWithShared)
+        factory = CreateSubscriptionViewModelFactory(startWithShared, editSubscriptionId)
     )
     val form by viewModel.formState.collectAsStateWithLifecycle()
     val currentStep by viewModel.currentStep.collectAsStateWithLifecycle()
@@ -98,6 +101,14 @@ fun CreateSubscriptionScreen(
     val stepIndex by viewModel.currentStepIndex.collectAsStateWithLifecycle()
 
     var showCancelDialog by remember { mutableStateOf(false) }
+
+    val messenger = LocalSnackbarMessenger.current
+    if (uiState is CreateSubscriptionUiState.Saved) {
+        LaunchedEffect(Unit) {
+            messenger.show(R.string.edit_subscription_saved)
+            onBack()
+        }
+    }
 
     // Success overlay
     if (uiState is CreateSubscriptionUiState.Success) {
@@ -146,6 +157,7 @@ fun CreateSubscriptionScreen(
         WizardTopBar(
             stepIndex = stepIndex,
             totalSteps = totalSteps,
+            showProgress = !form.isEditing,
             onCancel = { showCancelDialog = true }
         )
 
@@ -177,6 +189,7 @@ fun CreateSubscriptionScreen(
                         onSelect = viewModel::setShared
                     )
                     WizardStep.DETAILS -> DetailsStep(
+                        isEditing = form.isEditing,
                         service = form.selectedService,
                         totalAmount = form.totalAmount,
                         currency = form.currency,
@@ -208,6 +221,7 @@ fun CreateSubscriptionScreen(
         WizardFooter(
             currentStep = currentStep,
             isShared = form.shared,
+            isEditing = form.isEditing,
             isValid = isValid,
             isSubmitting = uiState is CreateSubscriptionUiState.Submitting,
             amountDisplay = if (form.totalAmount.isNotBlank()) "S/ ${form.totalAmount}" else null,
@@ -226,6 +240,7 @@ fun CreateSubscriptionScreen(
 private fun WizardTopBar(
     stepIndex: Int,
     totalSteps: Int,
+    showProgress: Boolean,
     onCancel: () -> Unit
 ) {
     Column(
@@ -239,8 +254,11 @@ private fun WizardTopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             STIconButton(icon = Icons.Outlined.Close, contentDescription = stringResource(R.string.cd_close_wizard), onClick = onCancel)
-            Text("${stepIndex + 1}/$totalSteps", style = SubTrackType.monoS, color = TextTertiary)
+            if (showProgress) {
+                Text("${stepIndex + 1}/$totalSteps", style = SubTrackType.monoS, color = TextTertiary)
+            }
         }
+        if (!showProgress) return@Column
         Spacer(Modifier.height(Spacing.s))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -263,6 +281,7 @@ private fun WizardTopBar(
 private fun WizardFooter(
     currentStep: WizardStep,
     isShared: Boolean,
+    isEditing: Boolean,
     isValid: Boolean,
     isSubmitting: Boolean,
     amountDisplay: String?,
@@ -271,9 +290,10 @@ private fun WizardFooter(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    val isFinalStep = nextWizardStep(currentStep, isShared) == null
+    val isFinalStep = nextWizardStep(currentStep, isShared, isEditing) == null
     val buttonText = when {
         isSubmitting -> stringResource(R.string.common_loading)
+        isEditing -> stringResource(R.string.edit_subscription_save)
         isFinalStep && isShared -> stringResource(R.string.create_subscription_footer_create_shared)
         isFinalStep -> stringResource(R.string.create_subscription_footer_create)
         else -> stringResource(R.string.create_subscription_footer_continue)

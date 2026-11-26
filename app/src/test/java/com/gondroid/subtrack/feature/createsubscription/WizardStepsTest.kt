@@ -25,6 +25,12 @@ class WizardStepsTest {
         assertNull(nextWizardStep(SPLIT, isShared = true))
     }
 
+    @Test fun `editing only shows the details step and saves from it`() {
+        assertEquals(listOf(DETAILS), wizardSteps(isShared = true, isEditing = true))
+        assertNull(nextWizardStep(DETAILS, isShared = true, isEditing = true))
+        assertNull(previousWizardStep(DETAILS, isShared = false, isEditing = true))
+    }
+
     @Test fun `back from details returns to who pays`() {
         assertEquals(WHO_PAYS, previousWizardStep(DETAILS, isShared = false))
         assertEquals(WHO_PAYS, previousWizardStep(DETAILS, isShared = true))

@@ -13,6 +13,7 @@ sealed interface Route {
 
     @Serializable data class SubscriptionDetail(val id: String) : Route
     @Serializable data class CreateSubscription(val startWithShared: Boolean = false) : Route
+    @Serializable data class EditSubscription(val id: String) : Route
 
     @Serializable data object AliasEdit : Route
     @Serializable data object Templates : Route

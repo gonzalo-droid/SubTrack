@@ -21,6 +21,8 @@ data class Subscription(
     val members: List<Member> = emptyList(),
     val archivedMembers: List<Member> = emptyList(),
     val lastActivityAt: Long? = null,
+    /** Paused subscriptions stay listed but don't count toward totals or upcoming cutoffs. */
+    val isPaused: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long
 )

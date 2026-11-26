@@ -27,9 +27,11 @@ import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
+import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
+import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 
 enum class BadgeVariant {
-    PRO, ADMIN, MEMBER, NEW, ERROR
+    PRO, ADMIN, MEMBER, NEW, ERROR, NEUTRAL
 }
 
 private data class BadgeColors(val container: Color, val content: Color)
@@ -40,6 +42,7 @@ private fun BadgeVariant.colors() = when (this) {
     BadgeVariant.MEMBER -> BadgeColors(AccentBlueBg, AccentBlue)
     BadgeVariant.NEW -> BadgeColors(AccentPurpleBg, AccentPurple)
     BadgeVariant.ERROR -> BadgeColors(AccentRedBg, AccentRed)
+    BadgeVariant.NEUTRAL -> BadgeColors(BgSurfaceEl, TextSecondary)
 }
 
 @Composable

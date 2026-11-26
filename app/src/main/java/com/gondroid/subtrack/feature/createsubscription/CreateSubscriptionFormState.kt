@@ -13,6 +13,9 @@ data class WizardMemberData(
 )
 
 data class CreateSubscriptionFormState(
+    /** Set when the wizard edits an existing subscription instead of creating one. */
+    val editingId: String? = null,
+
     // Servicio
     val selectedService: ServiceTemplate? = null,
     val customServiceName: String = "",
@@ -39,6 +42,8 @@ data class CreateSubscriptionFormState(
 
     val shared: Boolean get() = isShared == true
 
+    val isEditing: Boolean get() = editingId != null
+
     val totalAmountDouble: Double get() = totalAmount.toDoubleOrNull() ?: 0.0
 
     val equalSharePerPerson: Double get() {
@@ -49,22 +54,28 @@ data class CreateSubscriptionFormState(
 
 enum class WizardStep { SERVICE, WHO_PAYS, DETAILS, MEMBERS, SPLIT }
 
-/** Steps the wizard walks through: 3 for a personal subscription, 5 for a shared one. */
-fun wizardSteps(isShared: Boolean): List<WizardStep> =
-    if (isShared) WizardStep.entries
-    else listOf(WizardStep.SERVICE, WizardStep.WHO_PAYS, WizardStep.DETAILS)
+/**
+ * Steps the wizard walks through: 3 for a personal subscription, 5 for a shared one.
+ * Editing only touches the details; members are managed from the detail screen.
+ */
+fun wizardSteps(isShared: Boolean, isEditing: Boolean = false): List<WizardStep> = when {
+    isEditing -> listOf(WizardStep.DETAILS)
+    isShared -> WizardStep.entries
+    else -> listOf(WizardStep.SERVICE, WizardStep.WHO_PAYS, WizardStep.DETAILS)
+}
 
 /** Step after [current], or null when [current] is the last one (time to submit). */
-fun nextWizardStep(current: WizardStep, isShared: Boolean): WizardStep? =
-    wizardSteps(isShared).let { it.getOrNull(it.indexOf(current) + 1) }
+fun nextWizardStep(current: WizardStep, isShared: Boolean, isEditing: Boolean = false): WizardStep? =
+    wizardSteps(isShared, isEditing).let { it.getOrNull(it.indexOf(current) + 1) }
 
 /** Step before [current], or null on the first step. */
-fun previousWizardStep(current: WizardStep, isShared: Boolean): WizardStep? =
-    wizardSteps(isShared).let { it.getOrNull(it.indexOf(current) - 1) }
+fun previousWizardStep(current: WizardStep, isShared: Boolean, isEditing: Boolean = false): WizardStep? =
+    wizardSteps(isShared, isEditing).let { it.getOrNull(it.indexOf(current) - 1) }
 
 sealed interface CreateSubscriptionUiState {
     data object Idle : CreateSubscriptionUiState
     data object Submitting : CreateSubscriptionUiState
+    data object Saved : CreateSubscriptionUiState
     data class Success(val createdId: String, val isShared: Boolean, val serviceName: String, val memberCount: Int) : CreateSubscriptionUiState
     data class Error(val message: String) : CreateSubscriptionUiState
 }
