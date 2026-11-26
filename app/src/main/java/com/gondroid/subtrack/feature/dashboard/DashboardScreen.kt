@@ -170,108 +170,121 @@ private fun DashboardContent(
 
     data class FilterTab(val label: String, val count: Int)
 
-    Column(modifier = modifier) {
-        // Fixed header
-        DashboardHeader(
-            user = data.user,
-            dayLabel = data.dayLabel,
-            onNotificationsClick = onNavigateToNotifications,
-            onAvatarClick = onNavigateToProfile
-        )
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Fixed header
+            DashboardHeader(
+                user = data.user,
+                dayLabel = data.dayLabel,
+                onNotificationsClick = onNavigateToNotifications,
+                onAvatarClick = onNavigateToProfile
+            )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = Spacing.huge),
-            verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 88.dp), // room for the FAB (56dp + margins)
+                verticalArrangement = Arrangement.spacedBy(Spacing.m)
+            ) {
+                // ── Segmented selector ────────────────────────────────────────
+                item {
+                    val tabs = listOf(
+                        FilterTab(stringResource(R.string.dashboard_tab_all), data.personalCount + data.sharedCount),
+                        FilterTab(stringResource(R.string.dashboard_tab_personal), data.personalCount),
+                        FilterTab(stringResource(R.string.dashboard_tab_shared), data.sharedCount)
+                    )
+                    SegmentedSelector(
+                        options = tabs,
+                        selectedIndex = selectedFilter,
+                        onSelectionChange = { selectedFilter = it },
+                        labelProvider = { it.label },
+                        countProvider = { it.count },
+                        modifier = Modifier.padding(horizontal = Spacing.base).fillMaxWidth()
+                    )
+                }
+
+                // ── Dual hero row ─────────────────────────────────────────────
+                item {
+                    DualHeroRow(
+                        data = data,
+                        selectedFilter = selectedFilter,
+                        onSelectFilter = { selectedFilter = it },
+                        modifier = Modifier.padding(horizontal = Spacing.base)
+                    )
+                }
+
+                // ── Total summary ─────────────────────────────────────────────
+                item {
+                    TotalSummaryRow(
+                        totalAmount = data.totalMonthlySpend,
+                        netAmount = data.personalAmount,
+                        modifier = Modifier.padding(horizontal = Spacing.base)
+                    )
+                }
+
+                // ── Upcoming cutoffs ──────────────────────────────────────────
+                if (filteredUpcoming.isNotEmpty()) {
+                    item {
+                        UpcomingSection(
+                            subscriptions = filteredUpcoming,
+                            onNavigateToDetail = onNavigateToDetail
+                        )
+                    }
+                }
+
+                // ── Personal subscriptions ────────────────────────────────────
+                item {
+                    AnimatedVisibility(
+                        visible = showPersonal && data.personalSubscriptions.isNotEmpty(),
+                        enter = fadeIn(tween(200)) + expandVertically(tween(200)),
+                        exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
+                    ) {
+                        PersonalSubscriptionsSection(
+                            subscriptions = data.personalSubscriptions,
+                            onNavigateToDetail = onNavigateToDetail,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+
+                // ── Debtors ───────────────────────────────────────────────────
+                item {
+                    AnimatedVisibility(
+                        visible = showShared && data.debtors.isNotEmpty(),
+                        enter = fadeIn(tween(200)) + expandVertically(tween(200)),
+                        exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
+                    ) {
+                        DebtorsSection(
+                            debtors = data.debtors,
+                            sharedSubscriptions = data.sharedSubscriptions,
+                            onNavigateToDetail = onNavigateToDetail,
+                            onReminderTap = onReminderTap,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+
+                // ── Insight card ──────────────────────────────────────────────
+                data.insight?.let { insight ->
+                    item {
+                        DashboardInsightCard(
+                            insight = insight,
+                            onNavigateToDetail = onNavigateToDetail,
+                            modifier = Modifier.padding(horizontal = Spacing.base)
+                        )
+                    }
+                }
+            }
+        }
+
+        FloatingActionButton(
+            onClick = onNavigateToCreate,
+            containerColor = AccentGreen,
+            contentColor = Color.Black,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = Spacing.base, bottom = Spacing.base)
         ) {
-            // ── Segmented selector ────────────────────────────────────────
-            item {
-                val tabs = listOf(
-                    FilterTab(stringResource(R.string.dashboard_tab_all), data.personalCount + data.sharedCount),
-                    FilterTab(stringResource(R.string.dashboard_tab_personal), data.personalCount),
-                    FilterTab(stringResource(R.string.dashboard_tab_shared), data.sharedCount)
-                )
-                SegmentedSelector(
-                    options = tabs,
-                    selectedIndex = selectedFilter,
-                    onSelectionChange = { selectedFilter = it },
-                    labelProvider = { it.label },
-                    countProvider = { it.count },
-                    modifier = Modifier.padding(horizontal = Spacing.base).fillMaxWidth()
-                )
-            }
-
-            // ── Dual hero row ─────────────────────────────────────────────
-            item {
-                DualHeroRow(
-                    data = data,
-                    selectedFilter = selectedFilter,
-                    onSelectFilter = { selectedFilter = it },
-                    modifier = Modifier.padding(horizontal = Spacing.base)
-                )
-            }
-
-            // ── Total summary ─────────────────────────────────────────────
-            item {
-                TotalSummaryRow(
-                    totalAmount = data.totalMonthlySpend,
-                    netAmount = data.personalAmount,
-                    modifier = Modifier.padding(horizontal = Spacing.base)
-                )
-            }
-
-            // ── Upcoming cutoffs ──────────────────────────────────────────
-            if (filteredUpcoming.isNotEmpty()) {
-                item {
-                    UpcomingSection(
-                        subscriptions = filteredUpcoming,
-                        onNavigateToDetail = onNavigateToDetail
-                    )
-                }
-            }
-
-            // ── Personal subscriptions ────────────────────────────────────
-            item {
-                AnimatedVisibility(
-                    visible = showPersonal && data.personalSubscriptions.isNotEmpty(),
-                    enter = fadeIn(tween(200)) + expandVertically(tween(200)),
-                    exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
-                ) {
-                    PersonalSubscriptionsSection(
-                        subscriptions = data.personalSubscriptions,
-                        onNavigateToDetail = onNavigateToDetail,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
-
-            // ── Debtors ───────────────────────────────────────────────────
-            item {
-                AnimatedVisibility(
-                    visible = showShared && data.debtors.isNotEmpty(),
-                    enter = fadeIn(tween(200)) + expandVertically(tween(200)),
-                    exit = fadeOut(tween(150)) + shrinkVertically(tween(150))
-                ) {
-                    DebtorsSection(
-                        debtors = data.debtors,
-                        sharedSubscriptions = data.sharedSubscriptions,
-                        onNavigateToDetail = onNavigateToDetail,
-                        onReminderTap = onReminderTap,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
-
-            // ── Insight card ──────────────────────────────────────────────
-            data.insight?.let { insight ->
-                item {
-                    DashboardInsightCard(
-                        insight = insight,
-                        onNavigateToDetail = onNavigateToDetail,
-                        modifier = Modifier.padding(horizontal = Spacing.base)
-                    )
-                }
-            }
+            Icon(Icons.Outlined.Add, contentDescription = stringResource(R.string.subscription_list_fab_cd))
         }
     }
 }
