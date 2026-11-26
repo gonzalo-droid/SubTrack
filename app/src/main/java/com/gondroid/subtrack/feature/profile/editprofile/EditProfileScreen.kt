@@ -50,16 +50,16 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
-import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun EditProfileScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: EditProfileViewModel = viewModel(factory = EditProfileViewModelFactory())
+    val viewModel: EditProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

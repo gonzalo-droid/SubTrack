@@ -3,8 +3,9 @@ package com.gondroid.subtrack.data.mock
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.domain.repository.AuthRepository
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class MockAuthRepository : AuthRepository {
+class MockAuthRepository @Inject constructor() : AuthRepository {
 
     override suspend fun signInWithGoogle(): Result<User> {
         delay(1500)

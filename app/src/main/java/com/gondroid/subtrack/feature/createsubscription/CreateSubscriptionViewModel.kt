@@ -1,11 +1,7 @@
 package com.gondroid.subtrack.feature.createsubscription
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockServiceTemplateRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.Subscription
@@ -27,15 +23,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.math.abs
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.UpdateSubscriptionDetailsUseCase
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import java.util.Locale
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@HiltViewModel
-class CreateSubscriptionViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = CreateSubscriptionViewModel.Factory::class)
+class CreateSubscriptionViewModel @AssistedInject constructor(
+    @Assisted startWithShared: Boolean,
+    @Assisted editSubscriptionId: String?,
     private val createSubscription: CreateSubscriptionUseCase,
     private val getPopularServices: GetPopularServicesUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
@@ -43,6 +43,12 @@ class CreateSubscriptionViewModel @Inject constructor(
     private val updateSubscriptionDetails: UpdateSubscriptionDetailsUseCase,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(startWithShared: Boolean, editSubscriptionId: String?): CreateSubscriptionViewModel
+    }
+
 
     /** D2: the notification permission is asked right after the first subscription is created. */
     /** Null until DataStore answers, so the success screen doesn't flash before the prompt. */
@@ -105,7 +111,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    fun init(startWithShared: Boolean, editSubscriptionId: String?) {
+    private fun start(startWithShared: Boolean, editSubscriptionId: String?) {
         startsShared = startWithShared
         if (startWithShared) _form.update { it.copy(isShared = true) }
         if (editSubscriptionId != null) loadForEdit(editSubscriptionId)
@@ -325,24 +331,9 @@ class CreateSubscriptionViewModel @Inject constructor(
         _currentStep.value = WizardStep.SERVICE
         _uiState.value = CreateSubscriptionUiState.Idle
     }
-}
 
-class CreateSubscriptionViewModelFactory(
-    private val userPreferences: UserPreferences,
-    private val startWithShared: Boolean = false,
-    private val editSubscriptionId: String? = null
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val subRepo = MockSubscriptionRepository()
-        val serviceRepo = MockServiceTemplateRepository()
-        return CreateSubscriptionViewModel(
-            createSubscription = CreateSubscriptionUseCase(subRepo),
-            getPopularServices = GetPopularServicesUseCase(serviceRepo),
-            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
-            getSubscriptionDetail = GetSubscriptionDetailUseCase(subRepo),
-            updateSubscriptionDetails = UpdateSubscriptionDetailsUseCase(subRepo),
-            userPreferences = userPreferences
-        ).also { it.init(startWithShared, editSubscriptionId) } as T
+    // Last in the body so every property above is initialized first
+    init {
+        start(startWithShared, editSubscriptionId)
     }
 }

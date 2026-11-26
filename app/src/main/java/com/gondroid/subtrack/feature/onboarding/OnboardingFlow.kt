@@ -14,12 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gondroid.subtrack.AppStateViewModelFactory
 import com.gondroid.subtrack.core.designsystem.animation.ONBOARDING_TRANSITION_MS
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
 import com.gondroid.subtrack.core.navigation.Route
-import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.feature.onboarding.screens.AuthOnboardingScreen
 import com.gondroid.subtrack.feature.onboarding.screens.FirstSubscriptionScreen
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
@@ -29,6 +26,7 @@ import com.gondroid.subtrack.feature.onboarding.screens.ValueShareScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueTrackerScreen
 import androidx.compose.ui.res.stringResource
 import com.gondroid.subtrack.R
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun OnboardingFlow(
@@ -37,9 +35,7 @@ fun OnboardingFlow(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val vm: OnboardingViewModel = viewModel(
-        factory = OnboardingViewModelFactory(UserPreferences.getInstance(context))
-    )
+    val vm: OnboardingViewModel = hiltViewModel()
 
     val step by vm.currentStep.collectAsStateWithLifecycle()
     val authState by vm.authState.collectAsStateWithLifecycle()

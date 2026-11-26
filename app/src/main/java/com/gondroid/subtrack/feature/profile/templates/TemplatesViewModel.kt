@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.templates
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockTemplateRepository
 import com.gondroid.subtrack.domain.usecase.template.DeleteTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.DuplicateTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
@@ -77,17 +75,5 @@ class TemplatesViewModel @Inject constructor(
                 .onFailure { _events.emit(TemplatesEvent.Error(it.message)) }
             closeActions()
         }
-    }
-}
-
-class TemplatesViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockTemplateRepository()
-        return TemplatesViewModel(
-            getAllTemplates = GetAllTemplatesUseCase(repo),
-            duplicateTemplate = DuplicateTemplateUseCase(repo),
-            deleteTemplate = DeleteTemplateUseCase(repo)
-        ) as T
     }
 }

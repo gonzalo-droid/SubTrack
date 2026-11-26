@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,6 +45,7 @@ import com.gondroid.subtrack.domain.model.Payment
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun MemberHistoryScreen(
@@ -54,9 +54,9 @@ fun MemberHistoryScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: MemberHistoryViewModel = viewModel(
+    val viewModel = hiltViewModel<MemberHistoryViewModel, MemberHistoryViewModel.Factory>(
         key = "$subscriptionId/$memberId",
-        factory = MemberHistoryViewModelFactory(subscriptionId, memberId)
+        creationCallback = { it.create(subscriptionId, memberId) }
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

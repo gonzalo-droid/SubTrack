@@ -1,6 +1,7 @@
 package com.gondroid.subtrack
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-// TODO: [hilt] Add @HiltAndroidApp when Gradle plugin is configured
+@HiltAndroidApp
 class SubTrackApplication : Application()

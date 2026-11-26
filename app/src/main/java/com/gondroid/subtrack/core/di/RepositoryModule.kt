@@ -21,6 +21,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.gondroid.subtrack.data.mock.MockAuthRepository
+import com.gondroid.subtrack.domain.repository.AuthRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,6 +48,9 @@ abstract class RepositoryModule {
 
     @Binds @Singleton
     abstract fun bindReferralRepository(impl: MockReferralRepository): ReferralRepository
+
+    @Binds @Singleton
+    abstract fun bindAuthRepository(impl: MockAuthRepository): AuthRepository
 
     @Binds @Singleton
     abstract fun bindServiceTemplateRepository(impl: MockServiceTemplateRepository): ServiceTemplateRepository

@@ -1,12 +1,7 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.member
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockMemberRepository
-import com.gondroid.subtrack.data.mock.MockPaymentRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.MemberSubscriptionView
 import com.gondroid.subtrack.domain.model.Payment
 import com.gondroid.subtrack.domain.usecase.member.GetMemberPaymentHistoryUseCase
@@ -24,6 +19,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 // ── UI State ──────────────────────────────────────────────────────────────────
 
@@ -55,14 +54,24 @@ sealed interface MemberDetailEvent {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-class MemberDetailViewModel(
-    private val memberId: String,
-    private val subscriptionId: String,
+@HiltViewModel(assistedFactory = MemberDetailViewModel.Factory::class)
+class MemberDetailViewModel @AssistedInject constructor(
+    @Assisted("memberId") private val memberId: String,
+    @Assisted("subscriptionId") private val subscriptionId: String,
     getMemberSubscriptionDetail: GetMemberSubscriptionDetailUseCase,
     getMemberPaymentHistory: GetMemberPaymentHistoryUseCase,
     private val markOwnPaymentUseCase: MarkOwnPaymentUseCase,
     private val requestGroupExitUseCase: RequestGroupExitUseCase
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted("memberId") memberId: String,
+            @Assisted("subscriptionId") subscriptionId: String
+        ): MemberDetailViewModel
+    }
+
 
     val uiState: StateFlow<MemberDetailUiState> = combine(
         getMemberSubscriptionDetail(subscriptionId, memberId),
@@ -112,26 +121,5 @@ class MemberDetailViewModel(
     fun currentMonthKey(): String {
         val cal = Calendar.getInstance()
         return "%04d-%02d".format(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
-    }
-}
-
-class MemberDetailViewModelFactory(
-    private val memberId: String,
-    private val subscriptionId: String
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val memberRepo = MockMemberRepository()
-        val paymentRepo = MockPaymentRepository()
-        val subRepo = MockSubscriptionRepository()
-        val userRepo = MockUserRepository()
-        return MemberDetailViewModel(
-            memberId = memberId,
-            subscriptionId = subscriptionId,
-            getMemberSubscriptionDetail = GetMemberSubscriptionDetailUseCase(subRepo, memberRepo, userRepo),
-            getMemberPaymentHistory = GetMemberPaymentHistoryUseCase(paymentRepo),
-            markOwnPaymentUseCase = MarkOwnPaymentUseCase(paymentRepo),
-            requestGroupExitUseCase = RequestGroupExitUseCase(memberRepo)
-        ) as T
     }
 }

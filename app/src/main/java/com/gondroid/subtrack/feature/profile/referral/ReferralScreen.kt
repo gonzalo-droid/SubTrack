@@ -74,13 +74,10 @@ import com.gondroid.subtrack.core.designsystem.theme.AccentAmberBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
-import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleBg
-import com.gondroid.subtrack.core.designsystem.theme.BgApp
 import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
-import com.gondroid.subtrack.core.designsystem.theme.BorderStrong
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
@@ -95,6 +92,7 @@ import com.gondroid.subtrack.domain.model.ReferralRecord
 import com.gondroid.subtrack.domain.model.enums.ReferralStatus
 import java.util.concurrent.TimeUnit
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +100,7 @@ fun ReferralScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ReferralViewModel = viewModel(factory = ReferralViewModelFactory())
+    val viewModel: ReferralViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val resources = LocalResources.current

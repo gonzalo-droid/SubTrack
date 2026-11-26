@@ -14,27 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.CloudDownload
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.HelpOutline
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -64,18 +55,15 @@ import com.gondroid.subtrack.core.designsystem.components.text.Eyebrow
 import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
 import com.gondroid.subtrack.core.designsystem.theme.AccentAmberBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentBlue
-import com.gondroid.subtrack.core.designsystem.theme.AccentBlueBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
-import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
 import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
-import com.gondroid.subtrack.core.designsystem.theme.BorderStrong
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
@@ -91,6 +79,7 @@ import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.list.SettingsRow
 import com.gondroid.subtrack.core.designsystem.components.list.SettingsDivider
 import com.gondroid.subtrack.BuildConfig
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ProfileScreen(
@@ -104,7 +93,7 @@ fun ProfileScreen(
     onDebugData: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory())
+    val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {

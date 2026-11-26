@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -53,6 +52,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.SubscriptionStats
 import com.gondroid.subtrack.domain.usecase.subscription.SubscriptionFilter
 import com.gondroid.subtrack.feature.subscriptionlist.components.SubscriptionRow
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SubscriptionListScreen(
@@ -60,9 +60,7 @@ fun SubscriptionListScreen(
     onCreateSubscription: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: SubscriptionListViewModel = viewModel(
-        factory = SubscriptionListViewModelFactory()
-    )
+    val viewModel: SubscriptionListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize().background(BgApp)) {

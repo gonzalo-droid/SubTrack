@@ -101,6 +101,7 @@ import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.domain.model.enums.isUnpaid
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.components.TimelineLegend
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +111,10 @@ fun AdminDetailScreen(
     onEdit: () -> Unit,
     onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AdminDetailViewModel = viewModel(factory = AdminDetailViewModelFactory(subscriptionId))
+    viewModel: AdminDetailViewModel = hiltViewModel<AdminDetailViewModel, AdminDetailViewModel.Factory>(
+        key = subscriptionId,
+        creationCallback = { it.create(subscriptionId) }
+    )
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activeSheet by viewModel.activeSheet.collectAsStateWithLifecycle()

@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
@@ -79,6 +78,7 @@ import java.util.Date
 import java.util.Locale
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,9 +88,9 @@ fun MemberDetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm: MemberDetailViewModel = viewModel(
+    val vm = hiltViewModel<MemberDetailViewModel, MemberDetailViewModel.Factory>(
         key = "$subscriptionId/$memberId",
-        factory = MemberDetailViewModelFactory(memberId, subscriptionId)
+        creationCallback = { it.create(memberId, subscriptionId) }
     )
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val activeSheet by vm.activeSheet.collectAsStateWithLifecycle()

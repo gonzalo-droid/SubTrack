@@ -70,8 +70,8 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.Template
-import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +80,7 @@ fun TemplatesScreen(
     onEditTemplate: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: TemplatesViewModel = viewModel(factory = TemplatesViewModelFactory())
+    val viewModel: TemplatesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val actionSheet by viewModel.actionSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current

@@ -80,6 +80,7 @@ import com.gondroid.subtrack.core.util.TemplateRenderer
 import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 private val COMMON_EMOJIS = listOf(
     "💬", "✅", "🔔", "💳", "📱", "🎵",
@@ -96,7 +97,10 @@ fun EditTemplateScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: EditTemplateViewModel = viewModel(factory = EditTemplateViewModelFactory(templateId))
+    val viewModel = hiltViewModel<EditTemplateViewModel, EditTemplateViewModel.Factory>(
+        key = templateId ?: "new",
+        creationCallback = { it.create(templateId) }
+    )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

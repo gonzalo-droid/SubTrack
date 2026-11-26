@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -63,6 +62,7 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SettingsScreen(
@@ -70,7 +70,7 @@ fun SettingsScreen(
     onEditUser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModelFactory())
+    val viewModel: SettingsViewModel = hiltViewModel()
     val context = LocalContext.current
     val messenger = LocalSnackbarMessenger.current
     val scope = rememberCoroutineScope()

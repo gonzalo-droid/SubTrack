@@ -96,6 +96,7 @@ import com.gondroid.subtrack.domain.model.enums.isOverdue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.outlined.Add
+import androidx.hilt.navigation.compose.hiltViewModel
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -106,7 +107,7 @@ fun DashboardScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = viewModel(factory = DashboardViewModelFactory())
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

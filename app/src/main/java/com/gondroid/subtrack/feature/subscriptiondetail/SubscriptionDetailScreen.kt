@@ -8,12 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.AdminDetailScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.member.MemberDetailScreen
 import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SubscriptionDetailScreen(
@@ -23,8 +23,9 @@ fun SubscriptionDetailScreen(
     onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm: SubscriptionDetailRouterViewModel = viewModel(
-        factory = SubscriptionDetailRouterViewModelFactory(subscriptionId)
+    val vm = hiltViewModel<SubscriptionDetailRouterViewModel, SubscriptionDetailRouterViewModel.Factory>(
+        key = subscriptionId,
+        creationCallback = { it.create(subscriptionId) }
     )
     val roleState by vm.roleState.collectAsStateWithLifecycle()
 

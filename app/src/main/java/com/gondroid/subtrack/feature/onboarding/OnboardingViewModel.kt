@@ -1,13 +1,8 @@
 package com.gondroid.subtrack.feature.onboarding
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
-import com.gondroid.subtrack.data.mock.MockAuthRepository
-import com.gondroid.subtrack.data.mock.MockServiceTemplateRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.User
@@ -26,6 +21,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 // ── Step enum ────────────────────────────────────────────────────────────────
 
@@ -45,7 +42,8 @@ sealed interface AuthState {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-class OnboardingViewModel(
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(
     private val authenticateUser: AuthenticateUserUseCase,
     private val createSubscription: CreateSubscriptionUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
@@ -155,18 +153,3 @@ class OnboardingViewModel(
     }
 }
 
-// ── Factory ───────────────────────────────────────────────────────────────────
-
-class OnboardingViewModelFactory(
-    private val userPreferences: UserPreferences
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        OnboardingViewModel(
-            authenticateUser = AuthenticateUserUseCase(MockAuthRepository()),
-            createSubscription = CreateSubscriptionUseCase(MockSubscriptionRepository()),
-            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
-            getPopularServices = GetPopularServicesUseCase(MockServiceTemplateRepository()),
-            userPreferences = userPreferences
-        ) as T
-}

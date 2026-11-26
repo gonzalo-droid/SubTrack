@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -82,9 +81,9 @@ import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.runtime.LaunchedEffect
 import android.os.Build
-import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -94,10 +93,8 @@ fun CreateSubscriptionScreen(
     editSubscriptionId: String? = null,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: CreateSubscriptionViewModel = viewModel(
-        factory = CreateSubscriptionViewModelFactory(
-            UserPreferences.getInstance(LocalContext.current), startWithShared, editSubscriptionId
-        )
+    val viewModel = hiltViewModel<CreateSubscriptionViewModel, CreateSubscriptionViewModel.Factory>(
+        creationCallback = { it.create(startWithShared, editSubscriptionId) }
     )
     val askNotificationPermission by viewModel.askNotificationPermission.collectAsStateWithLifecycle()
     val form by viewModel.formState.collectAsStateWithLifecycle()
