@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -7,6 +9,13 @@ plugins {
     alias(libs.plugins.roborazzi)
     alias(libs.plugins.google.services)
 }
+
+// Upload key for Play (SEC-03): kept outside the repo, paths and passwords in local.properties.
+// Without them the release builds unsigned and Gradle warns; see "Publicación" in CLAUDE.md.
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+val uploadStoreFile: String? = localProps.getProperty("subtrack.signing.storeFile")
 
 android {
     namespace = "com.gondroid.subtrack"
@@ -25,8 +34,21 @@ android {
         }
     }
 
+    signingConfigs {
+        if (uploadStoreFile != null) {
+            create("release") {
+                storeFile = file(uploadStoreFile)
+                storePassword = localProps.getProperty("subtrack.signing.storePassword")
+                keyAlias = localProps.getProperty("subtrack.signing.keyAlias")
+                keyPassword = localProps.getProperty("subtrack.signing.keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
+                ?: null.also { logger.warn("w: subtrack.signing.* missing in local.properties: the release build is unsigned") }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
