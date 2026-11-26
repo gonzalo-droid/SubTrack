@@ -75,7 +75,9 @@ private val NOTIF_PREVIEWS = listOf(
 fun NotificationsPermissionScreen(
     onGrant: () -> Unit,
     onSkip: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Onboarding progress (0-based); null when shown outside the onboarding. */
+    progressStep: Int? = null
 ) {
     val launcher = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberLauncherForActivityResult(
@@ -91,24 +93,15 @@ fun NotificationsPermissionScreen(
             .padding(horizontal = Spacing.base),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = Spacing.m),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ProgressDots(totalSteps = 2, currentStep = 0)
-            Text(
-                stringResource(R.string.onboarding_later),
-                style = SubTrackType.bodyS,
-                color = TextSecondary,
+        // Top bar: the only skip action lives under the CTA
+        if (progressStep != null) {
+            Row(
                 modifier = Modifier
-                    .clickable(role = Role.Button, onClick = onSkip)
-                    .minimumInteractiveComponentSize()
-                    .padding(start = Spacing.m, top = Spacing.xs, bottom = Spacing.xs)
-            )
+                    .fillMaxWidth()
+                    .padding(top = Spacing.m)
+            ) {
+                ProgressDots(totalSteps = 2, currentStep = progressStep)
+            }
         }
 
         Spacer(Modifier.weight(1f))
@@ -160,7 +153,8 @@ fun NotificationsPermissionScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onSkip)
+                .clickable(role = Role.Button, onClick = onSkip)
+                .minimumInteractiveComponentSize()
                 .padding(vertical = Spacing.s)
         )
 

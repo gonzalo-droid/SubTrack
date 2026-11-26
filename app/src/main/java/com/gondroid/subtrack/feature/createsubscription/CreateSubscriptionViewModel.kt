@@ -31,6 +31,7 @@ import javax.inject.Inject
 import kotlin.math.abs
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.UpdateSubscriptionDetailsUseCase
+import com.gondroid.subtrack.core.preferences.UserPreferences
 
 @HiltViewModel
 class CreateSubscriptionViewModel @Inject constructor(
@@ -38,8 +39,18 @@ class CreateSubscriptionViewModel @Inject constructor(
     private val getPopularServices: GetPopularServicesUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
     private val getSubscriptionDetail: GetSubscriptionDetailUseCase,
-    private val updateSubscriptionDetails: UpdateSubscriptionDetailsUseCase
+    private val updateSubscriptionDetails: UpdateSubscriptionDetailsUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
+
+    /** D2: the notification permission is asked right after the first subscription is created. */
+    val askNotificationPermission: StateFlow<Boolean> = userPreferences.notificationPermissionRequested
+        .map { requested -> !requested }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    fun onNotificationPromptDone() {
+        viewModelScope.launch { userPreferences.setNotificationPermissionRequested(true) }
+    }
 
     private val _form = MutableStateFlow(CreateSubscriptionFormState())
     val formState: StateFlow<CreateSubscriptionFormState> = _form.asStateFlow()
@@ -300,6 +311,7 @@ class CreateSubscriptionViewModel @Inject constructor(
 }
 
 class CreateSubscriptionViewModelFactory(
+    private val userPreferences: UserPreferences,
     private val startWithShared: Boolean = false,
     private val editSubscriptionId: String? = null
 ) : ViewModelProvider.Factory {
@@ -312,7 +324,8 @@ class CreateSubscriptionViewModelFactory(
             getPopularServices = GetPopularServicesUseCase(serviceRepo),
             getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
             getSubscriptionDetail = GetSubscriptionDetailUseCase(subRepo),
-            updateSubscriptionDetails = UpdateSubscriptionDetailsUseCase(subRepo)
+            updateSubscriptionDetails = UpdateSubscriptionDetailsUseCase(subRepo),
+            userPreferences = userPreferences
         ).also { it.init(startWithShared, editSubscriptionId) } as T
     }
 }

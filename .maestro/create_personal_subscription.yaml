@@ -23,6 +23,9 @@ appId: com.gondroid.subtrack
 - assertVisible: "¿Quién paga ChatGPT Plus?"   # atrás desde Detalles vuelve a Quién paga
 - tapOn: "Continuar"
 - tapOn: "Crear suscripción"
+- tapOn:                              # aviso de notificaciones (solo la primera vez)
+    text: "Saltar por ahora"
+    optional: true
 - assertVisible: "¡Listo!"
 - tapOn: "Listo"
 - assertVisible: "ChatGPT Plus"

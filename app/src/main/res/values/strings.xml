@@ -498,7 +498,7 @@
 
     <!-- Onboarding — common -->
     <string name="onboarding_skip">Saltar</string>
-    <string name="onboarding_later">Después</string>
+    <string name="onboarding_success_fallback_name">amigo</string>
     <string name="onboarding_next">Siguiente →</string>
     <string name="onboarding_skip_for_now">Saltar por ahora</string>
     <string name="onboarding_value_eyebrow">VALOR %1$d DE 3</string>

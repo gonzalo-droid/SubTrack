@@ -81,6 +81,9 @@ import com.gondroid.subtrack.feature.createsubscription.steps.SplitStep
 import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.runtime.LaunchedEffect
+import android.os.Build
+import com.gondroid.subtrack.core.preferences.UserPreferences
+import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -91,8 +94,11 @@ fun CreateSubscriptionScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: CreateSubscriptionViewModel = viewModel(
-        factory = CreateSubscriptionViewModelFactory(startWithShared, editSubscriptionId)
+        factory = CreateSubscriptionViewModelFactory(
+            UserPreferences.getInstance(LocalContext.current), startWithShared, editSubscriptionId
+        )
     )
+    val askNotificationPermission by viewModel.askNotificationPermission.collectAsStateWithLifecycle()
     val form by viewModel.formState.collectAsStateWithLifecycle()
     val currentStep by viewModel.currentStep.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -110,8 +116,16 @@ fun CreateSubscriptionScreen(
         }
     }
 
-    // Success overlay
+    // Success overlay — preceded by the notification prompt the first time (D2)
     if (uiState is CreateSubscriptionUiState.Success) {
+        if (askNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            NotificationsPermissionScreen(
+                onGrant = viewModel::onNotificationPromptDone,
+                onSkip = viewModel::onNotificationPromptDone,
+                modifier = modifier
+            )
+            return
+        }
         val success = uiState as CreateSubscriptionUiState.Success
         SuccessScreen(
             serviceName = success.serviceName,

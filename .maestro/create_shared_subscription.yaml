@@ -27,4 +27,7 @@ appId: com.gondroid.subtrack
 - tapOn: "Continuar"
 - assertVisible: "Partes iguales"
 - tapOn: "Crear y enviar invitaciones"
+- tapOn:                              # aviso de notificaciones (solo la primera vez)
+    text: "Saltar por ahora"
+    optional: true
 - assertVisible: "¡Listo!"

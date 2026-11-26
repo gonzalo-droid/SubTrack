@@ -83,7 +83,7 @@ fun FirstSubscriptionScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProgressDots(totalSteps = 2, currentStep = 1)
+            ProgressDots(totalSteps = 2, currentStep = 0)
             Text(
                 stringResource(R.string.onboarding_skip),
                 style = SubTrackType.bodyS,

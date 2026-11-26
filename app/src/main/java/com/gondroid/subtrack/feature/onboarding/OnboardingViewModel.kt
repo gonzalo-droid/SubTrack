@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.data.mock.MockAuthRepository
-import com.gondroid.subtrack.data.mock.MockDataStore
+import com.gondroid.subtrack.data.mock.MockServiceTemplateRepository
 import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.ServiceTemplates
+import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.User
@@ -19,11 +19,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
+import android.os.Build
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
+import com.gondroid.subtrack.domain.usecase.servicetemplate.GetPopularServicesUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 // ── Step enum ────────────────────────────────────────────────────────────────
 
 enum class OnboardingStep {
-    VALUE_TRACKER, VALUE_SHARE, VALUE_INSIGHTS, AUTH, NOTIFICATIONS, FIRST_SUBSCRIPTION, SUCCESS
+    VALUE_TRACKER, VALUE_SHARE, VALUE_INSIGHTS, AUTH, FIRST_SUBSCRIPTION, NOTIFICATIONS, SUCCESS
 }
 
 // ── Auth state ────────────────────────────────────────────────────────────────
@@ -40,8 +47,17 @@ sealed interface AuthState {
 class OnboardingViewModel(
     private val authenticateUser: AuthenticateUserUseCase,
     private val createSubscription: CreateSubscriptionUseCase,
+    private val getCurrentUser: GetCurrentUserUseCase,
+    getPopularServices: GetPopularServicesUseCase,
     private val userPreferences: UserPreferences
 ) : ViewModel() {
+
+    val popularServices: List<ServiceTemplate> = getPopularServices()
+
+    /** First name for the success greeting; null until the mock user is available. */
+    val userFirstName: StateFlow<String?> = getCurrentUser()
+        .map { it?.name?.substringBefore(" ") }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _currentStep = MutableStateFlow(OnboardingStep.VALUE_TRACKER)
     val currentStep: StateFlow<OnboardingStep> = _currentStep.asStateFlow()
@@ -49,19 +65,14 @@ class OnboardingViewModel(
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    private val _selectedService = MutableStateFlow<ServiceTemplate?>(ServiceTemplates.popular.firstOrNull())
+    private val _selectedService = MutableStateFlow(popularServices.firstOrNull())
     val selectedService: StateFlow<ServiceTemplate?> = _selectedService.asStateFlow()
-
-    private val _isNotificationGranted = MutableStateFlow(false)
-    val isNotificationGranted: StateFlow<Boolean> = _isNotificationGranted.asStateFlow()
 
     private val _isCreatingSubscription = MutableStateFlow(false)
     val isCreatingSubscription: StateFlow<Boolean> = _isCreatingSubscription.asStateFlow()
 
     private val _createdServiceName = MutableStateFlow<String?>(null)
     val createdServiceName: StateFlow<String?> = _createdServiceName.asStateFlow()
-
-    val popularServices: List<ServiceTemplate> = ServiceTemplates.popular
 
     // ── Navigation ────────────────────────────────────────────────────────────
 
@@ -88,7 +99,7 @@ class OnboardingViewModel(
             block()
                 .onSuccess { user ->
                     _authState.value = AuthState.Authenticated(user)
-                    _currentStep.value = OnboardingStep.NOTIFICATIONS
+                    _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
                 }
                 .onFailure { error ->
                     _authState.value = AuthState.Error(error.message ?: "Error al autenticar")
@@ -97,19 +108,12 @@ class OnboardingViewModel(
     }
 
     // ── Notifications ─────────────────────────────────────────────────────────
+    // Asked right after the first subscription exists, when the reminders make sense.
 
-    fun grantNotifications() {
-        _isNotificationGranted.value = true
+    fun onNotificationPromptDone() {
         viewModelScope.launch {
             userPreferences.setNotificationPermissionRequested(true)
-            _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
-        }
-    }
-
-    fun skipNotifications() {
-        viewModelScope.launch {
-            userPreferences.setNotificationPermissionRequested(true)
-            _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
+            _currentStep.value = OnboardingStep.SUCCESS
         }
     }
 
@@ -131,7 +135,7 @@ class OnboardingViewModel(
                 totalAmount = service.suggestedMonthly ?: 0.0,
                 cycle = BillingCycle.MONTHLY,
                 cutoffDay = 15,
-                ownerId = MockDataStore.currentUser.value?.id ?: "usr_gonzalo",
+                ownerId = getCurrentUser().first()?.id.orEmpty(),
                 isShared = false,
                 category = service.category,
                 createdAt = now,
@@ -140,7 +144,9 @@ class OnboardingViewModel(
             createSubscription(sub)
             _createdServiceName.value = service.name
             _isCreatingSubscription.value = false
-            _currentStep.value = OnboardingStep.SUCCESS
+            val askNotifications = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                !userPreferences.notificationPermissionRequested.first()
+            _currentStep.value = if (askNotifications) OnboardingStep.NOTIFICATIONS else OnboardingStep.SUCCESS
         }
     }
 
@@ -159,6 +165,8 @@ class OnboardingViewModelFactory(
         OnboardingViewModel(
             authenticateUser = AuthenticateUserUseCase(MockAuthRepository()),
             createSubscription = CreateSubscriptionUseCase(MockSubscriptionRepository()),
+            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
+            getPopularServices = GetPopularServicesUseCase(MockServiceTemplateRepository()),
             userPreferences = userPreferences
         ) as T
 }
