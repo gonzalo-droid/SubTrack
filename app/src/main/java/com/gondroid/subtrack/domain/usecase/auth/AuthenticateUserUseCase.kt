@@ -7,5 +7,5 @@ import javax.inject.Inject
 class AuthenticateUserUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend fun withGoogle(): Result<User> = repository.signInWithGoogle()
+    suspend fun withGoogle(idToken: String): Result<User> = repository.signInWithGoogle(idToken)
 }

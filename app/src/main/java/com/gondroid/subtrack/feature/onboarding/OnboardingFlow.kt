@@ -11,6 +11,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import com.gondroid.subtrack.core.auth.GoogleIdTokenProvider
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gondroid.subtrack.core.designsystem.animation.ONBOARDING_TRANSITION_MS
@@ -41,6 +45,8 @@ fun OnboardingFlow(
     val isCreating by vm.isCreatingSubscription.collectAsStateWithLifecycle()
     val createdServiceName by vm.createdServiceName.collectAsStateWithLifecycle()
     val userFirstName by vm.userFirstName.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     AnimatedContent(
         targetState = step,
@@ -79,7 +85,14 @@ fun OnboardingFlow(
             )
             OnboardingStep.AUTH -> AuthOnboardingScreen(
                 authState = authState,
-                onGoogleSignIn = vm::authenticateWithGoogle,
+                onGoogleSignIn = {
+                    // The account picker needs the Activity, so it runs here; a closed picker does nothing
+                    scope.launch {
+                        GoogleIdTokenProvider.request(context)
+                            .onSuccess { token -> token?.let(vm::authenticateWithGoogle) }
+                            .onFailure { vm.onGoogleSignInFailed() }
+                    }
+                },
                 modifier = Modifier.fillMaxSize()
             )
             OnboardingStep.NOTIFICATIONS -> NotificationsPermissionScreen(

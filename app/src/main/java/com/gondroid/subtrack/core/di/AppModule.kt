@@ -11,6 +11,8 @@ import javax.inject.Singleton
 import androidx.room.Room
 import com.gondroid.subtrack.data.local.SnapshotDao
 import com.gondroid.subtrack.data.local.SubTrackDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,4 +28,10 @@ object AppModule {
 
     @Provides
     fun provideSnapshotDao(db: SubTrackDatabase): SnapshotDao = db.snapshotDao()
+
+    @Provides @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides @Singleton
+    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 }

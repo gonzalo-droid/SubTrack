@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import android.util.Log
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
@@ -36,8 +38,8 @@ sealed interface AuthState {
     data object Idle : AuthState
     data object Authenticating : AuthState
     data class Authenticated(val user: User) : AuthState
-    /** Null message: the UI shows the generic error from strings.xml. */
-    data class Error(val message: String?) : AuthState
+    /** The UI shows the generic error from strings.xml; the cause goes to the log. */
+    data object Error : AuthState
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -89,7 +91,12 @@ class OnboardingViewModel @Inject constructor(
 
     // ── Auth ──────────────────────────────────────────────────────────────────
 
-    fun authenticateWithGoogle() = authenticate { authenticateUser.withGoogle() }
+    fun authenticateWithGoogle(idToken: String) = authenticate { authenticateUser.withGoogle(idToken) }
+
+    /** The account picker failed before reaching Firebase (no Google account, no network...). */
+    fun onGoogleSignInFailed() {
+        _authState.value = AuthState.Error
+    }
 
     private fun authenticate(block: suspend () -> Result<User>) {
         viewModelScope.launch {
@@ -100,7 +107,8 @@ class OnboardingViewModel @Inject constructor(
                     _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
                 }
                 .onFailure { error ->
-                    _authState.value = AuthState.Error(error.message)
+                    Log.e(TAG, "Sign-in failed", error)
+                    _authState.value = AuthState.Error
                 }
         }
     }
@@ -151,5 +159,8 @@ class OnboardingViewModel @Inject constructor(
     fun skipFirstSubscription() {
         _currentStep.value = OnboardingStep.SUCCESS
     }
-}
 
+    private companion object {
+        const val TAG = "OnboardingViewModel"
+    }
+}

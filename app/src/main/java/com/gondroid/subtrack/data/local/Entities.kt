@@ -10,7 +10,9 @@ import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.SplitType
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "subscriptions")
 data class SubscriptionEntity(
     @PrimaryKey val id: String,
@@ -33,6 +35,7 @@ data class SubscriptionEntity(
 )
 
 /** Active and archived members of a subscription; [position] keeps the list order. */
+@Serializable
 @Entity(
     tableName = "members",
     primaryKeys = ["subscriptionId", "id"],
@@ -58,6 +61,7 @@ data class MemberEntity(
     val position: Int
 )
 
+@Serializable
 @Entity(tableName = "payments")
 data class PaymentEntity(
     @PrimaryKey val id: String,
@@ -71,6 +75,7 @@ data class PaymentEntity(
     val note: String?
 )
 
+@Serializable
 @Entity(tableName = "templates")
 data class TemplateEntity(
     @PrimaryKey val id: String,
@@ -83,6 +88,7 @@ data class TemplateEntity(
     val position: Int
 )
 
+@Serializable
 @Entity(tableName = "users")
 data class UserEntity(
     @PrimaryKey val id: String,
@@ -96,6 +102,7 @@ data class UserEntity(
 )
 
 /** Single row (id = 0): the signed-in user's payment aliases. */
+@Serializable
 @Entity(tableName = "user_alias")
 data class UserAliasEntity(
     @PrimaryKey val id: Int = 0,

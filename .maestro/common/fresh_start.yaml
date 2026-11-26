@@ -2,7 +2,9 @@
 # y deja la app en Inicio con los datos de demo. Los flujos lo usan con runFlow.
 appId: com.gondroid.subtrack
 ---
-- launchApp
+- launchApp:
+    arguments:
+      fakeAuth: true            # debug-only: skips the real Google/Firebase sign-in
 - extendedWaitUntil:
     visible: "Saltar"
     timeout: 90000

@@ -36,6 +36,7 @@ import com.gondroid.subtrack.core.designsystem.components.feedback.STSnackbarHos
 import com.gondroid.subtrack.core.designsystem.components.feedback.rememberSnackbarMessenger
 import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.gondroid.subtrack.core.auth.AuthConfig
 
 private fun NavDestination?.isMainRoute(): Boolean =
     this?.hasRoute(Route.Dashboard::class) == true ||
@@ -47,6 +48,9 @@ private fun NavDestination?.isMainRoute(): Boolean =
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (BuildConfig.DEBUG && intent.getBooleanExtra(AuthConfig.FAKE_AUTH_EXTRA, false)) {
+            AuthConfig.useFakeAuth = true
+        }
         enableEdgeToEdge()
         setContent {
             SubTrackTheme {

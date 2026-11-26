@@ -2,7 +2,9 @@
 # la primera suscripción (D2) y que "Compartir con amigos" abra el asistente en modo compartido.
 appId: com.gondroid.subtrack
 ---
-- launchApp
+- launchApp:
+    arguments:
+      fakeAuth: true            # debug-only: skips the real Google/Firebase sign-in
 - extendedWaitUntil:
     visible: "Saltar"
     timeout: 90000

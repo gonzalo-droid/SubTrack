@@ -16,8 +16,9 @@ Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **
 - **Async**: Coroutines + Flow
 - **Navegación**: Navigation Compose type-safe (con `@Serializable`)
 - **Persistencia local**: Room (fase 2)
-- **Backend**: Firebase (Auth, Firestore, Functions, FCM) — se integra en **fase 2**
-- **Fase 1 actual**: UI completa con `MockRepository` que devuelve datos hardcodeados
+- **Backend**: Firebase, proyecto `subtrack-f4dd3` (activo): Auth con Google (Credential Manager) y Firestore (`users/{uid}/…`, reglas en `firestore.rules`) como espejo del store; Room es la caché offline. FCM y Functions, pendientes.
+- **Post-clone**: baja `app/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
+- **Datos**: los repositorios siguen sobre `MockDataStore`; `LocalStoreSync` lo persiste en Room y `FirestoreSync` lo sube a Firestore. Los datos demo solo existen en debug.
 
 ## Reglas de comportamiento obligatorias
 
@@ -106,7 +107,7 @@ Cuando recibas una tarea:
    - Unit tests: `./gradlew testDebugUnitTest`
    - Lint (debe quedar en 0 errores): `./gradlew lintDebug`
    - Screenshot tests: `./gradlew verifyRoborazziDebug` (regrabar con `recordRoborazziDebug` si el cambio visual es intencional)
-   - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
+   - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo; los flujos lanzan la app con `fakeAuth: true`, que en debug salta el login real de Google) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
 ## Nunca hagas esto
