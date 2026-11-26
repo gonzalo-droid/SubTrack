@@ -5,10 +5,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 
 /**
- * Reads and replaces whole tables. The in-memory store (MockDataStore) stays the working copy
- * in phase 1; this DAO persists it so changes survive restarts.
+ * Persists the in-memory store (AppStore) row by row: LocalStoreSync sends only the rows
+ * that changed and the ids that were removed.
  */
 @Dao
 interface SnapshotDao {
@@ -21,40 +22,42 @@ interface SnapshotDao {
     @Query("SELECT * FROM user_alias WHERE id = 0") suspend fun alias(): UserAliasEntity?
     @Query("SELECT COUNT(*) FROM users") suspend fun userCount(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertSubscriptions(items: List<SubscriptionEntity>)
+    @Upsert suspend fun upsertSubscriptions(items: List<SubscriptionEntity>)
+    @Upsert suspend fun upsertPayments(items: List<PaymentEntity>)
+    @Upsert suspend fun upsertTemplates(items: List<TemplateEntity>)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertMembers(items: List<MemberEntity>)
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertPayments(items: List<PaymentEntity>)
-    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertTemplates(items: List<TemplateEntity>)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertUser(item: UserEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insertAlias(item: UserAliasEntity)
 
-    @Query("DELETE FROM subscriptions") suspend fun clearSubscriptions()
-    @Query("DELETE FROM payments") suspend fun clearPayments()
-    @Query("DELETE FROM templates") suspend fun clearTemplates()
+    // Members go with their subscription (ON DELETE CASCADE)
+    @Query("DELETE FROM subscriptions WHERE id IN (:ids)") suspend fun deleteSubscriptions(ids: Collection<String>)
+    @Query("DELETE FROM members WHERE subscriptionId IN (:subscriptionIds)") suspend fun deleteMembersOf(subscriptionIds: Collection<String>)
+    @Query("DELETE FROM payments WHERE id IN (:ids)") suspend fun deletePayments(ids: Collection<String>)
+    @Query("DELETE FROM templates WHERE id IN (:ids)") suspend fun deleteTemplates(ids: Collection<String>)
     @Query("DELETE FROM users") suspend fun clearUsers()
 
     /**
-     * Members go with their subscriptions (ON DELETE CASCADE). Careful if this becomes a per-row
-     * write: a REPLACE on `subscriptions` deletes that row first and cascades to its members, so
-     * use @Upsert there instead.
+     * Writes the changed subscriptions with their full member lists and deletes the removed ones.
+     * @Upsert, not REPLACE: a REPLACE deletes the row first and would cascade to its members.
      */
     @Transaction
-    suspend fun replaceSubscriptions(subscriptions: List<SubscriptionEntity>, members: List<MemberEntity>) {
-        clearSubscriptions()
-        insertSubscriptions(subscriptions)
+    suspend fun applySubscriptionChanges(changed: List<SubscriptionEntity>, members: List<MemberEntity>, removedIds: Collection<String>) {
+        deleteSubscriptions(removedIds)
+        upsertSubscriptions(changed)
+        deleteMembersOf(changed.map { it.id })
         insertMembers(members)
     }
 
     @Transaction
-    suspend fun replacePayments(items: List<PaymentEntity>) {
-        clearPayments()
-        insertPayments(items)
+    suspend fun applyPaymentChanges(changed: List<PaymentEntity>, removedIds: Collection<String>) {
+        deletePayments(removedIds)
+        upsertPayments(changed)
     }
 
     @Transaction
-    suspend fun replaceTemplates(items: List<TemplateEntity>) {
-        clearTemplates()
-        insertTemplates(items)
+    suspend fun applyTemplateChanges(changed: List<TemplateEntity>, removedIds: Collection<String>) {
+        deleteTemplates(removedIds)
+        upsertTemplates(changed)
     }
 
     @Transaction

@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -130,7 +131,7 @@ private fun ShareVisual() {
             "↓",
             style = SubTrackType.headlineL,
             color = AccentGreen,
-            modifier = Modifier.offset(y = arrowOffset.dp)
+            modifier = Modifier.offset { IntOffset(0, arrowOffset.dp.roundToPx()) }
         )
 
         // Member avatars (staggered)

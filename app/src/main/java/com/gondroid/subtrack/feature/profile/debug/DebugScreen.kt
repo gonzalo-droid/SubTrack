@@ -25,7 +25,7 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
-import com.gondroid.subtrack.data.mock.MockData
+import com.gondroid.subtrack.data.demo.DemoData
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.activity.ComponentActivity
 import android.content.Context
@@ -47,7 +47,7 @@ fun DebugScreen(
         item {
             Eyebrow(text = "route: Debug")
             Spacer(Modifier.height(Spacing.xs))
-            Text("Mock Data Debug", style = SubTrackType.headlineL, color = TextPrimary)
+            Text("Demo Data Debug", style = SubTrackType.headlineL, color = TextPrimary)
             Spacer(Modifier.height(Spacing.base))
             SecondaryButton(
                 text = "🔄 Reset onboarding",
@@ -64,7 +64,7 @@ fun DebugScreen(
         item {
             Text("USUARIO", style = SubTrackType.monoS, color = TextTertiary)
             Spacer(Modifier.height(4.dp))
-            val u = MockData.currentUser
+            val u = DemoData.currentUser
             Text(
                 "${u.id} · ${u.name} · ${u.email} · pro=${u.isPro} · ref=${u.referralCode}",
                 style = SubTrackType.mono,
@@ -77,10 +77,10 @@ fun DebugScreen(
 
         // Suscripciones
         item {
-            Text("SUSCRIPCIONES (${MockData.subscriptions.size})", style = SubTrackType.monoS, color = TextTertiary)
+            Text("SUSCRIPCIONES (${DemoData.subscriptions.size})", style = SubTrackType.monoS, color = TextTertiary)
             Spacer(Modifier.height(4.dp))
         }
-        items(MockData.subscriptions) { sub ->
+        items(DemoData.subscriptions) { sub ->
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     "${sub.id} · ${sub.name} · S/${sub.totalAmount} · cutoff=${sub.cutoffDay} · shared=${sub.isShared}",
@@ -114,10 +114,10 @@ fun DebugScreen(
             Spacer(Modifier.height(Spacing.s))
             HorizontalDivider(thickness = 1.dp)
             Spacer(Modifier.height(Spacing.s))
-            Text("PAGOS (${MockData.payments.size})", style = SubTrackType.monoS, color = TextTertiary)
+            Text("PAGOS (${DemoData.payments.size})", style = SubTrackType.monoS, color = TextTertiary)
             Spacer(Modifier.height(4.dp))
         }
-        items(MockData.payments) { pay ->
+        items(DemoData.payments) { pay ->
             Text(
                 "${pay.id} · ${pay.monthKey} · ${pay.status} · paidAt=${pay.paidAt != null}",
                 style = SubTrackType.mono,
@@ -129,10 +129,10 @@ fun DebugScreen(
             Spacer(Modifier.height(Spacing.s))
             HorizontalDivider(thickness = 1.dp)
             Spacer(Modifier.height(Spacing.s))
-            Text("PLANTILLAS (${MockData.templates.size})", style = SubTrackType.monoS, color = TextTertiary)
+            Text("PLANTILLAS (${DemoData.templates.size})", style = SubTrackType.monoS, color = TextTertiary)
             Spacer(Modifier.height(4.dp))
         }
-        items(MockData.templates) { tpl ->
+        items(DemoData.templates) { tpl ->
             Text(
                 "${tpl.id} · ${tpl.emoji} ${tpl.name} · ${tpl.tone}",
                 style = SubTrackType.mono,

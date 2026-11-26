@@ -1,4 +1,4 @@
-package com.gondroid.subtrack.data.mock
+package com.gondroid.subtrack.data.repository
 
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory

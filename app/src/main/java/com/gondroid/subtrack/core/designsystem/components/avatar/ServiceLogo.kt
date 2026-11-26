@@ -48,7 +48,7 @@ fun ServiceLogo(
 
     if (asset != null) {
         val bgColor = if (asset.useWhiteBackground) Color.White else Color(asset.brandColor)
-        val iconSize = size * 0.55f
+        val iconSize = size * asset.iconScale
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier

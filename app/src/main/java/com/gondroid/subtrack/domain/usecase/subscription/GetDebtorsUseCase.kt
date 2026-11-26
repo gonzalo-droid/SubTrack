@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.domain.usecase.subscription
 
+import java.util.Locale
 import com.gondroid.subtrack.domain.model.DebtorInfo
 import com.gondroid.subtrack.domain.model.enums.isOverdue
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
@@ -18,7 +19,7 @@ class GetDebtorsUseCase @Inject constructor(
         combine(repository.getSharedSubscriptions(), userRepository.getCurrentUser()) { subscriptions, user ->
             val cal = Calendar.getInstance()
             val monthKey = "${cal.get(Calendar.YEAR)}-${
-                String.format("%02d", cal.get(Calendar.MONTH) + 1)
+                String.format(Locale.ROOT, "%02d", cal.get(Calendar.MONTH) + 1)
             }"
             subscriptions
                 .filter { it.ownerId == user?.id && !it.isPaused }

@@ -1,6 +1,9 @@
 package com.gondroid.subtrack.core.preferences
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -11,18 +14,12 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
-class UserPreferences private constructor(private val context: Context) {
+@Singleton
+class UserPreferences @Inject constructor(@ApplicationContext private val context: Context) {
 
     companion object {
         private val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         private val NOTIFICATION_PERMISSION_REQUESTED = booleanPreferencesKey("notif_permission_requested")
-
-        @Volatile private var INSTANCE: UserPreferences? = null
-
-        fun getInstance(context: Context): UserPreferences =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: UserPreferences(context.applicationContext).also { INSTANCE = it }
-            }
     }
 
     val onboardingCompleted: Flow<Boolean>

@@ -18,7 +18,7 @@ Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **
 - **Persistencia local**: Room (fase 2)
 - **Backend**: Firebase, proyecto `subtrack-f4dd3` (activo): Auth con Google (Credential Manager) y Firestore (`users/{uid}/…`, reglas en `firestore.rules`) como espejo del store; Room es la caché offline. FCM y Functions, pendientes.
 - **Post-clone**: baja `app/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
-- **Datos**: los repositorios siguen sobre `MockDataStore`; `LocalStoreSync` lo persiste en Room y `FirestoreSync` lo sube a Firestore. Los datos demo solo existen en debug.
+- **Datos**: los repositorios (`data/repository/*RepositoryImpl`) trabajan sobre el store en memoria `AppStore`; `LocalStoreSync` lo persiste en Room fila por fila y `FirestoreSync` lo sube a Firestore. Los datos demo (`data/demo/DemoData`) solo existen en debug.
 
 ## Reglas de comportamiento obligatorias
 
@@ -34,8 +34,8 @@ El sistema de diseño está en `DESIGN_TOKENS.md`. **No inventes colores, tamañ
 - `presentation` depende de `domain` a través de use cases
 - **Nunca** hacer que ViewModels accedan directo al repositorio — siempre vía use cases
 
-### 4. Mock primero, real después
-Durante la fase 1, **todo dato viene de `MockRepository`**. No crees integraciones con Firebase aún, no crees llamadas de red. El flujo debe funcionar 100% con datos hardcodeados. Esto permite probar UX sin backend.
+### 4. Datos: un solo camino
+Todo dato pasa por los repositorios sobre `AppStore`; la persistencia (Room) y la nube (Firestore) se sincronizan desde ahí. No agregues llamadas de red directas desde features ni repositorios paralelos. La app debe seguir funcionando sin conexión.
 
 ### 5. Compose idiomático
 - Preview obligatorio para cada Composable público (al menos uno en light + uno en dark si aplica)
@@ -74,9 +74,9 @@ com.gondroid.subtrack/
 │   └── di/                        // Modules de Hilt globales
 │
 ├── data/                          // Implementaciones de repositorios
-│   ├── mock/                      // MockRepository + mock data (FASE 1)
-│   ├── remote/                    // Firebase sources (FASE 2)
-│   ├── local/                     // Room DAO + entities (FASE 2)
+│   ├── demo/                      // DemoData: datos de ejemplo (solo debug)
+│   ├── remote/                    // Firebase: auth y sync con Firestore
+│   ├── local/                     // Room DAO + entities
 │   └── repository/                // Implementaciones de interfaces
 │
 ├── domain/                        // Pure Kotlin, sin Android

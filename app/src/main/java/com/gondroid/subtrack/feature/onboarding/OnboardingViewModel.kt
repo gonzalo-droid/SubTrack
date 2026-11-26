@@ -55,7 +55,7 @@ class OnboardingViewModel @Inject constructor(
 
     val popularServices: List<ServiceTemplate> = getPopularServices()
 
-    /** First name for the success greeting; null until the mock user is available. */
+    /** First name for the success greeting; null until the user is available. */
     val userFirstName: StateFlow<String?> = getCurrentUser()
         .map { it?.name?.substringBefore(" ") }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)

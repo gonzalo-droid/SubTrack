@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.feature.profile.referral
 
+import androidx.compose.ui.unit.IntOffset
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -266,7 +267,7 @@ private fun ReferralHero(code: String, onCopyCode: () -> Unit) {
                 .clip(SubTrackShapes.l)
                 .background(Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500))))
                 .rotate(rotation)
-                .offset(y = offsetY.dp)
+                .offset { IntOffset(0, offsetY.dp.roundToPx()) }
         ) {
             Icon(Icons.Outlined.Star, null, tint = Color.Black, modifier = Modifier.size(28.dp))
         }
@@ -413,8 +414,8 @@ private fun StatsCard(info: ReferralInfo, modifier: Modifier = Modifier) {
 private fun StatBlock(
     value: String,
     label: String,
-    valueColor: Color = TextPrimary,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    valueColor: Color = TextPrimary
 ) {
     Column(
         modifier = modifier

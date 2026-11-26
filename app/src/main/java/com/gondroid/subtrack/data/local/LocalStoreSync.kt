@@ -1,6 +1,6 @@
 package com.gondroid.subtrack.data.local
 
-import com.gondroid.subtrack.data.mock.MockDataStore
+import com.gondroid.subtrack.data.repository.AppStore
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -17,12 +18,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Room persistence for the phase-1 store: the repositories keep working on [MockDataStore];
- * this loads it from the database at startup (seeding the demo data on first run) and writes
- * every later change back.
- *
- * shortcut: whole-table rewrites on each change; fine for a personal list of subscriptions,
- * replace with per-row DAO calls in the repositories when Firebase sync arrives (fase 2).
+ * Room persistence for the in-memory store ([AppStore]): the repositories work on it; this loads
+ * it from the database at startup (seeding the demo data on a debug first run) and writes every
+ * later change back, row by row.
  */
 @Singleton
 class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
@@ -39,13 +37,13 @@ class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
         runBlocking(Dispatchers.IO) {
             if (dao.userCount() == 0 && dao.subscriptions().isEmpty()) seed() else load()
         }
-        persist(MockDataStore.subscriptions) { subs ->
-            dao.replaceSubscriptions(subs.map { it.toEntity() }, subs.flatMap { it.memberEntities() })
+        persistRows(AppStore.subscriptions, { subs -> subs.associate { it.id to (it.toEntity() to it.memberEntities()) } }) { changed, removed ->
+            dao.applySubscriptionChanges(changed.map { it.first }, changed.flatMap { it.second }, removed)
         }
-        persist(MockDataStore.payments) { dao.replacePayments(it.map { p -> p.toEntity() }) }
-        persist(MockDataStore.templates) { dao.replaceTemplates(it.mapIndexed { i, t -> t.toEntity(i) }) }
-        persist(MockDataStore.currentUser) { dao.replaceUser(it?.toEntity()) }
-        persist(MockDataStore.userAlias) { dao.insertAlias(it.toEntity()) }
+        persistRows(AppStore.payments, { it.associate { p -> p.id to p.toEntity() } }, dao::applyPaymentChanges)
+        persistRows(AppStore.templates, { it.mapIndexed { i, t -> t.id to t.toEntity(i) }.toMap() }, dao::applyTemplateChanges)
+        persist(AppStore.currentUser) { dao.replaceUser(it?.toEntity()) }
+        persist(AppStore.userAlias) { dao.insertAlias(it.toEntity()) }
     }
 
     /** Stops persisting; the app never calls it (the process ends instead), tests do. */
@@ -53,21 +51,40 @@ class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
     fun close() = scope.cancel()
 
     private suspend fun seed() {
-        val subs = MockDataStore.subscriptions.value
-        dao.replaceSubscriptions(subs.map { it.toEntity() }, subs.flatMap { it.memberEntities() })
-        dao.replacePayments(MockDataStore.payments.value.map { it.toEntity() })
-        dao.replaceTemplates(MockDataStore.templates.value.mapIndexed { i, t -> t.toEntity(i) })
-        dao.replaceUser(MockDataStore.currentUser.value?.toEntity())
-        dao.insertAlias(MockDataStore.userAlias.value.toEntity())
+        val subs = AppStore.subscriptions.value
+        dao.applySubscriptionChanges(subs.map { it.toEntity() }, subs.flatMap { it.memberEntities() }, emptyList())
+        dao.applyPaymentChanges(AppStore.payments.value.map { it.toEntity() }, emptyList())
+        dao.applyTemplateChanges(AppStore.templates.value.mapIndexed { i, t -> t.toEntity(i) }, emptyList())
+        dao.replaceUser(AppStore.currentUser.value?.toEntity())
+        dao.insertAlias(AppStore.userAlias.value.toEntity())
     }
 
     private suspend fun load() {
         val members = dao.members().groupBy { it.subscriptionId }
-        MockDataStore.subscriptions.value = dao.subscriptions().map { it.toDomain(members[it.id].orEmpty()) }
-        MockDataStore.payments.value = dao.payments().map { it.toDomain() }
-        MockDataStore.templates.value = dao.templates().map { it.toDomain() }
-        MockDataStore.currentUser.value = dao.user()?.toDomain()
-        dao.alias()?.let { MockDataStore.userAlias.value = it.toDomain() }
+        AppStore.subscriptions.value = dao.subscriptions().map { it.toDomain(members[it.id].orEmpty()) }
+        AppStore.payments.value = dao.payments().map { it.toDomain() }
+        AppStore.templates.value = dao.templates().map { it.toDomain() }
+        AppStore.currentUser.value = dao.user()?.toDomain()
+        dao.alias()?.let { AppStore.userAlias.value = it.toDomain() }
+    }
+
+    /**
+     * Per-row persistence: compares each new list with the previous one by id and writes only
+     * the changed rows plus the removed ids.
+     */
+    private fun <T, R> persistRows(
+        flow: StateFlow<List<T>>,
+        toRows: (List<T>) -> Map<String, R>,
+        apply: suspend (changed: List<R>, removedIds: Set<String>) -> Unit
+    ) {
+        var previous = toRows(flow.value)
+        persist(flow) { list ->
+            val current = toRows(list)
+            val changed = current.filter { (id, row) -> previous[id] != row }.values.toList()
+            val removed = previous.keys - current.keys
+            previous = current
+            if (changed.isNotEmpty() || removed.isNotEmpty()) apply(changed, removed)
+        }
     }
 
     /** Writes every value after the current one (already in sync) back to the database. */

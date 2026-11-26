@@ -1,4 +1,4 @@
-package com.gondroid.subtrack.data.mock
+package com.gondroid.subtrack.data.repository
 
 import com.gondroid.subtrack.domain.model.ExitRequest
 import com.gondroid.subtrack.domain.model.ExitRequestStatus
@@ -7,7 +7,6 @@ import com.gondroid.subtrack.domain.model.PersonSummary
 import com.gondroid.subtrack.domain.model.SubscriptionParticipation
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.MemberRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -17,9 +16,9 @@ import javax.inject.Singleton
 import com.gondroid.subtrack.domain.model.enums.isOverdue
 
 @Singleton
-class MockMemberRepository @Inject constructor() : MemberRepository {
+class MemberRepositoryImpl @Inject constructor() : MemberRepository {
 
-    private val store = MockDataStore.subscriptions
+    private val store = AppStore.subscriptions
 
     override fun getMembersForSubscription(subscriptionId: String): Flow<List<Member>> =
         store.map { list ->
@@ -32,7 +31,6 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
         }
 
     override suspend fun addMember(subscriptionId: String, member: Member): Result<String> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.map { sub ->
             if (sub.id == subscriptionId) sub.copy(members = sub.members + member) else sub
         }
@@ -40,7 +38,6 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
     }
 
     override suspend fun updateMember(member: Member): Result<Unit> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.map { sub ->
             val inActive = sub.members.any { it.id == member.id }
             val inArchived = sub.archivedMembers.any { it.id == member.id }
@@ -54,7 +51,6 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
     }
 
     override suspend fun archiveMember(memberId: String): Result<Unit> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.map { sub ->
             val target = sub.members.find { it.id == memberId }
             if (target != null) {
@@ -68,7 +64,6 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
     }
 
     override suspend fun removeMember(memberId: String): Result<Unit> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.map { sub ->
             sub.copy(
                 members = sub.members.filter { it.id != memberId },
@@ -79,8 +74,7 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
     }
 
     override suspend fun requestExit(memberId: String, subscriptionId: String): Result<ExitRequest> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
-        val existing = MockDataStore.exitRequests.value
+        val existing = AppStore.exitRequests.value
             .find { it.memberId == memberId && it.subscriptionId == subscriptionId && it.status == ExitRequestStatus.PENDING }
         if (existing != null) return Result.success(existing)
         val request = ExitRequest(
@@ -89,17 +83,17 @@ class MockMemberRepository @Inject constructor() : MemberRepository {
             subscriptionId = subscriptionId,
             requestedAt = System.currentTimeMillis()
         )
-        MockDataStore.exitRequests.value = MockDataStore.exitRequests.value + request
+        AppStore.exitRequests.value = AppStore.exitRequests.value + request
         return Result.success(request)
     }
 
     override fun getExitRequest(memberId: String, subscriptionId: String): Flow<ExitRequest?> =
-        MockDataStore.exitRequests.map { list ->
+        AppStore.exitRequests.map { list ->
             list.find { it.memberId == memberId && it.subscriptionId == subscriptionId && it.status == ExitRequestStatus.PENDING }
         }
 
     override fun getAllPeopleWithSubscriptions(): Flow<List<PersonSummary>> =
-        combine(store, MockDataStore.payments) { subscriptions, payments ->
+        combine(store, AppStore.payments) { subscriptions, payments ->
             data class MemberAccumulator(
                 val member: Member,
                 val participations: MutableList<SubscriptionParticipation>,

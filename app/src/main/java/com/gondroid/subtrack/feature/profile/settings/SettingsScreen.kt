@@ -7,7 +7,11 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,6 +67,10 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
 
+
+/** Cache subfolder shared by the FileProvider; see res/xml/file_paths.xml. */
+private const val EXPORT_DIR = "exports"
+
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
@@ -92,10 +100,18 @@ fun SettingsScreen(
         } else null,
         onExport = {
             scope.launch {
+                // Shared as a real .csv attachment through the FileProvider (res/xml/file_paths.xml)
+                val file = withContext(Dispatchers.IO) {
+                    File(context.cacheDir, EXPORT_DIR).apply { mkdirs() }
+                        .resolve(exportFileName)
+                        .apply { writeText(viewModel.buildExport()) }
+                }
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
                 val send = Intent(Intent.ACTION_SEND).apply {
                     type = "text/csv"
                     putExtra(Intent.EXTRA_SUBJECT, exportFileName)
-                    putExtra(Intent.EXTRA_TEXT, viewModel.buildExport())
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 context.startActivity(Intent.createChooser(send, exportChooserTitle))
             }

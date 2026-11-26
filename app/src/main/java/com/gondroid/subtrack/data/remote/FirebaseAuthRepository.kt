@@ -1,8 +1,8 @@
 package com.gondroid.subtrack.data.remote
 
 import com.gondroid.subtrack.core.auth.AuthConfig
-import com.gondroid.subtrack.data.mock.MockData
-import com.gondroid.subtrack.data.mock.MockDataStore
+import com.gondroid.subtrack.data.demo.DemoData
+import com.gondroid.subtrack.data.repository.AppStore
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +18,7 @@ class FirebaseAuthRepository @Inject constructor(
     override suspend fun signInWithGoogle(idToken: String): Result<User> = runCatching {
         if (AuthConfig.useFakeAuth) {
             // E2E tests: the demo user, no Firebase and no sync
-            return@runCatching MockData.currentUser.also { MockDataStore.currentUser.value = it }
+            return@runCatching DemoData.currentUser.also { AppStore.currentUser.value = it }
         }
         val firebaseUser = auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null)).await().user
             ?: error("Firebase returned no user")
@@ -32,7 +32,7 @@ class FirebaseAuthRepository @Inject constructor(
             createdAt = firebaseUser.metadata?.creationTimestamp ?: System.currentTimeMillis()
         )
         sync.connect(user)
-        MockDataStore.currentUser.value ?: user
+        AppStore.currentUser.value ?: user
     }
 
     private companion object {

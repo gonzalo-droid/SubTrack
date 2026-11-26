@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.core.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,7 +27,7 @@ import com.gondroid.subtrack.feature.profile.settings.SettingsScreen
 @Composable
 fun SubTrackNavHost(
     navController: NavHostController,
-    modifier: androidx.compose.ui.Modifier = androidx.compose.ui.Modifier,
+    modifier: Modifier = Modifier,
     startDestination: Route = Route.Dashboard,
     pendingRoute: Route? = null,
     onPendingRouteOpened: () -> Unit = {}

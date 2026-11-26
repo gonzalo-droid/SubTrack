@@ -1,7 +1,7 @@
 package com.gondroid.subtrack.feature.createsubscription
 
+import androidx.core.net.toUri
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -88,9 +88,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun CreateSubscriptionScreen(
     onBack: () -> Unit,
     onCreated: (String) -> Unit,
+    modifier: Modifier = Modifier,
     startWithShared: Boolean = false,
-    editSubscriptionId: String? = null,
-    modifier: Modifier = Modifier
+    editSubscriptionId: String? = null
 ) {
     val viewModel = hiltViewModel<CreateSubscriptionViewModel, CreateSubscriptionViewModel.Factory>(
         creationCallback = { it.create(startWithShared, editSubscriptionId) }
@@ -427,7 +427,7 @@ private fun SuccessScreen(
                 subtitle = stringResource(R.string.create_subscription_success_whatsapp_desc),
                 onClick = {
                     runCatching {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://wa.me/".toUri()))
                     }
                 }
             )

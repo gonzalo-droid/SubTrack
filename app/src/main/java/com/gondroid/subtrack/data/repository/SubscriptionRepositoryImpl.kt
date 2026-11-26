@@ -1,18 +1,17 @@
-package com.gondroid.subtrack.data.mock
+package com.gondroid.subtrack.data.repository
 
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MockSubscriptionRepository @Inject constructor() : SubscriptionRepository {
+class SubscriptionRepositoryImpl @Inject constructor() : SubscriptionRepository {
 
-    private val store = MockDataStore.subscriptions
+    private val store = AppStore.subscriptions
 
     override fun getAllSubscriptions(): Flow<List<Subscription>> = store
 
@@ -26,24 +25,20 @@ class MockSubscriptionRepository @Inject constructor() : SubscriptionRepository 
         store.map { list -> list.filter { daysUntilCutoff(it.cutoffDay) in 0..daysAhead } }
 
     override suspend fun getSubscriptionById(id: String): Subscription? {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         return store.value.find { it.id == id }
     }
 
     override suspend fun createSubscription(subscription: Subscription): Result<String> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value + subscription
         return Result.success(subscription.id)
     }
 
     override suspend fun updateSubscription(subscription: Subscription): Result<Unit> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.map { if (it.id == subscription.id) subscription else it }
         return Result.success(Unit)
     }
 
     override suspend fun deleteSubscription(id: String): Result<Unit> {
-        if (MockConfig.SIMULATE_NETWORK_DELAY) delay(MockConfig.NETWORK_DELAY_MS)
         store.value = store.value.filter { it.id != id }
         return Result.success(Unit)
     }
