@@ -42,7 +42,8 @@ import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 fun PersonRow(
     person: PersonSummary,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    debtLabel: String = stringResource(R.string.people_owes_label)
 ) {
     Row(
         modifier = modifier
@@ -97,7 +98,7 @@ fun PersonRow(
                     color = com.gondroid.subtrack.core.designsystem.theme.AccentRed
                 )
                 Text(
-                    text = stringResource(R.string.people_owes_label),
+                    text = debtLabel,
                     style = SubTrackType.monoXS,
                     color = TextSecondary
                 )

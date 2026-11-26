@@ -620,6 +620,11 @@
     <string name="people_empty_search">Sin resultados</string>
     <string name="people_has_app_tag">APP</string>
     <string name="people_owes_label">debe</string>
+    <string name="people_i_owe_label">le debes</string>
+    <string name="people_title">Personas</string>
+    <string name="people_tab_owed_to_me">Te deben</string>
+    <string name="people_tab_i_owe">Debes</string>
+    <string name="people_empty_i_owe">No eres miembro de ninguna suscripción de otra persona</string>
     <string name="people_monthly_label">/mes</string>
     <string name="people_detail_punctuality">Puntual</string>
     <string name="people_detail_monthly">Mensual</string>
