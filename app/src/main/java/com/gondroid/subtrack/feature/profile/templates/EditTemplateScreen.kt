@@ -188,7 +188,7 @@ fun EditTemplateScreen(
         ) {
             STIconButton(
                 icon = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "",
+                contentDescription = stringResource(R.string.common_back),
                 onClick = ::requestBack
             )
             Text(

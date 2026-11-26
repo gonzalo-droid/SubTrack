@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.text.StatusPill
@@ -49,7 +50,7 @@ fun PersonRow(
             .clip(SubTrackShapes.l)
             .background(BgSurface)
             .border(1.dp, BorderDefault, SubTrackShapes.l)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(Spacing.m),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)

@@ -15,6 +15,10 @@
 
     <!-- Common actions -->
     <string name="common_back">Volver</string>
+    <string name="cd_close_wizard">Cerrar asistente</string>
+    <string name="cd_how_it_works">Cómo funciona</string>
+    <string name="cd_new_template">Nueva plantilla</string>
+    <string name="cd_settings">Ajustes</string>
     <string name="common_save">Guardar</string>
     <string name="common_cancel">Cancelar</string>
     <string name="common_delete">Eliminar</string>
@@ -97,13 +101,13 @@
     <!-- WhatsApp -->
     <string name="whatsapp_not_installed">WhatsApp no está instalado</string>
     <string name="whatsapp_invalid_phone">Número de teléfono inválido</string>
+    <string name="member_detail_payment_marked">Pago registrado</string>
+    <string name="member_detail_exit_requested">Solicitud enviada</string>
+    <string name="coming_soon_history">Próximamente: historial</string>
 
     <!-- Subscription detail — top nav -->
     <string name="subscription_detail_back_cd">Volver</string>
     <string name="subscription_detail_overflow_cd">Más opciones</string>
-    <string name="member_detail_payment_marked">Pago registrado</string>
-    <string name="member_detail_exit_requested">Solicitud enviada</string>
-    <string name="coming_soon_history">Próximamente: historial</string>
 
     <!-- Subscription detail — hero -->
     <string name="subscription_detail_admin_tag">ADMIN</string>

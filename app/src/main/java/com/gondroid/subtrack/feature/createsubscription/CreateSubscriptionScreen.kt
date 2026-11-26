@@ -233,7 +233,7 @@ private fun WizardTopBar(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.Outlined.Close, contentDescription = "", onClick = onCancel)
+            STIconButton(icon = Icons.Outlined.Close, contentDescription = stringResource(R.string.cd_close_wizard), onClick = onCancel)
             Text("${stepIndex + 1}/$totalSteps", style = SubTrackType.monoS, color = TextTertiary)
         }
         Spacer(Modifier.height(Spacing.s))

@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.avatar.AvatarStack
@@ -89,8 +90,8 @@ import com.gondroid.subtrack.domain.model.Insight
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
-
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+
 // ── Public entry point ────────────────────────────────────────────────────────
 
 @Composable
@@ -104,8 +105,8 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
     val messenger = LocalSnackbarMessenger.current
+
     when (val state = uiState) {
         is DashboardUiState.Loading -> DashboardSkeleton(modifier = modifier.fillMaxSize())
         is DashboardUiState.Empty -> DashboardEmptyState(
@@ -503,7 +504,7 @@ private fun UpcomingCutoffCard(
             .clip(SubTrackShapes.l)
             .border(1.dp, borderColor, SubTrackShapes.l)
             .background(BgSurface)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(Spacing.m)
     ) {
         // Type chip
@@ -607,7 +608,7 @@ private fun PersonalSubRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = Spacing.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -679,7 +680,7 @@ private fun DebtorRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = Spacing.s),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -727,7 +728,7 @@ private fun DashboardInsightCard(
             .clip(SubTrackShapes.l)
             .border(1.dp, AccentBlue.copy(alpha = 0.2f), SubTrackShapes.l)
             .background(AccentBlueBg)
-            .clickable { onNavigateToDetail(insight.subscriptionId) }
+            .clickable(role = Role.Button) { onNavigateToDetail(insight.subscriptionId) }
             .padding(Spacing.m),
         verticalAlignment = Alignment.Top
     ) {

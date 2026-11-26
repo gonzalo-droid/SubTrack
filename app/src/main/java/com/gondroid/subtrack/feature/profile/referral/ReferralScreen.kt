@@ -198,9 +198,9 @@ private fun ReferralContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "", onClick = onBack)
+            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.common_back), onClick = onBack)
             Text(stringResource(R.string.referral_title), style = SubTrackType.headlineS, color = TextPrimary)
-            STIconButton(icon = Icons.Outlined.HelpOutline, contentDescription = "", onClick = onHowItWorks)
+            STIconButton(icon = Icons.Outlined.HelpOutline, contentDescription = stringResource(R.string.cd_how_it_works), onClick = onHowItWorks)
         }
 
         // Hero

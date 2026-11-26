@@ -113,7 +113,7 @@ private fun AliasEditContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "", onClick = onBack)
+            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.common_back), onClick = onBack)
             Text(stringResource(R.string.alias_title), style = SubTrackType.headlineS, color = TextPrimary)
             Text(
                 text = stringResource(R.string.alias_save),

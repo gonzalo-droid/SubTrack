@@ -165,7 +165,7 @@ private fun ProfileContent(
                     style = SubTrackType.headlineL,
                     color = TextPrimary
                 )
-                STIconButton(icon = Icons.Outlined.Settings, contentDescription = "", onClick = {})
+                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = {})
             }
         }
 

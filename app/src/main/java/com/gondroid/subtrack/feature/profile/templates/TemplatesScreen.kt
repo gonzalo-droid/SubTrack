@@ -147,11 +147,11 @@ fun TemplatesScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "", onClick = onBack)
+            STIconButton(icon = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.common_back), onClick = onBack)
             Text(stringResource(R.string.template_screen_title), style = SubTrackType.headlineS, color = TextPrimary)
             STIconButton(
                 icon = Icons.Outlined.Add,
-                contentDescription = "",
+                contentDescription = stringResource(R.string.cd_new_template),
                 onClick = { onEditTemplate(null) }
             )
         }
