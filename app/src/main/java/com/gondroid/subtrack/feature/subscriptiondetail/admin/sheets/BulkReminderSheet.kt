@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gondroid.subtrack.R
@@ -115,7 +116,7 @@ fun BulkReminderSheet(
                     text = if (sendingIndex + 1 < selectedItems.size)
                         stringResource(R.string.member_sheet_bulk_next, sendingIndex + 2, selectedItems.size)
                     else
-                        stringResource(R.string.member_sheet_bulk_done, selectedItems.size),
+                        pluralStringResource(R.plurals.member_sheet_bulk_done, selectedItems.size, selectedItems.size),
                     onClick = {
                         val nextItem = selectedItems.getOrNull(sendingIndex + 1)
                         if (nextItem != null) {
@@ -153,8 +154,9 @@ fun BulkReminderSheet(
                 color = TextPrimary
             )
             Text(
-                text = stringResource(
-                    R.string.member_sheet_bulk_subtitle,
+                text = pluralStringResource(
+                    R.plurals.member_sheet_bulk_subtitle,
+                    selectedMembers.size,
                     selectedMembers.size,
                     "%.2f".format(selectedMembers.sumOf { it.shareAmount })
                 ),
@@ -283,7 +285,7 @@ fun BulkReminderSheet(
             Spacer(Modifier.height(Spacing.m))
 
             PrimaryButton(
-                text = stringResource(R.string.member_sheet_bulk_send, selectedItems.size),
+                text = pluralStringResource(R.plurals.member_sheet_bulk_send, selectedItems.size, selectedItems.size),
                 onClick = {
                     if (selectedItems.isNotEmpty() && template != null) {
                         val firstItem = selectedItems.first()

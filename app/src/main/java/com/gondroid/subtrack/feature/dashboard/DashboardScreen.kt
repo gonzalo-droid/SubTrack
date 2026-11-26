@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -347,9 +348,9 @@ private fun DualHeroRow(
                 val upcomingPersonal = data.upcomingCutoffs.count { !it.isShared }
                 Text(
                     text = stringResource(
-                        R.string.dashboard_hero_services_upcoming,
-                        data.personalCount,
-                        upcomingPersonal
+                        R.string.dashboard_hero_counts_format,
+                        pluralStringResource(R.plurals.dashboard_hero_services, data.personalCount, data.personalCount),
+                        pluralStringResource(R.plurals.dashboard_hero_upcoming, upcomingPersonal, upcomingPersonal)
                     ),
                     style = SubTrackType.bodyS,
                     color = TextSecondary
@@ -381,15 +382,16 @@ private fun DualHeroRow(
                 Text(
                     text = buildAnnotatedString {
                         append(
-                            stringResource(
-                                R.string.dashboard_hero_services_debtors_prefix,
+                            pluralStringResource(
+                                R.plurals.dashboard_hero_services_debtors_prefix,
+                                data.sharedCount,
                                 data.sharedCount
                             )
                         )
                         withStyle(
                             androidx.compose.ui.text.SpanStyle(color = AccentAmber)
                         ) { append("${data.debtorCount}") }
-                        append(stringResource(R.string.dashboard_hero_debtors_suffix))
+                        append(pluralStringResource(R.plurals.dashboard_hero_debtors_suffix, data.debtorCount))
                     },
                     style = SubTrackType.bodyS,
                     color = TextSecondary
@@ -490,7 +492,7 @@ private fun UpcomingCutoffCard(
     val urgencyText = when {
         daysUntil == 0 -> stringResource(R.string.dashboard_cutoff_today)
         daysUntil == 1 -> stringResource(R.string.dashboard_cutoff_tomorrow)
-        else -> stringResource(R.string.dashboard_cutoff_days, daysUntil)
+        else -> pluralStringResource(R.plurals.dashboard_cutoff_days, daysUntil, daysUntil)
     }
 
     Column(
@@ -736,8 +738,9 @@ private fun DashboardInsightCard(
         Spacer(Modifier.width(Spacing.s))
         Column {
             Text(
-                text = stringResource(
-                    R.string.dashboard_insight_unused,
+                text = pluralStringResource(
+                    R.plurals.dashboard_insight_unused,
+                    insight.daysSinceActivity,
                     insight.subscriptionName,
                     insight.daysSinceActivity
                 ),

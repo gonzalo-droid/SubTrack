@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -353,7 +354,7 @@ private fun SuccessScreen(
         Spacer(Modifier.height(Spacing.s))
         Text(
             text = if (isShared)
-                stringResource(R.string.create_subscription_success_shared_desc, serviceName, memberCount)
+                pluralStringResource(R.plurals.create_subscription_success_shared_desc, memberCount, serviceName, memberCount)
             else
                 stringResource(R.string.create_subscription_success_personal_desc, serviceName),
             style = SubTrackType.bodyM,

@@ -328,8 +328,9 @@ private fun AdminDetailContent(
                 )
                 val activeCount = data.activeMembers.size + 1
                 Text(
-                    text = stringResource(
-                        R.string.subscription_detail_plan_label,
+                    text = pluralStringResource(
+                        R.plurals.subscription_detail_plan_label,
+                        activeCount,
                         sub.category.name.lowercase().replaceFirstChar { it.uppercase() },
                         activeCount
                     ),
@@ -412,7 +413,7 @@ private fun AdminDetailContent(
         item {
             SectionHeader(
                 title = stringResource(R.string.subscription_detail_history_title),
-                trailing = stringResource(R.string.subscription_detail_history_months, data.monthlyHistory.size),
+                trailing = pluralStringResource(R.plurals.subscription_detail_history_months, data.monthlyHistory.size, data.monthlyHistory.size),
                 modifier = Modifier.padding(horizontal = Spacing.base)
             )
         }

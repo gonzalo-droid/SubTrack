@@ -60,6 +60,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -472,7 +473,7 @@ private fun ProgressCard(info: ReferralInfo, modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(Spacing.s))
         Text(
-            text = stringResource(R.string.referral_progress_desc, remaining, info.nextMilestoneReward).uppercase(),
+            text = pluralStringResource(R.plurals.referral_progress_desc, remaining, remaining, info.nextMilestoneReward).uppercase(),
             style = SubTrackType.monoXS,
             color = TextTertiary
         )
@@ -517,7 +518,7 @@ private fun ReferralRecordRow(record: ReferralRecord) {
         Avatar(name = record.referredName, size = 30.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(record.referredName, style = SubTrackType.bodyS, color = TextPrimary)
-            Text(formatRelativeDate(record.referredAt), style = SubTrackType.monoXS, color = TextTertiary)
+            Text(relativeDate(record.referredAt), style = SubTrackType.monoXS, color = TextTertiary)
         }
         Box(
             modifier = Modifier
@@ -575,10 +576,11 @@ private fun QrSheetContent(code: String, qrBitmap: Bitmap) {
     }
 }
 
-private fun formatRelativeDate(timestamp: Long): String {
-    val diffMs = System.currentTimeMillis() - timestamp
-    val days = TimeUnit.MILLISECONDS.toDays(diffMs).toInt()
-    return if (days == 0) "Hoy" else "Hace $days días"
+@Composable
+private fun relativeDate(timestamp: Long): String {
+    val days = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp).toInt()
+    return if (days == 0) stringResource(R.string.referral_today)
+    else pluralStringResource(R.plurals.referral_days_ago, days, days)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)

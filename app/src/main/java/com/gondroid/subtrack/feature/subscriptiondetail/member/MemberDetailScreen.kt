@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -382,7 +383,7 @@ private fun MemberDetailContent(
                         color = TextSecondary
                     )
                     Text(
-                        stringResource(R.string.member_detail_on_time_payments, onTimeCount),
+                        pluralStringResource(R.plurals.member_detail_on_time_payments, onTimeCount, onTimeCount),
                         style = SubTrackType.monoXS,
                         color = AccentGreen
                     )
