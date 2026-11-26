@@ -75,6 +75,18 @@ class OnboardingViewModel @Inject constructor(
     private val _createdServiceName = MutableStateFlow<String?>(null)
     val createdServiceName: StateFlow<String?> = _createdServiceName.asStateFlow()
 
+    /**
+     * Back to the first step. This ViewModel lives as long as the Activity, so after a sign-out
+     * the onboarding would otherwise reopen on its last screen.
+     */
+    fun restart() {
+        _currentStep.value = OnboardingStep.VALUE_TRACKER
+        _authState.value = AuthState.Idle
+        _selectedService.value = popularServices.firstOrNull()
+        _isCreatingSubscription.value = false
+        _createdServiceName.value = null
+    }
+
     // ── Navigation ────────────────────────────────────────────────────────────
 
     fun goToNextValue() {

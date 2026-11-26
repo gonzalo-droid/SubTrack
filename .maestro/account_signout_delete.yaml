@@ -1,0 +1,36 @@
+# Cuenta (ACC-02): "Cerrar sesión" vuelve al onboarding con el teléfono limpio, y "Eliminar cuenta"
+# (en Ajustes, con confirmación) hace lo mismo. Con fakeAuth no toca Firebase.
+appId: com.gondroid.subtrack
+---
+- runFlow: common/fresh_start.yaml
+- tapOn: "Perfil"
+- scrollUntilVisible:
+    element: "Cerrar sesión"
+- tapOn: "Cerrar sesión"
+- assertVisible: "¿Cerrar sesión?"
+- tapOn: "Cerrar sesión"         # con el diálogo abierto solo queda su botón
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 30000
+# Vuelve a entrar y elimina la cuenta desde Ajustes
+- tapOn: "Saltar"
+- tapOn: "Continuar con Google"
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 15000
+- tapOn: "Saltar"
+- tapOn: "Ir al inicio"
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 30000
+- assertNotVisible: "Netflix Premium"     # los datos de la sesión anterior no vuelven
+- tapOn: "Perfil"
+- tapOn: "Ajustes"
+- scrollUntilVisible:
+    element: "Eliminar cuenta"
+- tapOn: "Eliminar cuenta"
+- assertVisible: "¿Eliminar tu cuenta?"
+- tapOn: "Eliminar"
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 30000

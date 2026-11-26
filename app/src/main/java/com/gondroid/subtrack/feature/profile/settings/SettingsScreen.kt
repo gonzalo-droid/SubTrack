@@ -1,5 +1,24 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.core.designsystem.theme.BgSurface
+import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
+import com.gondroid.subtrack.core.designsystem.theme.AccentRed
+import com.gondroid.subtrack.core.auth.GoogleIdTokenProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.outlined.PrivacyTip
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.DeleteForever
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -84,6 +103,31 @@ fun SettingsScreen(
     val exportChooserTitle = stringResource(R.string.settings_export_chooser)
     val exportFileName = stringResource(R.string.settings_export_file_name)
     val feedbackSubject = stringResource(R.string.settings_feedback_subject, BuildConfig.VERSION_NAME)
+    val uriHandler = LocalUriHandler.current
+    val privacyUrl = stringResource(R.string.settings_privacy_url)
+    val termsUrl = stringResource(R.string.settings_terms_url)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.deleteFailed.collect { messenger.show(R.string.settings_delete_account_error) }
+    }
+
+    if (showDeleteDialog) {
+        DeleteAccountDialog(
+            onConfirm = {
+                showDeleteDialog = false
+                // Firebase asks for a fresh Google sign-in before deleting; a closed picker cancels
+                scope.launch {
+                    GoogleIdTokenProvider.request(context)
+                        .onSuccess { token -> token?.let(viewModel::deleteAccount) }
+                        .onFailure { viewModel.onReauthFailed() }
+                }
+            },
+            onDismiss = { showDeleteDialog = false }
+        )
+    }
+    if (uiState.isDeletingAccount) DeletingAccountDialog()
 
     SettingsContent(
         onBack = onBack,
@@ -116,6 +160,9 @@ fun SettingsScreen(
                 context.startActivity(Intent.createChooser(send, exportChooserTitle))
             }
         },
+        onPrivacy = { uriHandler.openUri(privacyUrl) },
+        onTerms = { uriHandler.openUri(termsUrl) },
+        onDeleteAccount = { showDeleteDialog = true },
         onFeedback = {
             val mail = Intent(Intent.ACTION_SENDTO, "mailto:".toUri()).apply {
                 putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
@@ -155,6 +202,9 @@ private fun SettingsContent(
     onLanguage: (() -> Unit)?,
     onExport: () -> Unit,
     onFeedback: () -> Unit,
+    onPrivacy: () -> Unit,
+    onTerms: () -> Unit,
+    onDeleteAccount: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -236,8 +286,66 @@ private fun SettingsContent(
                 value = "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
             )
         }
+
+        Eyebrow(text = stringResource(R.string.settings_legal_section), modifier = Modifier.padding(top = Spacing.s))
+        SettingsGroup {
+            SettingsRow(
+                Icons.Outlined.PrivacyTip, AccentBlueBg, AccentBlue,
+                stringResource(R.string.settings_privacy), onClick = onPrivacy
+            )
+            SettingsDivider()
+            SettingsRow(
+                Icons.Outlined.Description, Color.White.copy(alpha = 0.06f), TextSecondary,
+                stringResource(R.string.settings_terms), onClick = onTerms
+            )
+        }
+
+        // Destructive action last and on its own, away from everyday rows
+        SettingsGroup(modifier = Modifier.padding(top = Spacing.m)) {
+            SettingsRow(
+                Icons.Outlined.DeleteForever, AccentRedBg, AccentRed,
+                stringResource(R.string.settings_delete_account),
+                titleColor = AccentRed,
+                showChevron = false,
+                onClick = onDeleteAccount
+            )
+        }
         Spacer(Modifier.height(Spacing.xl))
     }
+}
+
+
+@Composable
+private fun DeleteAccountDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings_delete_account_title), color = TextPrimary) },
+        text = { Text(stringResource(R.string.settings_delete_account_body), color = TextSecondary) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.settings_delete_account_confirm), color = AccentRed)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.common_cancel), color = TextSecondary)
+            }
+        },
+        containerColor = BgSurface
+    )
+}
+
+/** Blocks the screen while the account is deleted; it cannot be dismissed halfway. */
+@Composable
+private fun DeletingAccountDialog() {
+    AlertDialog(
+        onDismissRequest = {},
+        confirmButton = {},
+        title = { Text(stringResource(R.string.settings_deleting_account), color = TextPrimary) },
+        text = { LinearProgressIndicator(color = AccentRed, modifier = Modifier.fillMaxWidth()) },
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+        containerColor = BgSurface
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)
@@ -245,7 +353,8 @@ private fun SettingsContent(
 private fun SettingsContentPreview() {
     SubTrackTheme {
         SettingsContent(
-            onBack = {}, onEditUser = {}, onNotifications = {}, onLanguage = {}, onExport = {}, onFeedback = {}
+            onBack = {}, onEditUser = {}, onNotifications = {}, onLanguage = {}, onExport = {}, onFeedback = {},
+            onPrivacy = {}, onTerms = {}, onDeleteAccount = {}
         )
     }
 }

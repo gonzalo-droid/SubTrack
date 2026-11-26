@@ -72,6 +72,28 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
         }
     }
 
+    /**
+     * Stops mirroring. Call it BEFORE clearing the store on sign-out: a running mirror would
+     * take the emptied lists as deletions and wipe the account's cloud data.
+     */
+    fun stop() {
+        mirrorJob?.cancel()
+        mirrorJob = null
+    }
+
+    /** Deletes everything under `users/{uid}` (the client must delete each subcollection document). */
+    suspend fun deleteRemote(uid: String) {
+        val root = userDoc(uid)
+        for (name in listOf(SUBSCRIPTIONS, PAYMENTS, TEMPLATES)) {
+            root.collection(name).get().await().documents.chunked(MAX_BATCH_WRITES).forEach { chunk ->
+                val batch = db.batch()
+                chunk.forEach { batch.delete(it.reference) }
+                batch.commit().await()
+            }
+        }
+        root.delete().await()
+    }
+
     private suspend fun restore(root: DocumentReference, profile: Map<String, Any?>, user: User) {
         val subs = root.collection(SUBSCRIPTIONS).get().await().documents
             .map { it.data.orEmpty().fromFirestore<RemoteSubscription>() }
@@ -162,5 +184,6 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
         const val TEMPLATES = "templates"
         const val PROFILE = "profile"
         const val ALIAS = "alias"
+        const val MAX_BATCH_WRITES = 450 // Firestore allows 500 writes per batch
     }
 }

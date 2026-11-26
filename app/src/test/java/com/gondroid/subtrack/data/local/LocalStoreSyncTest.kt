@@ -88,6 +88,14 @@ class LocalStoreSyncTest {
         assertEquals(others, runBlocking { dao.members() }.filter { it.subscriptionId != edited.id })
     }
 
+    @Test fun `clearing the store on sign-out empties the database but keeps the default templates`() {
+        LocalStoreSync(dao).start()
+        AppStore.clear()
+        eventually { runBlocking { dao.subscriptions().isEmpty() && dao.payments().isEmpty() && dao.user() == null } }
+        assertTrue(runBlocking { dao.members() }.isEmpty())
+        assertEquals(DemoData.templates.map { it.id }, runBlocking { dao.templates() }.map { it.id })
+    }
+
     @Test fun `an empty users table alone does not reseed over real data`() {
         val first = LocalStoreSync(dao).also { it.start() }
         AppStore.subscriptions.value = listOf(DemoData.subscriptions.first().copy(name = "Mía"))

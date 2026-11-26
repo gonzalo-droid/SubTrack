@@ -10,7 +10,11 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.gondroid.subtrack.core.auth.GoogleIdTokenProvider
@@ -46,6 +50,16 @@ fun OnboardingFlow(
     val createdServiceName by vm.createdServiceName.collectAsStateWithLifecycle()
     val userFirstName by vm.userFirstName.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    // Each time the flow enters composition (first launch or after a sign-out) it starts over;
+    // rememberSaveable keeps a rotation from restarting it.
+    var started by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (!started) {
+            vm.restart()
+            started = true
+        }
+    }
     val scope = rememberCoroutineScope()
 
     AnimatedContent(

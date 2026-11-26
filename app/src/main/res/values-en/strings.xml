@@ -306,6 +306,18 @@
     <string name="profile_logout">Log out</string>
     <string name="profile_logout_title">Log out?</string>
     <string name="profile_logout_confirm">Log out</string>
+    <string name="profile_logout_error">Couldn\'t log out. Please try again.</string>
+    <string name="settings_legal_section">Legal</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_terms">Terms and conditions</string>
+    <string name="settings_privacy_url">https://nekodojo.app/en/apps/subtrack/privacy</string>
+    <string name="settings_terms_url">https://nekodojo.app/en/apps/subtrack/terms</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_delete_account_title">Delete your account?</string>
+    <string name="settings_delete_account_body">Your account and all your subscriptions, members, payments and templates are deleted, in the cloud and on this phone. This can\'t be undone. To confirm, pick your Google account again.</string>
+    <string name="settings_delete_account_confirm">Delete</string>
+    <string name="settings_deleting_account">Deleting your account…</string>
+    <string name="settings_delete_account_error">Couldn\'t delete the account. Check your connection and try again.</string>
     <string name="profile_referral_title">Invite and earn Pro</string>
     <plurals name="profile_referral_months">
         <item quantity="one">%1$d month earned</item>
@@ -513,7 +525,7 @@
     <string name="onboarding_auth_title">Create your account</string>
     <string name="onboarding_auth_subtitle">Sign in with one tap. Your data is safe.</string>
     <string name="onboarding_auth_google">Continue with Google</string>
-    <string name="onboarding_auth_terms">By continuing you accept our Terms of Service and Privacy Policy.</string>
+    <string name="onboarding_auth_terms"><![CDATA[By continuing you accept our <a href="https://nekodojo.app/en/apps/subtrack/terms">Terms of Service</a> and <a href="https://nekodojo.app/en/apps/subtrack/privacy">Privacy Policy</a>.]]></string>
 
     <!-- Onboarding — Notifications -->
     <string name="onboarding_notif_eyebrow">Important permission</string>
