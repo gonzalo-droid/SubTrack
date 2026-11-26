@@ -14,7 +14,10 @@ data class PersonSummary(
     val firstJoinedAt: Long,
     val lastActivityAt: Long?,
     val subscriptions: List<SubscriptionParticipation>
-)
+) {
+    /** Every shared subscription with this person is paused: listed dimmed, nothing to collect. */
+    val isAllPaused: Boolean get() = subscriptions.isNotEmpty() && subscriptions.all { it.isPaused }
+}
 
 data class SubscriptionParticipation(
     val subscriptionId: String,
@@ -22,5 +25,7 @@ data class SubscriptionParticipation(
     val brandColor: String,
     val status: PaymentStatus,
     val shareAmount: Double,
-    val isArchived: Boolean
+    val isArchived: Boolean,
+    /** Paused subscriptions stay visible but don't add to debt or monthly totals. */
+    val isPaused: Boolean = false
 )

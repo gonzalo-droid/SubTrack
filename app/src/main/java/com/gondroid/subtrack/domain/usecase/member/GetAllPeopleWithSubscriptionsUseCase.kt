@@ -23,18 +23,23 @@ class GetAllPeopleWithSubscriptionsUseCase @Inject constructor(
         subscriptionRepository.getAllSubscriptions(),
         userRepository.getCurrentUser()
     ) { people, subscriptions, user ->
-        val ownedIds = subscriptions.filter { it.ownerId == user?.id && !it.isPaused }.map { it.id }.toSet()
+        val owned = subscriptions.filter { it.ownerId == user?.id }
+        val ownedIds = owned.map { it.id }.toSet()
+        val pausedIds = owned.filter { it.isPaused }.map { it.id }.toSet()
         people
             .filter { it.userId == null || it.userId != user?.id }
             .mapNotNull { person ->
-                val mine = person.subscriptions.filter { it.subscriptionId in ownedIds }
+                val mine = person.subscriptions
+                    .filter { it.subscriptionId in ownedIds }
+                    .map { it.copy(isPaused = it.subscriptionId in pausedIds) }
                 if (mine.isEmpty()) return@mapNotNull null
+                val counting = mine.filter { !it.isPaused }
                 person.copy(
                     subscriptions = mine,
-                    totalDebt = mine.filter { it.status.isOverdue }.sumOf { it.shareAmount },
-                    totalMonthlyContribution = mine.filter { !it.isArchived }.sumOf { it.shareAmount }
+                    totalDebt = counting.filter { it.status.isOverdue }.sumOf { it.shareAmount },
+                    totalMonthlyContribution = counting.filter { !it.isArchived }.sumOf { it.shareAmount }
                 )
             }
-            .sortedByDescending { it.totalDebt }
+            .sortedWith(compareBy<PersonSummary> { it.isAllPaused }.thenByDescending { it.totalDebt })
     }
 }

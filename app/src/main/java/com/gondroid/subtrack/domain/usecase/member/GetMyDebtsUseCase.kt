@@ -23,7 +23,7 @@ class GetMyDebtsUseCase @Inject constructor(
     ) { subscriptions, user ->
         if (user == null) return@combine emptyList()
         subscriptions
-            .filter { it.ownerId != user.id && !it.isPaused }
+            .filter { it.ownerId != user.id }
             .mapNotNull { sub ->
                 val me = sub.members.find { it.userId == user.id } ?: return@mapNotNull null
                 sub.ownerId to SubscriptionParticipation(
@@ -32,7 +32,8 @@ class GetMyDebtsUseCase @Inject constructor(
                     brandColor = sub.brandColor,
                     status = me.currentStatus,
                     shareAmount = me.shareAmount,
-                    isArchived = false
+                    isArchived = false,
+                    isPaused = sub.isPaused
                 ) to me.joinedAt
             }
             .groupBy({ it.first.first }, { it })
@@ -45,14 +46,14 @@ class GetMyDebtsUseCase @Inject constructor(
                     name = owner?.name.orEmpty(),
                     phone = owner?.phone.orEmpty(),
                     hasApp = true,
-                    totalDebt = participations.filter { it.status.isOverdue }.sumOf { it.shareAmount },
-                    totalMonthlyContribution = participations.sumOf { it.shareAmount },
+                    totalDebt = participations.filter { !it.isPaused && it.status.isOverdue }.sumOf { it.shareAmount },
+                    totalMonthlyContribution = participations.filter { !it.isPaused }.sumOf { it.shareAmount },
                     punctualityPercent = null,
                     firstJoinedAt = entries.minOf { it.second },
                     lastActivityAt = null,
                     subscriptions = participations
                 )
             }
-            .sortedByDescending { it.totalDebt }
+            .sortedWith(compareBy<PersonSummary> { it.isAllPaused }.thenByDescending { it.totalDebt })
     }
 }

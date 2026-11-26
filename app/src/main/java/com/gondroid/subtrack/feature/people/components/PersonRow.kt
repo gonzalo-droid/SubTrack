@@ -37,6 +37,12 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.PersonSummary
 import com.gondroid.subtrack.domain.model.SubscriptionParticipation
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
+import androidx.compose.ui.draw.alpha
+import com.gondroid.subtrack.core.designsystem.components.text.Badge
+import com.gondroid.subtrack.core.designsystem.components.text.BadgeVariant
+
+/** Opacity for people whose shared subscriptions are all paused. */
+internal const val PAUSED_ALPHA = 0.5f
 
 @Composable
 fun PersonRow(
@@ -52,7 +58,9 @@ fun PersonRow(
             .background(BgSurface)
             .border(1.dp, BorderDefault, SubTrackShapes.l)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(Spacing.m),
+            .padding(Spacing.m)
+            // Everything with this person is paused: dimmed, the admin can delete it from the detail
+            .alpha(if (person.isAllPaused) PAUSED_ALPHA else 1f),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
@@ -92,7 +100,9 @@ fun PersonRow(
         }
 
         Column(horizontalAlignment = Alignment.End) {
-            if (person.totalDebt > 0) {
+            if (person.isAllPaused) {
+                Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+            } else if (person.totalDebt > 0) {
                 Text(
                     text = "S/ ${"%.2f".format(person.totalDebt)}",
                     style = SubTrackType.monoS,

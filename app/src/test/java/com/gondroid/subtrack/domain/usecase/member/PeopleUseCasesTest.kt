@@ -79,10 +79,12 @@ class PeopleUseCasesTest {
         assertEquals(listOf("" to "ghost"), debts.map { it.name to it.userId })
     }
 
-    @Test fun `paused subscriptions create no debts`() = runBlocking {
+    @Test fun `paused subscriptions create no debts but the admin stays listed as paused`() = runBlocking {
         val paused = subs.map { it.copy(isPaused = true) }
         assertEquals(emptyList<Any>(), GetDebtorsUseCase(FakeSubs(paused), FakeUsers())().first())
-        assertEquals(emptyList<Any>(), GetMyDebtsUseCase(FakeSubs(paused), FakeUsers())().first())
+        val owner = GetMyDebtsUseCase(FakeSubs(paused), FakeUsers())().first().single()
+        assertEquals(0.0, owner.totalDebt, 0.001)
+        assertEquals(true, owner.isAllPaused)
     }
 
     @Test fun `people who owe me exclude me and subscriptions I don't own`() = runBlocking {
