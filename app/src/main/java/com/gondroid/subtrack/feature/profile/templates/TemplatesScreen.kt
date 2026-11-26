@@ -48,7 +48,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
 import com.gondroid.subtrack.core.designsystem.components.text.Badge
@@ -70,8 +69,8 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.Template
-import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +79,7 @@ fun TemplatesScreen(
     onEditTemplate: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: TemplatesViewModel = viewModel(factory = TemplatesViewModelFactory())
+    val viewModel: TemplatesViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val actionSheet by viewModel.actionSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -93,7 +92,7 @@ fun TemplatesScreen(
             when (event) {
                 is TemplatesEvent.Duplicated -> messenger.show(R.string.template_duplicated)
                 is TemplatesEvent.Deleted -> messenger.show(R.string.template_deleted)
-                is TemplatesEvent.Error -> messenger.show(event.message)
+                is TemplatesEvent.Error -> messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }

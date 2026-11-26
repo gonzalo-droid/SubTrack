@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.templates
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockTemplateRepository
 import com.gondroid.subtrack.domain.usecase.template.DeleteTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.DuplicateTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
@@ -20,7 +18,8 @@ import javax.inject.Inject
 sealed interface TemplatesEvent {
     data class Duplicated(val name: String) : TemplatesEvent
     data class Deleted(val name: String) : TemplatesEvent
-    data class Error(val message: String) : TemplatesEvent
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : TemplatesEvent
 }
 
 @HiltViewModel
@@ -62,7 +61,7 @@ class TemplatesViewModel @Inject constructor(
                 ?.templates?.find { it.id == templateId }?.name ?: ""
             duplicateTemplate(templateId)
                 .onSuccess { _events.emit(TemplatesEvent.Duplicated(name)) }
-                .onFailure { _events.emit(TemplatesEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(TemplatesEvent.Error(it.message)) }
             closeActions()
         }
     }
@@ -73,20 +72,8 @@ class TemplatesViewModel @Inject constructor(
                 ?.templates?.find { it.id == templateId }?.name ?: ""
             deleteTemplate(templateId)
                 .onSuccess { _events.emit(TemplatesEvent.Deleted(name)) }
-                .onFailure { _events.emit(TemplatesEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(TemplatesEvent.Error(it.message)) }
             closeActions()
         }
-    }
-}
-
-class TemplatesViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockTemplateRepository()
-        return TemplatesViewModel(
-            getAllTemplates = GetAllTemplatesUseCase(repo),
-            duplicateTemplate = DuplicateTemplateUseCase(repo),
-            deleteTemplate = DeleteTemplateUseCase(repo)
-        ) as T
     }
 }

@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.editprofile
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import com.gondroid.subtrack.domain.usecase.user.UpdateUserUseCase
@@ -20,9 +18,11 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
-    private val updateUser: UpdateUserUseCase,
-    private val authProvider: AuthProvider = AuthProvider.GOOGLE
+    private val updateUser: UpdateUserUseCase
 ) : ViewModel() {
+
+    // TODO: [fase-2] read the provider from Firebase Auth; Android signs in with Google only
+    private val authProvider = AuthProvider.GOOGLE
 
     private val _events = MutableSharedFlow<EditProfileEvent>()
     val events = _events.asSharedFlow()
@@ -78,19 +78,5 @@ class EditProfileViewModel @Inject constructor(
     private fun updateDraft(block: EditProfileData.() -> EditProfileData) {
         val current = (uiState.value as? EditProfileUiState.Success)?.data ?: return
         _draft.value = current.block()
-    }
-}
-
-class EditProfileViewModelFactory(
-    private val authProvider: AuthProvider = AuthProvider.GOOGLE
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockUserRepository()
-        return EditProfileViewModel(
-            getCurrentUser = GetCurrentUserUseCase(repo),
-            updateUser = UpdateUserUseCase(repo),
-            authProvider = authProvider
-        ) as T
     }
 }

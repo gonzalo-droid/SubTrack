@@ -14,27 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.CloudDownload
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.HelpOutline
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,14 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
@@ -64,18 +54,15 @@ import com.gondroid.subtrack.core.designsystem.components.text.Eyebrow
 import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
 import com.gondroid.subtrack.core.designsystem.theme.AccentAmberBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentBlue
-import com.gondroid.subtrack.core.designsystem.theme.AccentBlueBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
-import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
 import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
-import com.gondroid.subtrack.core.designsystem.theme.BorderStrong
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
@@ -88,6 +75,10 @@ import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.UserAlias
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.list.SettingsRow
+import com.gondroid.subtrack.core.designsystem.components.list.SettingsDivider
+import com.gondroid.subtrack.BuildConfig
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ProfileScreen(
@@ -95,12 +86,13 @@ fun ProfileScreen(
     onNavigateToReferral: () -> Unit,
     onNavigateToAliasEdit: () -> Unit = {},
     onNavigateToEditUser: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     onNavigateToEditTemplate: (String?) -> Unit = {},
     onDebugOnboarding: () -> Unit = {},
     onDebugData: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory())
+    val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {
@@ -110,6 +102,7 @@ fun ProfileScreen(
             onNavigateToAliasEdit = onNavigateToAliasEdit,
             onNavigateToReferral = onNavigateToReferral,
             onNavigateToEditUser = onNavigateToEditUser,
+            onNavigateToSettings = onNavigateToSettings,
             onNavigateToEditTemplate = onNavigateToEditTemplate,
             onNavigateToTemplates = onNavigateToTemplates,
             modifier = modifier
@@ -123,14 +116,13 @@ private fun ProfileContent(
     onNavigateToAliasEdit: () -> Unit,
     onNavigateToReferral: () -> Unit,
     onNavigateToEditUser: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onNavigateToEditTemplate: (String?) -> Unit,
     onNavigateToTemplates: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showLegalSheet by remember { mutableStateOf(false) }
-    var darkModeEnabled by remember { mutableStateOf(true) }
-    var faceIdEnabled by remember { mutableStateOf(false) }
 
     if (showLogoutDialog) {
         AlertDialog(
@@ -165,7 +157,7 @@ private fun ProfileContent(
                     style = SubTrackType.headlineL,
                     color = TextPrimary
                 )
-                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = {})
+                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = onNavigateToSettings)
             }
         }
 
@@ -291,83 +283,6 @@ private fun ProfileContent(
         item { Spacer(Modifier.height(Spacing.base)) }
 
         // Account section
-        item {
-            Eyebrow(
-                text = stringResource(R.string.profile_account_section),
-                modifier = Modifier.padding(horizontal = Spacing.base, vertical = Spacing.s)
-            )
-        }
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = Spacing.base)
-                    .clip(SubTrackShapes.l)
-                    .background(BgSurface)
-                    .border(1.dp, BorderDefault, SubTrackShapes.l)
-            ) {
-                SettingsRow(
-                    icon = Icons.Outlined.AccountCircle,
-                    iconBg = AccentBlueBg,
-                    iconTint = AccentBlue,
-                    title = stringResource(R.string.profile_account_personal),
-                    onClick = onNavigateToEditUser
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.Language,
-                    iconBg = AccentPurpleBg,
-                    iconTint = AccentPurple,
-                    title = stringResource(R.string.profile_account_locale),
-                    value = "Perú · S/ PEN",
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.NotificationsNone,
-                    iconBg = AccentAmberBg,
-                    iconTint = AccentAmber,
-                    title = stringResource(R.string.profile_account_notifications),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.Lock,
-                    iconBg = AccentBlueBg,
-                    iconTint = AccentBlue,
-                    title = stringResource(R.string.profile_account_faceid),
-                    trailing = {
-                        Switch(
-                            checked = faceIdEnabled,
-                            onCheckedChange = { faceIdEnabled = it },
-                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = AccentGreen)
-                        )
-                    }
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.CloudDownload,
-                    iconBg = Color.White.copy(alpha = 0.06f),
-                    iconTint = TextSecondary,
-                    title = stringResource(R.string.profile_account_export),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.DarkMode,
-                    iconBg = Color.White.copy(alpha = 0.06f),
-                    iconTint = TextSecondary,
-                    title = stringResource(R.string.profile_account_dark_theme),
-                    trailing = {
-                        Switch(
-                            checked = darkModeEnabled,
-                            onCheckedChange = { darkModeEnabled = it },
-                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = AccentGreen)
-                        )
-                    }
-                )
-            }
-        }
-
         // Referral card
         item {
             ReferralEntryCard(
@@ -395,22 +310,6 @@ private fun ProfileContent(
                     .border(1.dp, BorderDefault, SubTrackShapes.l)
             ) {
                 SettingsRow(
-                    icon = Icons.Outlined.HelpOutline,
-                    iconBg = AccentGreenBg,
-                    iconTint = AccentGreen,
-                    title = stringResource(R.string.profile_support_help),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.NotificationsNone,
-                    iconBg = AccentPurpleBg,
-                    iconTint = AccentPurple,
-                    title = stringResource(R.string.profile_support_feedback),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
                     icon = Icons.Outlined.Lock,
                     iconBg = Color.White.copy(alpha = 0.06f),
                     iconTint = TextSecondary,
@@ -434,7 +333,7 @@ private fun ProfileContent(
         // Footer
         item {
             Text(
-                text = stringResource(R.string.profile_version, "0.1.0", 128),
+                text = stringResource(R.string.profile_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
                 style = SubTrackType.monoXS,
                 color = TextTertiary,
                 modifier = Modifier
@@ -700,47 +599,6 @@ private fun TemplateCard(template: Template, onClick: () -> Unit, modifier: Modi
         }
     }
 }
-
-@Composable
-private fun SettingsRow(
-    icon: ImageVector,
-    iconBg: Color,
-    iconTint: Color,
-    title: String,
-    titleColor: Color = TextPrimary,
-    value: String? = null,
-    showChevron: Boolean = true,
-    trailing: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = Spacing.m, vertical = Spacing.s),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.m)
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(32.dp).clip(SubTrackShapes.base).background(iconBg)
-        ) {
-            Icon(icon, null, tint = iconTint, modifier = Modifier.size(18.dp))
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = SubTrackType.bodyS, color = titleColor)
-            if (value != null) Text(value, style = SubTrackType.monoXS, color = TextTertiary)
-        }
-        if (trailing != null) trailing()
-        else if (showChevron) Icon(Icons.Outlined.ChevronRight, null, tint = TextTertiary, modifier = Modifier.size(16.dp))
-    }
-}
-
-@Composable
-private fun SettingsDivider() = HorizontalDivider(
-    modifier = Modifier.padding(start = 56.dp),
-    color = BorderDefault
-)
 
 @Composable
 private fun ReferralEntryCard(

@@ -1,0 +1,682 @@
+<resources>
+    <string name="app_name">SubTrack</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_dashboard">Home</string>
+    <string name="nav_subscriptions">Subscriptions</string>
+    <string name="nav_people">People</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Payment status -->
+    <string name="status_paid">Paid</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_overdue">Overdue</string>
+    <string name="status_late">Late</string>
+
+    <!-- Common actions -->
+    <string name="common_back">Back</string>
+    <string name="cd_close_wizard">Close wizard</string>
+    <string name="cd_how_it_works">How it works</string>
+    <string name="cd_new_template">New template</string>
+    <string name="cd_settings">Settings</string>
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
+
+    <!-- Dashboard — header -->
+    <string name="dashboard_notifications_cd">Notifications</string>
+    <string name="dashboard_avatar_cd">Your profile</string>
+    <string name="dashboard_greeting">Hi, %1$s</string>
+
+    <!-- Dashboard — filter tabs -->
+    <string name="dashboard_tab_all">All</string>
+    <string name="dashboard_tab_personal">Personal</string>
+    <string name="dashboard_tab_shared">Shared</string>
+
+    <!-- Dashboard — hero cards -->
+    <string name="dashboard_hero_personal">PERSONAL</string>
+    <string name="dashboard_hero_shared">SHARED</string>
+    <plurals name="dashboard_hero_services">
+        <item quantity="one">%1$d service</item>
+        <item quantity="other">%1$d services</item>
+    </plurals>
+    <plurals name="dashboard_hero_upcoming">
+        <item quantity="one">%1$d upcoming</item>
+        <item quantity="other">%1$d upcoming</item>
+    </plurals>
+    <string name="dashboard_hero_counts_format">%1$s · %2$s</string>
+    <plurals name="dashboard_hero_services_debtors_prefix">
+        <item quantity="one">"%1$d service · "</item>
+        <item quantity="other">"%1$d services · "</item>
+    </plurals>
+    <plurals name="dashboard_hero_debtors_suffix">
+        <item quantity="one">" owes"</item>
+        <item quantity="other">" owe"</item>
+    </plurals>
+
+    <!-- Dashboard — total summary -->
+    <string name="dashboard_total_monthly">Monthly total</string>
+    <string name="dashboard_net_badge">NET</string>
+
+    <!-- Dashboard — upcoming section -->
+    <string name="dashboard_upcoming_title">Upcoming charges</string>
+    <string name="dashboard_upcoming_see_all">See all →</string>
+    <string name="dashboard_cutoff_today">Due today</string>
+    <string name="dashboard_cutoff_tomorrow">Tomorrow</string>
+    <plurals name="dashboard_cutoff_days">
+        <item quantity="one">In %1$d day</item>
+        <item quantity="other">In %1$d days</item>
+    </plurals>
+    <string name="dashboard_cutoff_type_personal">Personal</string>
+    <string name="dashboard_cutoff_type_shared">Shared</string>
+
+    <!-- Dashboard — personal section -->
+    <string name="dashboard_personal_title">Your personal</string>
+    <string name="dashboard_personal_see_all">See all →</string>
+    <string name="dashboard_billing_monthly">Monthly · Day %1$d</string>
+    <string name="dashboard_billing_yearly">Yearly · Day %1$d</string>
+    <string name="dashboard_billing_custom">Custom · Day %1$d</string>
+
+    <!-- Dashboard — debtors section -->
+    <string name="dashboard_debtors_title">Owed to you</string>
+    <string name="dashboard_debtors_see_all">See all →</string>
+    <string name="dashboard_reminder_cd">Remind via WhatsApp</string>
+    <string name="dashboard_debtor_detail">%1$s · Due on day %2$d</string>
+
+    <!-- Dashboard — insight -->
+    <plurals name="dashboard_insight_unused">
+        <item quantity="one">You haven\'t opened %1$s in %2$d day.</item>
+        <item quantity="other">You haven\'t opened %1$s in %2$d days.</item>
+    </plurals>
+    <string name="dashboard_insight_cancel_hint">Cancel and save S/ %1$s/month?</string>
+
+    <!-- Dashboard — empty state -->
+    <string name="dashboard_empty_title">No subscriptions yet</string>
+    <string name="dashboard_empty_subtitle">Add your first subscription to start managing your spending.</string>
+    <string name="dashboard_empty_cta">Add subscription</string>
+
+    <!-- WhatsApp -->
+    <string name="whatsapp_not_installed">WhatsApp is not installed</string>
+    <string name="whatsapp_invalid_phone">Invalid phone number</string>
+    <string name="member_detail_payment_marked">Payment recorded</string>
+    <string name="member_detail_exit_requested">Request sent</string>
+    <string name="subscription_detail_collect_one">Collect from %1$s</string>
+    <string name="subscription_menu_edit">Edit</string>
+    <string name="subscription_menu_pause">Pause</string>
+    <string name="subscription_menu_resume">Resume</string>
+    <string name="subscription_menu_delete">Delete</string>
+    <string name="subscription_paused_tag">PAUSED</string>
+    <string name="subscription_paused_toast">Subscription paused. It doesn\'t count toward your totals.</string>
+    <string name="subscription_resumed_toast">Subscription resumed</string>
+    <string name="subscription_deleted_toast">Subscription deleted</string>
+    <string name="subscription_delete_title">Delete %1$s?</string>
+    <string name="subscription_delete_desc">This deletes the subscription along with its members and history. This can\'t be undone.</string>
+    <string name="edit_subscription_eyebrow">Edit subscription</string>
+    <string name="edit_subscription_save">Save changes</string>
+    <string name="edit_subscription_saved">Changes saved</string>
+    <string name="edit_subscription_not_found">This subscription no longer exists</string>
+
+    <!-- Subscription detail — top nav -->
+    <string name="subscription_detail_back_cd">Back</string>
+    <string name="subscription_detail_overflow_cd">More options</string>
+
+    <!-- Subscription detail — hero -->
+    <string name="subscription_detail_admin_tag">ADMIN</string>
+    <plurals name="subscription_detail_plan_label">
+        <item quantity="one">%1$s plan · %2$d profile</item>
+        <item quantity="other">%1$s plan · %2$d profiles</item>
+    </plurals>
+    <string name="date_day_of_month">%2$s %1$d</string>
+    <string-array name="month_names">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string name="subscription_detail_cutoff_today">Billing day today · %1$s</string>
+    <string name="subscription_detail_cutoff_day">Billing day %1$d · %2$s</string>
+
+    <!-- Subscription detail — members section -->
+    <string name="subscription_detail_members_title">Members</string>
+    <string name="subscription_detail_members_count">%1$d · S/ %2$s each</string>
+
+    <!-- Subscription detail — member row -->
+    <string name="member_profile_label">%1$s</string>
+    <string name="member_no_profile">No profile assigned</string>
+    <string name="member_toast_coming_soon">Coming soon: manage member</string>
+
+    <!-- Subscription detail — collection bar -->
+    <plurals name="subscription_detail_collect_title">
+        <item quantity="one">Collect from %1$d pending</item>
+        <item quantity="other">Collect from %1$d pending</item>
+    </plurals>
+    <string name="subscription_detail_collect_subtitle">S/ %1$s · Via WhatsApp</string>
+    <string name="subscription_detail_collect_toast">Coming soon: bulk collection</string>
+
+    <!-- Subscription detail — history section -->
+    <string name="subscription_detail_history_title">History</string>
+    <plurals name="subscription_detail_history_months">
+        <item quantity="one">%1$d month</item>
+        <item quantity="other">%1$d months</item>
+    </plurals>
+    <string name="subscription_detail_month_complete">Complete</string>
+    <string name="subscription_detail_month_partial">Partial</string>
+
+    <!-- Subscription detail — archived section -->
+    <string name="subscription_detail_archived_divider">ARCHIVED · %1$d</string>
+    <string name="subscription_detail_archived_help">Members who left with a pending debt. Once they pay, you can delete them for good.</string>
+    <string name="subscription_detail_archived_tag">Archived</string>
+    <string name="subscription_detail_archived_status">DEBT</string>
+    <string name="subscription_detail_archived_toast">Coming soon: manage archived</string>
+
+    <!-- Subscription detail — not found -->
+    <string name="subscription_detail_not_found_title">Subscription not found</string>
+    <string name="subscription_detail_not_found_subtitle">It may have been deleted.</string>
+
+    <!-- Member sheets — common -->
+    <string name="member_sheet_handle_cd">Close panel</string>
+    <string name="member_sheet_continue">Continue →</string>
+    <string name="member_sheet_cancel">Cancel</string>
+
+    <!-- Member sheets — Add step 1 -->
+    <string name="member_sheet_add_step1_eyebrow">Step 1 of 2</string>
+    <string name="member_sheet_add_step1_title">Add member</string>
+    <string name="member_sheet_add_search_hint">Search contact or name</string>
+    <string name="member_sheet_add_contacts_option">Contacts</string>
+    <string name="member_sheet_add_qr_option">QR code</string>
+    <string name="member_sheet_add_suggestions_title">Suggested</string>
+
+    <!-- Member sheets — Add step 2 -->
+    <string name="member_sheet_add_step2_eyebrow">Step 2 of 2 · amount</string>
+    <string name="member_sheet_add_step2_title">How much does %1$s chip in?</string>
+    <string name="member_sheet_add_amount_label">MONTHLY SHARE</string>
+    <string name="member_sheet_add_split_chip">S/ %1$s (equal split)</string>
+    <string name="member_sheet_add_typical_chip">S/ %1$s (usual amount)</string>
+    <string name="member_sheet_add_custom_chip">Custom</string>
+    <string name="member_sheet_add_math_total">Total %1$s</string>
+    <string name="member_sheet_add_math_current">Current shares</string>
+    <string name="member_sheet_add_math_new">New member</string>
+    <string name="member_sheet_add_math_you_cover">You cover</string>
+    <string name="member_sheet_add_admin_cover_note">You\'ll cover S/ %1$s of the difference this month. You can adjust the share later.</string>
+    <string name="member_sheet_add_confirm">Add %1$s</string>
+    <string name="member_sheet_added_toast">%1$s added to the group</string>
+
+    <!-- Member sheets — Edit -->
+    <string name="member_sheet_edit_eyebrow">Member · %1$s</string>
+
+    <string name="member_sheet_edit_punctuality">%1$d%% on time</string>
+    <string name="member_sheet_edit_action_remind">Send reminder</string>
+    <string name="member_sheet_edit_action_remind_sub">Open WhatsApp with a message</string>
+    <string name="member_sheet_edit_action_paid">Mark as paid</string>
+    <string name="member_sheet_edit_action_paid_sub">Record this month\'s payment</string>
+    <string name="member_sheet_edit_action_data">Edit details · amount</string>
+    <string name="member_sheet_edit_action_data_sub">Name, phone, share</string>
+    <string name="member_sheet_edit_action_history">View history</string>
+    <string name="member_sheet_edit_action_history_sub">Payments from recent months</string>
+    <string name="member_sheet_edit_action_remove">Remove from group</string>
+    <string name="member_sheet_edit_action_remove_sub">Archive or delete</string>
+    <string name="member_sheet_paid_toast">%1$s marked as paid</string>
+
+    <!-- Member sheets — Edit data -->
+    <string name="member_sheet_data_title">Edit details for %1$s</string>
+    <string name="member_sheet_data_name_label">Name</string>
+    <string name="member_sheet_data_phone_label">Phone</string>
+    <string name="member_sheet_data_amount_label">Monthly share</string>
+    <string name="member_sheet_data_save">Save changes</string>
+    <string name="member_sheet_updated_toast">%1$s updated</string>
+
+    <!-- Member sheets — Remove -->
+    <string name="member_sheet_remove_eyebrow">Confirm action</string>
+    <string name="member_sheet_remove_warning_title">%1$s has S/ %2$s pending</string>
+    <string name="member_sheet_remove_warning_sub">%1$s can\'t be deleted with pending payments</string>
+    <string name="member_sheet_remove_archive_title">Archive with debt</string>
+    <string name="member_sheet_remove_archive_sub">Moves to archived. They can pay later.</string>
+    <string name="member_sheet_remove_forgive_title">Forgive debt</string>
+    <string name="member_sheet_remove_forgive_sub">You take on the S/ %1$s pending.</string>
+    <string name="member_sheet_remove_transfer_title">Transfer to replacement</string>
+    <string name="member_sheet_remove_transfer_sub">Add the new member first.</string>
+    <string name="member_sheet_remove_confirm_archive">Archive</string>
+    <string name="member_sheet_remove_confirm_forgive">Forgive and delete</string>
+    <string name="member_sheet_remove_confirm_transfer">Continue to add</string>
+    <string name="member_sheet_archived_toast">%1$s archived with pending debt</string>
+    <string name="member_sheet_forgiven_toast">%1$s deleted. Debt forgiven.</string>
+
+    <!-- Member sheets — Bulk reminder -->
+    <string name="member_sheet_bulk_title">Collect from pending</string>
+    <plurals name="member_sheet_bulk_subtitle">
+        <item quantity="one">%1$d person · S/ %2$s total</item>
+        <item quantity="other">%1$d people · S/ %2$s total</item>
+    </plurals>
+    <string name="member_sheet_bulk_owes">Owes S/ %1$s</string>
+    <string name="member_sheet_bulk_template_label">Message template</string>
+    <string name="member_sheet_bulk_preview_label">Preview</string>
+    <string name="member_sheet_bulk_helper">WhatsApp will open for each person. Send each message and come back to the app.</string>
+    <plurals name="member_sheet_bulk_send">
+        <item quantity="one">Send via WhatsApp to %1$d person</item>
+        <item quantity="other">Send via WhatsApp to %1$d people</item>
+    </plurals>
+    <string name="member_sheet_bulk_next">Next → (%1$d of %2$d)</string>
+    <plurals name="member_sheet_bulk_done">
+        <item quantity="one">Done! %1$d reminder sent</item>
+        <item quantity="other">Done! %1$d reminders sent</item>
+    </plurals>
+
+    <!-- Member sheets — Exit request -->
+    <string name="member_sheet_exit_title">New request</string>
+    <string name="member_sheet_exit_subtitle">Exit request</string>
+    <string name="member_sheet_exit_approve">Approve exit</string>
+    <string name="member_sheet_exit_reject">Reject</string>
+
+    <!-- Month keys display -->
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+
+    <!-- Profile screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_edit">Edit</string>
+    <string name="profile_pro_title">SubTrack Pro</string>
+    <string name="profile_pro_badge">ACTIVE</string>
+    <string name="profile_pro_subtitle">Unlimited shared · Advanced stats · 9.90/month</string>
+    <string name="profile_pro_cta">Upgrade to Pro</string>
+    <string name="profile_pro_cta_sub">Unlock unlimited subscriptions and stats</string>
+    <string name="profile_alias_title">Where to get paid</string>
+    <string name="profile_alias_edit">Edit</string>
+    <string name="profile_alias_subtitle">Automatically included in your WhatsApp templates. We don\'t process payments, we only coordinate them.</string>
+    <string name="profile_alias_default_tag">DEFAULT</string>
+    <string name="profile_alias_section">Payment aliases</string>
+    <string name="profile_templates_title">My messages</string>
+    <string name="profile_templates_new">+ New</string>
+    <string name="profile_templates_section">Collection templates</string>
+    <string name="profile_account_section">Account</string>
+    <string name="profile_account_personal">Personal info</string>
+    <string name="profile_account_locale">Country and currency</string>
+    <string name="profile_account_notifications">Notifications</string>
+    <string name="profile_account_export">Export my data</string>
+    <string name="profile_support_section">Support</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_locale_value">Peru · S/ PEN</string>
+    <string name="settings_notifications_desc">Reminders for billing days and payments</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_desc">Spanish or English, from your system settings</string>
+    <string name="settings_data_section">Your data</string>
+    <string name="settings_export_desc">Share your subscriptions as CSV</string>
+    <string name="settings_export_chooser">Export subscriptions</string>
+    <string name="settings_export_file_name">subtrack.csv</string>
+    <string name="settings_feedback_subject">SubTrack %1$s · feedback</string>
+    <string name="settings_feedback_no_app">No email app is installed</string>
+    <string name="settings_version">Version</string>
+    <string name="profile_support_feedback">Send feedback</string>
+    <string name="profile_logout">Log out</string>
+    <string name="profile_logout_title">Log out?</string>
+    <string name="profile_logout_confirm">Log out</string>
+    <string name="profile_referral_title">Invite and earn Pro</string>
+    <plurals name="profile_referral_months">
+        <item quantity="one">%1$d month earned</item>
+        <item quantity="other">%1$d months earned</item>
+    </plurals>
+    <string name="profile_version">v%1$s · build %2$d</string>
+    <string name="profile_stats_services">services</string>
+    <string name="profile_stats_spend">monthly spend</string>
+    <string name="profile_stats_recovered">recovered</string>
+
+    <!-- Legal / logos disclaimer -->
+    <string name="legal_logos_title">Logos and trademarks</string>
+    <string name="legal_logos_body">The service logos shown in SubTrack (Netflix, Spotify, YouTube, among others) are registered trademarks of their respective owners. They are used for reference and information only, with no commercial intent or affiliation.</string>
+    <string name="legal_logos_simpleicons">Icons based on Simple Icons (simpleicons.org) · CC0 1.0 License</string>
+
+    <!-- Alias edit screen -->
+    <string name="alias_title">Payment aliases</string>
+    <string name="alias_save">Save</string>
+    <string name="alias_yape_label">Yape</string>
+    <string name="alias_yape_placeholder">987 654 321</string>
+    <string name="alias_plin_label">Plin</string>
+    <string name="alias_plin_placeholder">987 654 321</string>
+    <string name="alias_cci_bank_label">Bank (CCI)</string>
+    <string name="alias_cci_bank_placeholder">BCP, Interbank…</string>
+    <string name="alias_cci_number_label">CCI account number</string>
+    <string name="alias_cci_number_placeholder">00219000016789</string>
+    <string name="alias_default_label">Default alias</string>
+    <string name="alias_info_box">These details will be inserted automatically into your WhatsApp templates using the variables {yape}, {plin}, {cci}.</string>
+    <string name="alias_saved_toast">Alias updated ✓</string>
+    <string name="alias_error_phone">Must have 9 digits</string>
+
+    <!-- Referral screen -->
+    <string name="referral_title">Referrals</string>
+    <string name="referral_hero_title">Invite a friend\n= 1 month Pro</string>
+    <string name="referral_hero_subtitle">When your friend installs the app and adds their first subscription, you both get a free month of Pro.</string>
+    <string name="referral_code_label">YOUR CODE</string>
+    <string name="referral_code_copied">Code copied!</string>
+    <string name="referral_share_wa">WhatsApp</string>
+    <string name="referral_share_link">Link</string>
+    <string name="referral_share_qr">QR</string>
+    <string name="referral_share_wa_message">Use my code %s on SubTrack and we both get 1 free month of Pro 🎉 Download it here: https://subtrack.app/download</string>
+    <string name="referral_stats_title">Your referrals</string>
+    <string name="referral_stats_see_all">See all →</string>
+    <string name="referral_stats_invited">Invited</string>
+    <string name="referral_stats_active">Active</string>
+    <string name="referral_stats_months">Pro months</string>
+    <string name="referral_progress_title">Next milestone</string>
+    <plurals name="referral_progress_desc">
+        <item quantity="one">%1$d more referral and you earn %2$s</item>
+        <item quantity="other">%1$d more referrals and you earn %2$s</item>
+    </plurals>
+    <string name="referral_recent_title">Recent referrals</string>
+    <string name="referral_status_active">+1 month Pro</string>
+    <string name="referral_status_pending">Installed</string>
+    <string name="referral_how_it_works">How it works</string>
+    <string name="referral_how_desc">1. Share your unique code with friends\n2. Your friend installs SubTrack and adds their first subscription\n3. You both get 1 free month of Pro!\n\nEach active referral = 1 month of Pro. Stackable with no limit.</string>
+    <string name="referral_qr_title">Show this QR</string>
+    <string name="referral_qr_desc">Your friend scans the code to download SubTrack with your referral</string>
+    <plurals name="referral_days_ago">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
+    <string name="referral_today">Today</string>
+
+    <!-- Templates screen -->
+    <string name="template_screen_title">Templates</string>
+    <string name="template_screen_new">+ New</string>
+    <string name="template_info_text">Templates are used when you collect. Pick the one that fits the tone you want with each person.</string>
+    <string name="template_action_edit">Edit</string>
+    <string name="template_action_duplicate">Duplicate</string>
+    <string name="template_action_delete">Delete template</string>
+    <string name="template_action_delete_disabled">Default templates can\'t be deleted</string>
+    <string name="template_duplicated">Template duplicated ✓</string>
+    <string name="template_deleted">Template deleted</string>
+    <string name="template_delete_confirm_title">Delete this template?</string>
+    <string name="template_delete_confirm_desc">This can\'t be undone.</string>
+    <string name="template_delete_confirm_btn">Delete</string>
+
+    <!-- Edit template screen -->
+    <string name="edit_template_title_new">New template</string>
+    <string name="edit_template_title_edit">Edit template</string>
+    <string name="edit_template_save">Save</string>
+    <string name="edit_template_eyebrow_new">Template · new</string>
+    <string name="edit_template_eyebrow_edit">Template · editing</string>
+    <string name="edit_template_name_label">NAME · EMOJI</string>
+    <string name="edit_template_name_placeholder">E.g. Friendly</string>
+    <string name="edit_template_tone_label">MESSAGE TONE</string>
+    <string name="edit_template_message_label">MESSAGE</string>
+    <string name="edit_template_message_placeholder">Write your message here…</string>
+    <string name="edit_template_variables_label">AVAILABLE VARIABLES</string>
+    <string name="edit_template_variables_hint">Tap to insert</string>
+    <string name="edit_template_preview_toggle">Preview with real data</string>
+    <string name="edit_template_preview_collapse">Hide preview</string>
+    <string name="edit_template_delete">Delete template</string>
+    <string name="edit_template_saved_toast">Template saved ✓</string>
+    <string name="edit_template_discard_title">Discard changes?</string>
+    <string name="edit_template_discard_confirm">Discard</string>
+    <string name="edit_template_emoji_label">EMOJI</string>
+
+    <!-- Create Subscription wizard -->
+    <string name="create_subscription_step1_eyebrow">Step 1 · Service</string>
+    <string name="create_subscription_step1_title">Pick the service</string>
+    <string name="create_subscription_step1_subtitle">The most popular ones. Tap one, or pick Other if it\'s not on the list.</string>
+    <string name="create_subscription_other_tile_label">Other</string>
+    <string name="create_subscription_other_title">Add service</string>
+    <string name="create_subscription_other_name_label">SERVICE NAME</string>
+    <string name="create_subscription_other_name_placeholder">E.g. Canva, Duolingo…</string>
+    <string name="create_subscription_other_color_label">COLOR</string>
+
+    <string name="create_subscription_who_pays_eyebrow">Step 2 · Who pays</string>
+    <string name="create_subscription_who_pays_title">Who pays for %1$s?</string>
+    <string name="create_subscription_who_pays_hint">%1$s is usually paid on a family plan, so we mark it as shared.</string>
+    <string name="create_subscription_who_pays_me">Just me</string>
+    <string name="create_subscription_who_pays_me_desc">You pay for it and only you see it in your tracker.</string>
+    <string name="create_subscription_who_pays_shared">I share it</string>
+    <string name="create_subscription_who_pays_shared_desc">You split the cost and collect from each person on WhatsApp.</string>
+    <string name="create_subscription_cutoff_next">Next charge: %1$s</string>
+    <string name="create_subscription_step2_eyebrow">Step 3 · Details</string>
+    <string name="create_subscription_step2_title">Amount and date</string>
+    <string name="create_subscription_amount_label">TOTAL AMOUNT PER CYCLE</string>
+    <string name="create_subscription_suggested_chip">Use suggested · S/ %1$s</string>
+    <string name="create_subscription_currency_label">CURRENCY</string>
+    <string name="create_subscription_cycle_label">CYCLE</string>
+    <string name="create_subscription_cycle_monthly">Monthly</string>
+    <string name="create_subscription_cycle_yearly">Yearly</string>
+    <string name="create_subscription_cycle_custom">Other</string>
+    <string name="create_subscription_cutoff_label">BILLING DAY</string>
+    <string name="create_subscription_cutoff_selected">Day %1$d</string>
+
+    <string name="create_subscription_step3_eyebrow">Step 4 · Members</string>
+    <string name="create_subscription_step3_title">Who are you sharing it with?</string>
+    <string name="create_subscription_members_empty">You haven\'t added anyone yet</string>
+    <string name="create_subscription_add_member">+ Add member</string>
+    <string name="create_subscription_add_member_sheet_title">Add member</string>
+    <string name="create_subscription_add_member_name_label">NAME</string>
+    <string name="create_subscription_add_member_name_placeholder">E.g. María García</string>
+    <string name="create_subscription_add_member_phone_label">PHONE</string>
+    <string name="create_subscription_add_member_confirm">Add</string>
+
+    <string name="create_subscription_step4_eyebrow">Step 5 · Split</string>
+    <string name="create_subscription_step4_title">How do you split it?</string>
+    <string name="create_subscription_step4_subtitle">S/ %1$s among %2$d people</string>
+    <string name="create_subscription_split_equal">Equal parts</string>
+    <string name="create_subscription_split_equal_preview">S/ %1$s ÷ %2$d = S/ %3$s per person</string>
+    <string name="create_subscription_split_percentage">By percentage</string>
+    <string name="create_subscription_split_percentage_desc">Each person pays according to their assigned percentage.</string>
+    <string name="create_subscription_split_fixed">Fixed amounts</string>
+    <string name="create_subscription_split_fixed_desc">Assign an exact amount to each person.</string>
+    <string name="create_subscription_split_you">You (admin)</string>
+    <string name="create_subscription_split_diff_under">You cover the S/ %1$s difference</string>
+    <string name="create_subscription_split_diff_over">The sum exceeds the total by S/ %1$s</string>
+
+    <string name="create_subscription_footer_continue">Continue</string>
+    <string name="create_subscription_footer_create">Create subscription</string>
+    <string name="create_subscription_footer_create_shared">Create and send invitations</string>
+    <string name="create_subscription_footer_back">← Previous</string>
+
+    <string name="create_subscription_cancel_title">Discard subscription?</string>
+    <string name="create_subscription_cancel_desc">The information you entered will be lost.</string>
+    <string name="create_subscription_cancel_confirm">Discard</string>
+
+    <string name="create_subscription_success_title">All set!</string>
+    <string name="create_subscription_success_personal_desc">%1$s is now in your tracker.</string>
+    <plurals name="create_subscription_success_shared_desc">
+        <item quantity="one">%1$s created with %2$d member. Send the invitation via WhatsApp.</item>
+        <item quantity="other">%1$s created with %2$d members. Send the invitations via WhatsApp.</item>
+    </plurals>
+    <string name="create_subscription_success_whatsapp">Send invitations via WhatsApp</string>
+    <string name="create_subscription_success_whatsapp_desc">Notify the group members with the invitation template.</string>
+    <string name="create_subscription_success_view">View subscription</string>
+    <string name="create_subscription_success_view_desc">Go to the details of %1$s.</string>
+    <string name="create_subscription_success_another">Create another subscription</string>
+    <string name="create_subscription_success_another_desc">Go back to step 1 with a clean wizard.</string>
+    <string name="create_subscription_success_home">Done</string>
+
+    <!-- Onboarding — common -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_success_fallback_name">friend</string>
+    <string name="onboarding_next">Next →</string>
+    <string name="onboarding_skip_for_now">Skip for now</string>
+    <string name="onboarding_value_eyebrow">VALUE %1$d OF 3</string>
+
+    <!-- Onboarding — Tracker -->
+    <string name="onboarding_tracker_title">Everything in one place</string>
+    <string name="onboarding_tracker_desc_prefix">"Add all your subscriptions and see exactly "</string>
+    <string name="onboarding_tracker_desc_bold">how much you spend each month.</string>
+    <string name="onboarding_tracker_desc_suffix">" Netflix, Spotify, ChatGPT and more."</string>
+
+    <!-- Onboarding — Share -->
+    <string name="onboarding_share_title">Share with friends</string>
+    <string name="onboarding_share_desc_prefix">"Split shared accounts and collect on "</string>
+    <string name="onboarding_share_desc_bold">WhatsApp with one tap.</string>
+    <string name="onboarding_share_desc_suffix">" No drama, no forgetting."</string>
+    <string name="onboarding_share_bubble">Hi! 👋 Just a reminder that Netflix is due on the 15th. Your share is S/13.73. Can you transfer it to me? — SubTrack</string>
+    <string name="onboarding_share_calc_total">S/ 54.90</string>
+    <string name="onboarding_share_calc_result">S/ 13.73 each</string>
+
+    <!-- Onboarding — Insights -->
+    <string name="onboarding_insights_title">Never overpay</string>
+    <string name="onboarding_insights_desc_prefix">"SubTrack detects duplicate subscriptions and "</string>
+    <string name="onboarding_insights_desc_bold">shows you how much you can save.</string>
+    <string name="onboarding_insights_desc_suffix"></string>
+    <string name="onboarding_insights_cta">Get started →</string>
+    <string name="onboarding_insights_card1">You spend S/ 168.70 on subscriptions this month</string>
+    <string name="onboarding_insights_card2">Netflix is due in 3 days</string>
+    <string name="onboarding_insights_card3">You could save S/ 41.18 by sharing it</string>
+
+    <!-- Onboarding — Auth -->
+    <string name="onboarding_auth_title">Create your account</string>
+    <string name="onboarding_auth_subtitle">Sign in with one tap. Your data is safe.</string>
+    <string name="onboarding_auth_google">Continue with Google</string>
+    <string name="onboarding_auth_terms">By continuing you accept our Terms of Service and Privacy Policy.</string>
+
+    <!-- Onboarding — Notifications -->
+    <string name="onboarding_notif_eyebrow">Important permission</string>
+    <string name="onboarding_notif_title">Alerts before the billing day</string>
+    <string name="onboarding_notif_desc">We let you know 3 days ahead and show you who hasn\'t paid. No spam, just what matters.</string>
+    <string name="onboarding_notif_cta">Turn on notifications</string>
+    <string name="onboarding_notif_preview1">Netflix is due in 3 days. María and Carlos haven\'t paid yet</string>
+    <string name="onboarding_notif_preview2">Spotify is due tomorrow · S/ 6.50</string>
+    <string name="onboarding_notif_preview3">Carlos paid you S/ 13.73 for Netflix 🎉</string>
+
+    <!-- Onboarding — First subscription -->
+    <string name="onboarding_first_sub_title_line1">Add your</string>
+    <string name="onboarding_first_sub_title_accent">first</string>
+    <string name="onboarding_first_sub_title_line2">subscription</string>
+    <string name="onboarding_first_sub_subtitle">Pick one to start. You can add more later.</string>
+    <string name="onboarding_first_sub_hint">+ ADD MORE LATER</string>
+    <string name="onboarding_first_sub_other">Other</string>
+    <string name="onboarding_first_sub_cta_selected">Continue with %1$s →</string>
+    <string name="onboarding_first_sub_cta_empty">Select a service</string>
+
+    <!-- Onboarding — Success -->
+    <string name="onboarding_success_title">All set, %1$s!</string>
+    <string name="onboarding_success_subtitle_with_sub">%1$s is now in your tracker. What do you want to do next?</string>
+    <string name="onboarding_success_subtitle_empty">Your account is ready. What do you want to do first?</string>
+    <string name="onboarding_success_add_another">Add another subscription</string>
+    <string name="onboarding_success_add_another_desc">SPOTIFY · HBO · CHATGPT...</string>
+    <string name="onboarding_success_share">Share with friends</string>
+    <string name="onboarding_success_share_desc">SPLIT NETFLIX · SAVE S/ 41</string>
+    <string name="onboarding_success_go_home">Go to home</string>
+    <string name="onboarding_success_go_home_desc">SEE YOUR DASHBOARD</string>
+
+    <!-- Member detail screen -->
+    <string name="member_detail_eyebrow">MY SUBSCRIPTION</string>
+    <string name="member_detail_my_share">Your share</string>
+    <string name="member_detail_cycle_monthly">monthly</string>
+    <string name="member_detail_cycle_yearly">yearly</string>
+    <string name="member_detail_status_section">STATUS THIS MONTH</string>
+    <string name="member_detail_mark_paid">Mark as paid</string>
+    <string name="member_detail_admin_section">ADMIN</string>
+    <string name="member_detail_contact_admin">Contact via WhatsApp</string>
+    <string name="member_detail_stats_section">SUMMARY</string>
+    <string name="member_detail_member_since">Member since %1$s</string>
+    <plurals name="member_detail_on_time_payments">
+        <item quantity="one">%1$d on-time payment</item>
+        <item quantity="other">%1$d on-time payments</item>
+    </plurals>
+    <string name="member_detail_history_section">HISTORY</string>
+    <string name="member_detail_plan_section">PLAN</string>
+    <string name="member_detail_plan_cutoff">Billing day: %1$d</string>
+    <string name="member_detail_plan_cycle">%1$s cycle</string>
+    <string name="member_detail_plan_currency">Currency: %1$s</string>
+    <string name="member_detail_exit_action">Leave group</string>
+    <string name="member_detail_exit_pending_banner">Exit request sent. The admin will review it soon.</string>
+
+    <!-- Mark as paid sheet -->
+    <string name="member_action_mark_paid_title">Confirm payment</string>
+    <string name="member_action_mark_paid_desc">Did you already transfer S/ %1$s to %2$s?</string>
+    <string name="member_action_mark_paid_note_label">NOTE (optional)</string>
+    <string name="member_action_mark_paid_note_placeholder">E.g. I paid via Yape</string>
+    <string name="member_action_mark_paid_confirm">Confirm payment</string>
+
+    <!-- Request exit sheet -->
+    <string name="member_action_exit_title">Leave group</string>
+    <string name="member_action_exit_desc">Request to leave %1$s. The admin must approve it. You\'ll stay active until they confirm.</string>
+    <string name="member_action_exit_confirm">Send request</string>
+
+    <!-- Subscription list screen -->
+    <string name="subscription_list_search_hint">Search subscription…</string>
+    <string name="subscription_list_filter_all">All</string>
+    <string name="subscription_list_filter_personal">Personal</string>
+    <string name="subscription_list_filter_shared">Shared</string>
+    <string name="subscription_list_stat_total">Total</string>
+    <string name="subscription_list_stat_personal">Personal</string>
+    <string name="subscription_list_stat_shared">Shared</string>
+    <string name="subscription_list_stat_monthly">Monthly</string>
+    <string name="subscription_list_empty">No subscriptions</string>
+    <string name="subscription_list_fab_cd">Create subscription</string>
+    <string name="subscription_list_tag_admin">ADMIN</string>
+    <string name="subscription_list_tag_member">MEMBER</string>
+
+    <!-- People screen -->
+    <string name="people_search_hint">Search person…</string>
+    <string name="people_empty">No people yet</string>
+    <string name="people_empty_search">No results</string>
+    <string name="people_has_app_tag">APP</string>
+    <string name="people_owes_label">owes</string>
+    <string name="people_i_owe_label">you owe</string>
+    <string name="people_unknown_admin">Admin</string>
+    <string name="people_title">People</string>
+    <string name="people_tab_owed_to_me">Owed to you</string>
+    <string name="people_tab_i_owe">You owe</string>
+    <string name="people_empty_i_owe">You\'re not a member of anyone else\'s subscription</string>
+    <string name="people_monthly_label">/mo</string>
+    <string name="people_detail_punctuality">On time</string>
+    <string name="people_detail_monthly">Monthly</string>
+    <string name="people_detail_since">Since</string>
+    <string name="people_detail_subs_title">Subscriptions</string>
+    <string name="people_detail_archived_label">Archived</string>
+
+    <string name="timeline_legend_paid">Paid</string>
+    <string name="timeline_legend_owes">Owes</string>
+    <string name="timeline_legend_none">No record</string>
+    <string name="timeline_dot_cd">%1$s: %2$s</string>
+
+    <!-- Member history screen -->
+    <string name="member_history_title">Payment history</string>
+    <string name="member_history_punctuality">%1$d%% on time</string>
+    <string name="member_history_no_decided">No closed months yet</string>
+    <string name="member_history_empty">No payments recorded yet.</string>
+    <string name="member_history_legend">Paid: arrived before the billing day · Late: arrived after · Overdue: never arrived · Pending: the billing day hasn\'t passed yet.</string>
+    <plurals name="member_history_months">
+        <item quantity="one">Last %1$d month</item>
+        <item quantity="other">Last %1$d months</item>
+    </plurals>
+
+    <!-- Payment history item -->
+    <string name="member_history_paid_on">Paid on %1$s</string>
+    <string name="member_history_pending">Pending</string>
+    <string name="member_history_overdue">Overdue</string>
+    <string name="member_history_late">Late</string>
+
+    <!-- Edit profile -->
+    <string name="edit_profile_title">Edit profile</string>
+    <string name="edit_profile_save">Save</string>
+    <string name="edit_profile_save_button">Save changes</string>
+    <string name="edit_profile_change_photo">Change photo</string>
+    <string name="edit_profile_change_photo_hint">Tap the avatar to choose</string>
+    <string name="edit_profile_field_name">Name</string>
+    <string name="edit_profile_field_phone">Phone</string>
+    <string name="edit_profile_field_email">Email</string>
+    <string name="edit_profile_email_managed_google">Managed by your Google account</string>
+    <string name="edit_profile_email_managed_apple">Managed by your Apple account</string>
+    <string name="edit_profile_name_error">Name can\'t be empty</string>
+    <string name="edit_profile_saved_toast">Profile updated</string>
+    <string name="edit_profile_provider_google">Google</string>
+    <string name="edit_profile_provider_apple">Apple</string>
+
+</resources>

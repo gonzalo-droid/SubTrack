@@ -31,6 +31,9 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.MemberPaymentStatus
 import com.gondroid.subtrack.domain.model.MonthlyPaymentSummary
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 private val DOT_SIZE = 20.dp
 
@@ -77,16 +80,41 @@ fun TimelineItem(
     }
 }
 
+private enum class DotKind { PAID, OWES, NONE }
+
+private fun MemberPaymentStatus.kind() = when (status) {
+    PaymentStatus.PAID, PaymentStatus.LATE -> DotKind.PAID
+    PaymentStatus.OVERDUE, PaymentStatus.PENDING -> DotKind.OWES
+    null -> DotKind.NONE
+}
+
 @Composable
 private fun StatusDot(memberStatus: MemberPaymentStatus) {
-    val (bg, label) = when (memberStatus.status) {
-        PaymentStatus.PAID, PaymentStatus.LATE -> Pair(AccentGreen, "")
-        PaymentStatus.OVERDUE, PaymentStatus.PENDING -> Pair(AccentRed, "!")
-        null -> Pair(TextTertiary.copy(alpha = 0.4f), "–")
+    val kind = memberStatus.kind()
+    val description = stringResource(
+        R.string.timeline_dot_cd,
+        memberStatus.memberName,
+        stringResource(kind.labelRes())
+    )
+    KindDot(kind, Modifier.semantics { contentDescription = description })
+}
+
+private fun DotKind.labelRes() = when (this) {
+    DotKind.PAID -> R.string.timeline_legend_paid
+    DotKind.OWES -> R.string.timeline_legend_owes
+    DotKind.NONE -> R.string.timeline_legend_none
+}
+
+@Composable
+private fun KindDot(kind: DotKind, modifier: Modifier = Modifier) {
+    val (bg, label) = when (kind) {
+        DotKind.PAID -> Pair(AccentGreen, "")
+        DotKind.OWES -> Pair(AccentRed, "!")
+        DotKind.NONE -> Pair(TextTertiary.copy(alpha = 0.4f), "–")
     }
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(DOT_SIZE)
             .clip(SubTrackShapes.circle)
             .background(bg.copy(alpha = 0.2f))
@@ -100,6 +128,23 @@ private fun StatusDot(memberStatus: MemberPaymentStatus) {
                     .clip(SubTrackShapes.circle)
                     .background(bg)
             )
+        }
+    }
+}
+
+/** What each history dot means (B4): shown once under the history list. */
+@Composable
+fun TimelineLegend(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth().clearAndSetSemantics { },
+        horizontalArrangement = Arrangement.spacedBy(Spacing.m),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DotKind.entries.forEach { kind ->
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                KindDot(kind)
+                Text(stringResource(kind.labelRes()), style = SubTrackType.monoXS, color = TextSecondary)
+            }
         }
     }
 }

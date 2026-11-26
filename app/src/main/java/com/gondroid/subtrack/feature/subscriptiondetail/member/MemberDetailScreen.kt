@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
@@ -78,6 +77,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,9 +88,9 @@ fun MemberDetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm: MemberDetailViewModel = viewModel(
+    val vm = hiltViewModel<MemberDetailViewModel, MemberDetailViewModel.Factory>(
         key = "$subscriptionId/$memberId",
-        factory = MemberDetailViewModelFactory(memberId, subscriptionId)
+        creationCallback = { it.create(memberId, subscriptionId) }
     )
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val activeSheet by vm.activeSheet.collectAsStateWithLifecycle()
@@ -105,7 +106,7 @@ fun MemberDetailScreen(
                 is MemberDetailEvent.ExitRequested ->
                     messenger.show(R.string.member_detail_exit_requested)
                 is MemberDetailEvent.Error ->
-                    messenger.show(event.message)
+                    messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }
@@ -468,38 +469,6 @@ private fun SectionCard(
 @Composable
 private fun PlanInfoRow(label: String) {
     Text(label, style = SubTrackType.bodyXS, color = TextSecondary)
-}
-
-@Composable
-private fun PaymentHistoryRow(payment: Payment, modifier: Modifier = Modifier) {
-    val dateStr = payment.paidAt?.let {
-        SimpleDateFormat("d MMM yyyy", Locale.forLanguageTag("es")).format(Date(it))
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = Spacing.s),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(payment.monthKey, style = SubTrackType.monoXS, color = TextSecondary)
-            if (dateStr != null) {
-                Text(
-                    stringResource(R.string.member_history_paid_on, dateStr),
-                    style = SubTrackType.bodyXS,
-                    color = TextTertiary
-                )
-            }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
-        ) {
-            Text("S/ %.2f".format(payment.amount), style = SubTrackType.monoS, color = TextPrimary)
-            StatusPill(status = payment.status)
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

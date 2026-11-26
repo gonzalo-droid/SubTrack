@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,19 +23,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
 import com.gondroid.subtrack.core.designsystem.components.input.STTextField
-import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
-import com.gondroid.subtrack.core.designsystem.theme.AccentAmberBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentBlue
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
@@ -53,13 +47,14 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AliasEditScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: AliasEditViewModel = viewModel(factory = AliasEditViewModelFactory())
+    val viewModel: AliasEditViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

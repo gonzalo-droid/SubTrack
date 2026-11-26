@@ -3,7 +3,8 @@
 appId: com.gondroid.subtrack
 ---
 - launchApp:
-    clearState: true
+    arguments:
+      fakeAuth: true            # debug-only: skips the real Google/Firebase sign-in
 - extendedWaitUntil:
     visible: "Saltar"
     timeout: 90000

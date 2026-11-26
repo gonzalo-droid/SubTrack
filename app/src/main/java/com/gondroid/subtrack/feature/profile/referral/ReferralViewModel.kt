@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.referral
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockReferralRepository
 import com.gondroid.subtrack.domain.usecase.referral.GetRecentReferralsUseCase
 import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,15 +22,4 @@ class ReferralViewModel @Inject constructor(
     ) { info, records ->
         ReferralUiState.Success(ReferralData(info = info, recentReferrals = records))
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ReferralUiState.Loading)
-}
-
-class ReferralViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockReferralRepository()
-        return ReferralViewModel(
-            getReferralInfo = GetReferralInfoUseCase(repo),
-            getRecentReferrals = GetRecentReferralsUseCase(repo)
-        ) as T
-    }
 }

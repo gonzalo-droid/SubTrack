@@ -11,15 +11,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import com.gondroid.subtrack.core.auth.GoogleIdTokenProvider
+import kotlinx.coroutines.launch
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gondroid.subtrack.AppStateViewModelFactory
 import com.gondroid.subtrack.core.designsystem.animation.ONBOARDING_TRANSITION_MS
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
 import com.gondroid.subtrack.core.navigation.Route
-import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.feature.onboarding.screens.AuthOnboardingScreen
 import com.gondroid.subtrack.feature.onboarding.screens.FirstSubscriptionScreen
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
@@ -29,6 +29,7 @@ import com.gondroid.subtrack.feature.onboarding.screens.ValueShareScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueTrackerScreen
 import androidx.compose.ui.res.stringResource
 import com.gondroid.subtrack.R
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun OnboardingFlow(
@@ -36,10 +37,7 @@ fun OnboardingFlow(
     onComplete: (then: Route?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val vm: OnboardingViewModel = viewModel(
-        factory = OnboardingViewModelFactory(UserPreferences.getInstance(context))
-    )
+    val vm: OnboardingViewModel = hiltViewModel()
 
     val step by vm.currentStep.collectAsStateWithLifecycle()
     val authState by vm.authState.collectAsStateWithLifecycle()
@@ -47,6 +45,8 @@ fun OnboardingFlow(
     val isCreating by vm.isCreatingSubscription.collectAsStateWithLifecycle()
     val createdServiceName by vm.createdServiceName.collectAsStateWithLifecycle()
     val userFirstName by vm.userFirstName.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     AnimatedContent(
         targetState = step,
@@ -85,8 +85,14 @@ fun OnboardingFlow(
             )
             OnboardingStep.AUTH -> AuthOnboardingScreen(
                 authState = authState,
-                onGoogleSignIn = vm::authenticateWithGoogle,
-                onAppleSignIn = vm::authenticateWithApple,
+                onGoogleSignIn = {
+                    // The account picker needs the Activity, so it runs here; a closed picker does nothing
+                    scope.launch {
+                        GoogleIdTokenProvider.request(context)
+                            .onSuccess { token -> token?.let(vm::authenticateWithGoogle) }
+                            .onFailure { vm.onGoogleSignInFailed() }
+                    }
+                },
                 modifier = Modifier.fillMaxSize()
             )
             OnboardingStep.NOTIFICATIONS -> NotificationsPermissionScreen(

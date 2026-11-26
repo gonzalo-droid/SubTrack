@@ -28,9 +28,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 import com.gondroid.subtrack.domain.usecase.subscription.DeleteSubscriptionUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.PauseSubscriptionUseCase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
 // ── Sheet navigation state ────────────────────────────────────────────────────
 
@@ -56,15 +58,15 @@ sealed interface AdminDetailEvent {
     data class BulkReminderSent(val count: Int) : AdminDetailEvent
     data class PausedChanged(val paused: Boolean) : AdminDetailEvent
     data object Deleted : AdminDetailEvent
-    data class Error(val message: String) : AdminDetailEvent
+    /** Null message: the UI shows the generic error from strings.xml. */
+    data class Error(val message: String?) : AdminDetailEvent
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-// TODO: [hilt] When @HiltViewModel injection is active, restore SavedStateHandle injection
-@HiltViewModel
-class AdminDetailViewModel @Inject constructor(
-    private val subscriptionId: String,
+@HiltViewModel(assistedFactory = AdminDetailViewModel.Factory::class)
+class AdminDetailViewModel @AssistedInject constructor(
+    @Assisted private val subscriptionId: String,
     getSubscriptionDetail: GetSubscriptionDetailUseCase,
     getMembersForSubscription: GetMembersForSubscriptionUseCase,
     getArchivedMembers: GetArchivedMembersUseCase,
@@ -78,6 +80,12 @@ class AdminDetailViewModel @Inject constructor(
     private val pauseSubscriptionUseCase: PauseSubscriptionUseCase,
     private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(subscriptionId: String): AdminDetailViewModel
+    }
+
 
     val uiState: StateFlow<AdminDetailUiState> = combine(
         getSubscriptionDetail(subscriptionId),
@@ -138,7 +146,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberAdded(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -149,7 +157,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberUpdated(member.name))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -188,7 +196,7 @@ class AdminDetailViewModel @Inject constructor(
                     _events.emit(AdminDetailEvent.MemberMarkedAsPaid(memberName))
                     closeSheet()
                 }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -205,7 +213,7 @@ class AdminDetailViewModel @Inject constructor(
         viewModelScope.launch {
             pauseSubscriptionUseCase(subscriptionId, paused)
                 .onSuccess { _events.emit(AdminDetailEvent.PausedChanged(paused)) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 
@@ -214,7 +222,7 @@ class AdminDetailViewModel @Inject constructor(
         viewModelScope.launch {
             deleteSubscriptionUseCase(subscriptionId)
                 .onSuccess { _events.emit(AdminDetailEvent.Deleted) }
-                .onFailure { _events.emit(AdminDetailEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(AdminDetailEvent.Error(it.message)) }
         }
     }
 

@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,7 +34,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import com.gondroid.subtrack.core.designsystem.components.feedback.STSnackbarHost
 import com.gondroid.subtrack.core.designsystem.components.feedback.rememberSnackbarMessenger
-// TODO: [hilt] Add @AndroidEntryPoint when Gradle plugin is configured
+import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import com.gondroid.subtrack.core.auth.AuthConfig
 
 private fun NavDestination?.isMainRoute(): Boolean =
     this?.hasRoute(Route.Dashboard::class) == true ||
@@ -43,15 +44,17 @@ private fun NavDestination?.isMainRoute(): Boolean =
     this?.hasRoute(Route.People::class) == true ||
     this?.hasRoute(Route.Profile::class) == true
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (BuildConfig.DEBUG && intent.getBooleanExtra(AuthConfig.FAKE_AUTH_EXTRA, false)) {
+            AuthConfig.useFakeAuth = true
+        }
         enableEdgeToEdge()
         setContent {
             SubTrackTheme {
-                val appStateVm: AppStateViewModel = viewModel(
-                    factory = AppStateViewModelFactory(applicationContext)
-                )
+                val appStateVm: AppStateViewModel = hiltViewModel()
                 val appState by appStateVm.state.collectAsStateWithLifecycle()
 
                 when (appState) {

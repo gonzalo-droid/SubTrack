@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -53,7 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
@@ -82,8 +80,9 @@ import com.gondroid.subtrack.feature.createsubscription.steps.WhoPaysStep
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.runtime.LaunchedEffect
 import android.os.Build
-import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -93,10 +92,8 @@ fun CreateSubscriptionScreen(
     editSubscriptionId: String? = null,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: CreateSubscriptionViewModel = viewModel(
-        factory = CreateSubscriptionViewModelFactory(
-            UserPreferences.getInstance(LocalContext.current), startWithShared, editSubscriptionId
-        )
+    val viewModel = hiltViewModel<CreateSubscriptionViewModel, CreateSubscriptionViewModel.Factory>(
+        creationCallback = { it.create(startWithShared, editSubscriptionId) }
     )
     val askNotificationPermission by viewModel.askNotificationPermission.collectAsStateWithLifecycle()
     val form by viewModel.formState.collectAsStateWithLifecycle()
@@ -118,7 +115,8 @@ fun CreateSubscriptionScreen(
 
     // Success overlay — preceded by the notification prompt the first time (D2)
     if (uiState is CreateSubscriptionUiState.Success) {
-        if (askNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (askNotificationPermission == null) return // DataStore not read yet: one frame at most
+        if (askNotificationPermission == true && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             NotificationsPermissionScreen(
                 onGrant = viewModel::onNotificationPromptDone,
                 onSkip = viewModel::onNotificationPromptDone,
@@ -149,7 +147,7 @@ fun CreateSubscriptionScreen(
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is CreateSubscriptionUiState.Error -> {
-                messenger.show(state.message)
+                messenger.show(state.message, R.string.common_error_generic)
                 viewModel.errorShown()
             }
             CreateSubscriptionUiState.NotFound -> {
@@ -218,7 +216,12 @@ fun CreateSubscriptionScreen(
                         suggestsShared = form.selectedService?.suggestsShared == true,
                         onSelect = viewModel::setShared
                     )
-                    WizardStep.DETAILS -> DetailsStep(
+                    // Editing: inputs stay hidden until the subscription loads, so typing can't be overwritten
+                    WizardStep.DETAILS -> if (form.isEditing && form.selectedService == null) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = AccentGreen)
+                        }
+                    } else DetailsStep(
                         isEditing = form.isEditing,
                         service = form.selectedService,
                         totalAmount = form.totalAmount,

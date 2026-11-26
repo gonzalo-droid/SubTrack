@@ -1,0 +1,20 @@
+# Arranque: pasa el onboarding sin crear nada (run.sh ya borró los datos y fijó el español)
+# y deja la app en Inicio con los datos de demo. Los flujos lo usan con runFlow.
+appId: com.gondroid.subtrack
+---
+- launchApp:
+    arguments:
+      fakeAuth: true            # debug-only: skips the real Google/Firebase sign-in
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 90000
+- tapOn: "Saltar"
+- tapOn: "Continuar con Google"
+- extendedWaitUntil:
+    visible: "Saltar"
+    timeout: 15000
+- tapOn: "Saltar"                 # primera suscripción: la omite
+- tapOn: "Ir al inicio"
+- extendedWaitUntil:
+    visible: "Suscripciones"
+    timeout: 30000

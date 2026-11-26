@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local, per-developer state
+/.idea/deploymentTargetSelector.xml
+/.claude/settings.local.json
+/.superpowers/
+
+# Firebase config (public repo: download from the console, see CLAUDE.md)
+/app/google-services.json

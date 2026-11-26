@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
@@ -100,6 +99,8 @@ import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.domain.model.enums.isUnpaid
+import com.gondroid.subtrack.feature.subscriptiondetail.admin.components.TimelineLegend
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,14 +108,19 @@ fun AdminDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
     onEdit: () -> Unit,
+    onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AdminDetailViewModel = viewModel(factory = AdminDetailViewModelFactory(subscriptionId))
+    viewModel: AdminDetailViewModel = hiltViewModel<AdminDetailViewModel, AdminDetailViewModel.Factory>(
+        key = subscriptionId,
+        creationCallback = { it.create(subscriptionId) }
+    )
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activeSheet by viewModel.activeSheet.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val resources = LocalResources.current
     val messenger = LocalSnackbarMessenger.current
+    var deleting by remember { mutableStateOf(false) }
 
     // Collect one-shot events
     LaunchedEffect(Unit) {
@@ -136,7 +142,7 @@ fun AdminDetailScreen(
                     if (event.paused) R.string.subscription_paused_toast else R.string.subscription_resumed_toast
                 )
                 AdminDetailEvent.Deleted -> resources.getString(R.string.subscription_deleted_toast)
-                is AdminDetailEvent.Error -> event.message
+                is AdminDetailEvent.Error -> event.message ?: resources.getString(R.string.common_error_generic)
             }
             messenger.show(msg)
         }
@@ -149,7 +155,8 @@ fun AdminDetailScreen(
     ) {
         when (val state = uiState) {
             AdminDetailUiState.Loading -> AdminDetailSkeleton(modifier = Modifier.padding(top = Spacing.s))
-            AdminDetailUiState.NotFound -> AdminDetailNotFound(onBack = onBack)
+            // Right after deleting, the router leaves this screen; don't flash "not found" meanwhile.
+            AdminDetailUiState.NotFound -> if (!deleting) AdminDetailNotFound(onBack = onBack)
             is AdminDetailUiState.Success -> AdminDetailContent(
                 data = state.data,
                 onBack = onBack,
@@ -159,7 +166,10 @@ fun AdminDetailScreen(
                 onCobranzaTap = viewModel::openBulkReminder,
                 onEdit = onEdit,
                 onSetPaused = viewModel::setPaused,
-                onDelete = viewModel::deleteSubscription
+                onDelete = {
+                    deleting = true
+                    viewModel.deleteSubscription()
+                }
             )
         }
 
@@ -215,8 +225,8 @@ fun AdminDetailScreen(
                                 onMarkAsPaid = { viewModel.markAsPaid(member.id) },
                                 onEditData = { viewModel.openEditMemberData(member.id) },
                                 onViewHistory = {
-                                    // TODO: [milestone-7] Navigate to member history screen
-                                    messenger.show(R.string.coming_soon_history)
+                                    viewModel.closeSheet()
+                                    onMemberHistory(member.id)
                                 },
                                 onRemove = {
                                     val hasPending = member.currentStatus.isUnpaid
@@ -264,9 +274,7 @@ fun AdminDetailScreen(
                         )
 
                     is ActiveSheet.BulkReminder -> {
-                        val pending = successState?.data?.activeMembers?.filter {
-                            it.currentStatus.isUnpaid
-                        } ?: emptyList()
+                        val pending = successState?.data?.pendingMembers.orEmpty()
                         BulkReminderSheet(
                             pendingItems = pending.map {
                                 com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.BulkReminderItem(
@@ -473,6 +481,11 @@ private fun AdminDetailContent(
 
         items(data.monthlyHistory, key = { it.monthKey }) { summary ->
             TimelineItem(summary = summary, modifier = Modifier.padding(horizontal = Spacing.base))
+        }
+        if (data.monthlyHistory.isNotEmpty()) {
+            item {
+                TimelineLegend(Modifier.padding(horizontal = Spacing.base).padding(top = Spacing.xs))
+            }
         }
 
         // Archived section

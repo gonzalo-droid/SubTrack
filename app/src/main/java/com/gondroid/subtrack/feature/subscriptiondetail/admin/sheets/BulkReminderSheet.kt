@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +40,6 @@ import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
 import com.gondroid.subtrack.core.designsystem.theme.AccentGreenBg
-import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
@@ -59,6 +56,7 @@ import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.runtime.saveable.rememberSaveable
 
 data class BulkReminderItem(
     val member: Member,
@@ -77,8 +75,9 @@ fun BulkReminderSheet(
     val messenger = LocalSnackbarMessenger.current
     var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
     var selectedTemplateId by remember { mutableStateOf(templates.firstOrNull { it.isDefault }?.id ?: templates.firstOrNull()?.id) }
-    var sendingIndex by remember { mutableIntStateOf(-1) }
-    var sentCount by remember { mutableIntStateOf(0) }
+    // Saveable so a rotation mid-send keeps the position and the count
+    var sendingIndex by rememberSaveable { mutableIntStateOf(-1) }
+    var sentCount by rememberSaveable { mutableIntStateOf(0) }
 
     // A failed open closes the sheet so the error snackbar isn't hidden behind it.
     fun send(phone: String, message: String): Boolean {
@@ -135,14 +134,12 @@ fun BulkReminderSheet(
                         val nextItem = selectedItems.getOrNull(sendingIndex + 1)
                         if (nextItem != null) {
                             val next = nextItem.member
-                            val msg = template?.let {
-                                WhatsAppHelper.buildReminderMessage(
-                                    memberName = next.name,
-                                    serviceName = nextItem.subscriptionName,
-                                    amount = "%.2f".format(next.shareAmount),
-                                    adminName = adminName
-                                )
-                            } ?: ""
+                            val msg = WhatsAppHelper.buildReminderMessage(
+                                memberName = next.name,
+                                serviceName = nextItem.subscriptionName,
+                                amount = "%.2f".format(next.shareAmount),
+                                adminName = adminName
+                            )
                             if (send(next.phone, msg)) sendingIndex++
                         } else {
                             onDone(sentCount)

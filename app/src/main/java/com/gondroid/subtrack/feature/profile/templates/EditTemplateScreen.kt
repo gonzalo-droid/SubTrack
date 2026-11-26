@@ -54,7 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
 import com.gondroid.subtrack.core.designsystem.components.input.STTextField
@@ -80,6 +79,7 @@ import com.gondroid.subtrack.core.util.TemplateRenderer
 import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.hilt.navigation.compose.hiltViewModel
 
 private val COMMON_EMOJIS = listOf(
     "💬", "✅", "🔔", "💳", "📱", "🎵",
@@ -96,7 +96,10 @@ fun EditTemplateScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: EditTemplateViewModel = viewModel(factory = EditTemplateViewModelFactory(templateId))
+    val viewModel = hiltViewModel<EditTemplateViewModel, EditTemplateViewModel.Factory>(
+        key = templateId ?: "new",
+        creationCallback = { it.create(templateId) }
+    )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -129,7 +132,7 @@ fun EditTemplateScreen(
                     onBack()
                 }
                 is EditTemplateEvent.Deleted -> onBack()
-                is EditTemplateEvent.Error -> messenger.show(event.message)
+                is EditTemplateEvent.Error -> messenger.show(event.message, R.string.common_error_generic)
             }
         }
     }

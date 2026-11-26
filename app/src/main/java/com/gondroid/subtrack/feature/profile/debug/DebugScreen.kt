@@ -15,13 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
-import com.gondroid.subtrack.AppStateViewModelFactory
 import com.gondroid.subtrack.AppStateViewModel
 import com.gondroid.subtrack.core.designsystem.components.buttons.SecondaryButton
 import com.gondroid.subtrack.core.designsystem.components.text.Eyebrow
-import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
@@ -29,6 +26,10 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.data.mock.MockData
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.activity.ComponentActivity
+import android.content.Context
+import android.content.ContextWrapper
 
 @Composable
 fun DebugScreen(
@@ -36,9 +37,8 @@ fun DebugScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val appStateVm: AppStateViewModel = viewModel(
-        factory = AppStateViewModelFactory(context.applicationContext)
-    )
+    // Activity-scoped: the same instance MainActivity uses, so resetting shows the onboarding
+    val appStateVm: AppStateViewModel = hiltViewModel(context.findActivity())
 
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(Spacing.l),
@@ -156,4 +156,11 @@ fun DebugScreen(
 @Composable
 private fun DebugScreenPreview() {
     SubTrackTheme { DebugScreen(onBack = {}) }
+}
+
+/** The hosting activity, unwrapping ContextWrappers (theme or locale wrappers). */
+private tailrec fun Context.findActivity(): ComponentActivity = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> error("DebugScreen must be hosted by a ComponentActivity")
 }

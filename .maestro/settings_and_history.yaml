@@ -1,0 +1,18 @@
+# Ajustes desde Perfil (filas reales) e historial de pagos de un miembro desde el detalle admin.
+appId: com.gondroid.subtrack
+---
+- runFlow: common/fresh_start.yaml
+- tapOn: "Perfil"
+- tapOn: "Ajustes"
+- assertVisible: "Ajustes"
+- assertVisible: "Datos personales"
+- assertVisible: "Exportar mis datos"
+- back
+- tapOn: "Suscripciones"
+- tapOn: "Netflix Premium"
+- tapOn: "María.*"
+- tapOn: "Ver historial.*"
+- assertVisible: "Historial de pagos"
+- assertVisible: ".*puntual|Sin meses cerrados todavía"
+- back
+- assertVisible: "Netflix Premium"

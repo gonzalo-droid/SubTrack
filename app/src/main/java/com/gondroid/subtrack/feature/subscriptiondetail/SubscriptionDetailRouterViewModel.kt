@@ -1,15 +1,16 @@
 package com.gondroid.subtrack.feature.subscriptiondetail
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockDataStore
-import com.gondroid.subtrack.data.mock.MockMemberRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 sealed interface RoleState {
     data object Loading : RoleState
@@ -18,14 +19,21 @@ sealed interface RoleState {
     data object NotFound : RoleState
 }
 
-class SubscriptionDetailRouterViewModel(
-    private val subscriptionId: String,
-    getSubscriptionDetail: GetSubscriptionDetailUseCase
+@HiltViewModel(assistedFactory = SubscriptionDetailRouterViewModel.Factory::class)
+class SubscriptionDetailRouterViewModel @AssistedInject constructor(
+    @Assisted private val subscriptionId: String,
+    getSubscriptionDetail: GetSubscriptionDetailUseCase,
+    getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(subscriptionId: String): SubscriptionDetailRouterViewModel
+    }
 
     val roleState = combine(
         getSubscriptionDetail(subscriptionId),
-        MockDataStore.currentUser
+        getCurrentUser()
     ) { sub, user ->
         when {
             sub == null || user == null -> RoleState.NotFound
@@ -41,15 +49,4 @@ class SubscriptionDetailRouterViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = RoleState.Loading
     )
-}
-
-class SubscriptionDetailRouterViewModelFactory(
-    private val subscriptionId: String
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        SubscriptionDetailRouterViewModel(
-            subscriptionId = subscriptionId,
-            getSubscriptionDetail = GetSubscriptionDetailUseCase(MockSubscriptionRepository())
-        ) as T
 }

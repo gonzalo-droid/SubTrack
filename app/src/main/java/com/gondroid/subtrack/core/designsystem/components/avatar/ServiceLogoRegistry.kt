@@ -23,6 +23,8 @@ object ServiceLogoRegistry {
         "tpl_crunchyroll" to ServiceLogoAsset(R.drawable.ic_service_crunchyroll, 0xFFF47521),
         "tpl_claude"     to ServiceLogoAsset(R.drawable.ic_service_anthropic,  0xFFD97757),
         "tpl_linkedin"   to ServiceLogoAsset(R.drawable.ic_service_linkedin,   0xFF0A66C2),
+        "tpl_disney"     to ServiceLogoAsset(R.drawable.ic_service_disneyplus, 0xFF113CCF),
+        "tpl_prime"      to ServiceLogoAsset(R.drawable.ic_service_prime,      0xFF00A8E1),
     )
 
     fun get(templateId: String?): ServiceLogoAsset? = templateId?.let { map[it] }

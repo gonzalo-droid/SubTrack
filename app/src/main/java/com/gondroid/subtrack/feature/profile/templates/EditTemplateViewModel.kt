@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.templates
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockTemplateRepository
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.usecase.template.DeleteTemplateUseCase
@@ -17,14 +15,23 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@HiltViewModel
-class EditTemplateViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = EditTemplateViewModel.Factory::class)
+class EditTemplateViewModel @AssistedInject constructor(
+    @Assisted templateId: String?,
     private val getTemplateById: GetTemplateByIdUseCase,
     private val saveTemplate: SaveTemplateUseCase,
     private val deleteTemplate: DeleteTemplateUseCase
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory {
+        fun create(templateId: String?): EditTemplateViewModel
+    }
+
 
     private val _uiState = MutableStateFlow<EditTemplateUiState>(EditTemplateUiState.Loading)
     val uiState: StateFlow<EditTemplateUiState> = _uiState.asStateFlow()
@@ -38,7 +45,7 @@ class EditTemplateViewModel @Inject constructor(
         (_uiState.value as? EditTemplateUiState.Editing)?.form != originalForm
     )
 
-    fun init(templateId: String?) {
+    private fun start(templateId: String?) {
         if (_uiState.value !is EditTemplateUiState.Loading) return
         viewModelScope.launch {
             if (templateId == null) {
@@ -94,7 +101,7 @@ class EditTemplateViewModel @Inject constructor(
         viewModelScope.launch {
             saveTemplate(editing.form.toTemplate())
                 .onSuccess { _events.emit(EditTemplateEvent.Saved) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message ?: "Error al guardar")) }
+                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
             _uiState.value = editing
         }
     }
@@ -108,7 +115,7 @@ class EditTemplateViewModel @Inject constructor(
         viewModelScope.launch {
             deleteTemplate(editing.form.id)
                 .onSuccess { _events.emit(EditTemplateEvent.Deleted) }
-                .onFailure { _events.emit(EditTemplateEvent.Error(it.message ?: "Error")) }
+                .onFailure { _events.emit(EditTemplateEvent.Error(it.message)) }
         }
     }
 
@@ -118,16 +125,9 @@ class EditTemplateViewModel @Inject constructor(
             else state
         }
     }
-}
 
-class EditTemplateViewModelFactory(private val templateId: String?) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockTemplateRepository()
-        return EditTemplateViewModel(
-            getTemplateById = GetTemplateByIdUseCase(repo),
-            saveTemplate = SaveTemplateUseCase(repo),
-            deleteTemplate = DeleteTemplateUseCase(repo)
-        ).also { it.init(templateId) } as T
+    // Last in the body so every property above is initialized first
+    init {
+        start(templateId)
     }
 }

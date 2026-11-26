@@ -52,7 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
@@ -96,6 +95,7 @@ import com.gondroid.subtrack.domain.model.enums.isOverdue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.outlined.Add
+import androidx.hilt.navigation.compose.hiltViewModel
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -106,7 +106,7 @@ fun DashboardScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = viewModel(factory = DashboardViewModelFactory())
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -182,7 +182,7 @@ private fun DashboardContent(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 88.dp), // room for the FAB (56dp + margins)
+                contentPadding = PaddingValues(bottom = FabClearance),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
                 // ── Segmented selector ────────────────────────────────────────
@@ -900,6 +900,9 @@ private fun DashboardEmptyState(
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
 private const val LARGE_FONT_SCALE = 1.3f
+
+/** Bottom room so the last row clears the FAB: 56dp FAB + 16dp margin + 16dp gap. */
+private val FabClearance = Spacing.huge + Spacing.xxl + Spacing.s
 
 // ── Previews ──────────────────────────────────────────────────────────────────
 

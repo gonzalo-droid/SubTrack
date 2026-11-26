@@ -2,10 +2,7 @@
 # Inicio: el FAB abre el asistente.
 appId: com.gondroid.subtrack
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Suscripciones"
-    timeout: 90000
+- runFlow: common/fresh_start.yaml
 - tapOn: "Crear suscripción"          # FAB de Inicio
 - assertVisible: "1/3"
 - tapOn: "Cerrar asistente"

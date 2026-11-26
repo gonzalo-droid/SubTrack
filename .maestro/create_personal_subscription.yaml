@@ -1,10 +1,7 @@
 # Suscripción personal: Servicio → ¿Quién paga? (Solo yo) → Detalles → éxito (3 pasos).
 appId: com.gondroid.subtrack
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Suscripciones"
-    timeout: 90000
+- runFlow: common/fresh_start.yaml
 - tapOn: "Suscripciones"
 - tapOn: "Crear suscripción"          # FAB
 - tapOn: "ChatGPT Plus"

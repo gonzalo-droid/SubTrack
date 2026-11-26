@@ -1,8 +1,6 @@
 package com.gondroid.subtrack
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,6 +11,8 @@ import kotlinx.coroutines.launch
 import com.gondroid.subtrack.core.navigation.Route
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 sealed interface AppReadyState {
     data object Loading : AppReadyState
@@ -20,7 +20,8 @@ sealed interface AppReadyState {
     data object ShowMain : AppReadyState
 }
 
-class AppStateViewModel(
+@HiltViewModel
+class AppStateViewModel @Inject constructor(
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
@@ -50,10 +51,4 @@ class AppStateViewModel(
     fun resetOnboarding() {
         viewModelScope.launch { userPreferences.setOnboardingCompleted(false) }
     }
-}
-
-class AppStateViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        AppStateViewModel(UserPreferences.getInstance(context)) as T
 }

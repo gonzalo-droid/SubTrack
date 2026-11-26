@@ -2,10 +2,7 @@
 # Servicio → ¿Quién paga? → Detalles → Miembros → División → éxito (5 pasos).
 appId: com.gondroid.subtrack
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Suscripciones"
-    timeout: 90000
+- runFlow: common/fresh_start.yaml
 - tapOn: "Suscripciones"
 - tapOn: "Crear suscripción"          # FAB
 - tapOn: "Spotify"

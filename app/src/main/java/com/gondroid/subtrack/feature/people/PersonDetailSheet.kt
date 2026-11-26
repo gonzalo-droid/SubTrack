@@ -48,6 +48,10 @@ import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.ui.draw.alpha
+import com.gondroid.subtrack.core.designsystem.components.text.Badge
+import com.gondroid.subtrack.core.designsystem.components.text.BadgeVariant
+import com.gondroid.subtrack.feature.people.components.PAUSED_ALPHA
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,11 +85,12 @@ private fun PersonDetailContent(person: PersonSummary) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Spacing.m)
         ) {
-            Avatar(name = person.name, size = 56.dp)
+            val displayName = person.name.ifBlank { stringResource(R.string.people_unknown_admin) }
+            Avatar(name = displayName, size = 56.dp)
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = person.name,
+                        text = displayName,
                         style = SubTrackType.headlineM,
                         color = TextPrimary,
                         modifier = Modifier.weight(1f, fill = false)
@@ -181,7 +186,8 @@ private fun ParticipationRow(participation: SubscriptionParticipation) {
             .clip(SubTrackShapes.base)
             .background(BgSurface)
             .border(1.dp, BorderDefault, SubTrackShapes.base)
-            .padding(Spacing.m),
+            .padding(Spacing.m)
+            .alpha(if (participation.isPaused) PAUSED_ALPHA else 1f),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
@@ -199,7 +205,11 @@ private fun ParticipationRow(participation: SubscriptionParticipation) {
                 color = TextTertiary
             )
         }
-        StatusPill(status = participation.status)
+        if (participation.isPaused) {
+            Badge(text = stringResource(R.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
+        } else {
+            StatusPill(status = participation.status)
+        }
     }
 }
 

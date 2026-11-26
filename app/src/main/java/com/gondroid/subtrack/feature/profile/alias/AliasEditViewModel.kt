@@ -1,9 +1,7 @@
 package com.gondroid.subtrack.feature.profile.alias
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockUserAliasRepository
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.domain.usecase.alias.GetUserAliasUseCase
 import com.gondroid.subtrack.domain.usecase.alias.UpdateUserAliasUseCase
@@ -73,16 +71,5 @@ class AliasEditViewModel @Inject constructor(
     private fun updateDraft(block: AliasEditData.() -> AliasEditData) {
         val current = (uiState.value as? AliasEditUiState.Success)?.data ?: return
         _draft.value = current.block()
-    }
-}
-
-class AliasEditViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val repo = MockUserAliasRepository()
-        return AliasEditViewModel(
-            getUserAlias = GetUserAliasUseCase(repo),
-            updateUserAlias = UpdateUserAliasUseCase(repo)
-        ) as T
     }
 }

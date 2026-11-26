@@ -1,10 +1,7 @@
 # Menú ⋮ del detalle admin: editar el monto, pausar/reanudar y eliminar (con confirmación).
 appId: com.gondroid.subtrack
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Suscripciones"
-    timeout: 90000
+- runFlow: common/fresh_start.yaml
 - tapOn: "Suscripciones"
 - tapOn: "Netflix Premium"
 - assertVisible: "Cobrar a .*"
@@ -17,7 +14,9 @@ appId: com.gondroid.subtrack
 - tapOn: "Más opciones"
 - tapOn: "Editar"
 - tapOn: "Guardar cambios"
-- assertVisible: "Cambios guardados"
+- extendedWaitUntil:                  # guardar vuelve al detalle (el snackbar dura 4 s, no se exige)
+    visible: "Cobrar a .*"
+    timeout: 15000
 # Pausar y reanudar
 - tapOn: "Más opciones"
 - tapOn: "Pausar"

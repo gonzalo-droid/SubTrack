@@ -1,13 +1,7 @@
 package com.gondroid.subtrack.feature.profile
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.gondroid.subtrack.data.mock.MockReferralRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.MockTemplateRepository
-import com.gondroid.subtrack.data.mock.MockUserAliasRepository
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.usecase.alias.GetUserAliasUseCase
 import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionsUseCase
@@ -54,17 +48,4 @@ class ProfileViewModel @Inject constructor(
             )
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProfileUiState.Loading)
-}
-
-class ProfileViewModelFactory : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProfileViewModel(
-            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
-            getUserAlias = GetUserAliasUseCase(MockUserAliasRepository()),
-            getSubscriptions = GetSubscriptionsUseCase(MockSubscriptionRepository()),
-            getTemplates = GetAllTemplatesUseCase(MockTemplateRepository()),
-            getReferralInfo = GetReferralInfoUseCase(MockReferralRepository())
-        ) as T
-    }
 }

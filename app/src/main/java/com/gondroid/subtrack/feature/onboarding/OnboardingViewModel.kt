@@ -1,13 +1,10 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import android.util.Log
+
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
-import com.gondroid.subtrack.data.mock.MockAuthRepository
-import com.gondroid.subtrack.data.mock.MockServiceTemplateRepository
-import com.gondroid.subtrack.data.mock.MockSubscriptionRepository
-import com.gondroid.subtrack.data.mock.MockUserRepository
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.User
@@ -26,6 +23,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 // ── Step enum ────────────────────────────────────────────────────────────────
 
@@ -39,12 +38,14 @@ sealed interface AuthState {
     data object Idle : AuthState
     data object Authenticating : AuthState
     data class Authenticated(val user: User) : AuthState
-    data class Error(val message: String) : AuthState
+    /** The UI shows the generic error from strings.xml; the cause goes to the log. */
+    data object Error : AuthState
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-class OnboardingViewModel(
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(
     private val authenticateUser: AuthenticateUserUseCase,
     private val createSubscription: CreateSubscriptionUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
@@ -90,8 +91,12 @@ class OnboardingViewModel(
 
     // ── Auth ──────────────────────────────────────────────────────────────────
 
-    fun authenticateWithGoogle() = authenticate { authenticateUser.withGoogle() }
-    fun authenticateWithApple() = authenticate { authenticateUser.withApple() }
+    fun authenticateWithGoogle(idToken: String) = authenticate { authenticateUser.withGoogle(idToken) }
+
+    /** The account picker failed before reaching Firebase (no Google account, no network...). */
+    fun onGoogleSignInFailed() {
+        _authState.value = AuthState.Error
+    }
 
     private fun authenticate(block: suspend () -> Result<User>) {
         viewModelScope.launch {
@@ -102,7 +107,8 @@ class OnboardingViewModel(
                     _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
                 }
                 .onFailure { error ->
-                    _authState.value = AuthState.Error(error.message ?: "Error al autenticar")
+                    Log.e(TAG, "Sign-in failed", error)
+                    _authState.value = AuthState.Error
                 }
         }
     }
@@ -153,20 +159,8 @@ class OnboardingViewModel(
     fun skipFirstSubscription() {
         _currentStep.value = OnboardingStep.SUCCESS
     }
-}
 
-// ── Factory ───────────────────────────────────────────────────────────────────
-
-class OnboardingViewModelFactory(
-    private val userPreferences: UserPreferences
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        OnboardingViewModel(
-            authenticateUser = AuthenticateUserUseCase(MockAuthRepository()),
-            createSubscription = CreateSubscriptionUseCase(MockSubscriptionRepository()),
-            getCurrentUser = GetCurrentUserUseCase(MockUserRepository()),
-            getPopularServices = GetPopularServicesUseCase(MockServiceTemplateRepository()),
-            userPreferences = userPreferences
-        ) as T
+    private companion object {
+        const val TAG = "OnboardingViewModel"
+    }
 }

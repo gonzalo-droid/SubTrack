@@ -10,6 +10,8 @@ data class AdminDetailData(
     val activeMembers: List<Member>,
     val archivedMembers: List<Member>,
     val monthlyHistory: List<MonthlyPaymentSummary>,
+    /** Members the admin can collect from (none while the subscription is paused). */
+    val pendingMembers: List<Member>,
     val pendingPaymentsCount: Int,
     val pendingAmount: Double,
     val adminName: String,
@@ -36,6 +38,7 @@ fun buildAdminDetailData(
         activeMembers = activeMembers,
         archivedMembers = archivedMembers,
         monthlyHistory = monthlyHistory,
+        pendingMembers = pendingMembers,
         pendingPaymentsCount = pendingMembers.size,
         pendingAmount = pendingMembers.sumOf { it.shareAmount },
         adminName = adminName,
