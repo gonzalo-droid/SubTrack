@@ -133,7 +133,7 @@ fun ReferralScreen(
                     },
                     onShareWhatsApp = {
                         val msg = context.getString(R.string.referral_share_wa_message, info.code)
-                        WhatsAppHelper.openWhatsApp(context, "", msg)
+                        WhatsAppHelper.shareToWhatsApp(context, msg)
                     },
                     onShareLink = {
                         val sendIntent = Intent(Intent.ACTION_SEND).apply {

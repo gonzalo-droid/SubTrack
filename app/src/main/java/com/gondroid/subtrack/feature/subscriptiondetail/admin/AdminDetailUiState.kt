@@ -11,7 +11,8 @@ data class AdminDetailData(
     val archivedMembers: List<Member>,
     val monthlyHistory: List<MonthlyPaymentSummary>,
     val pendingPaymentsCount: Int,
-    val pendingAmount: Double
+    val pendingAmount: Double,
+    val adminName: String
 )
 
 sealed interface AdminDetailUiState {
@@ -27,7 +28,8 @@ fun buildAdminDetailData(
     subscription: Subscription,
     activeMembers: List<Member>,
     archivedMembers: List<Member>,
-    monthlyHistory: List<MonthlyPaymentSummary>
+    monthlyHistory: List<MonthlyPaymentSummary>,
+    adminName: String
 ): AdminDetailData {
     val pendingMembers = activeMembers.filter { isPending(it.currentStatus) }
     return AdminDetailData(
@@ -36,6 +38,7 @@ fun buildAdminDetailData(
         archivedMembers = archivedMembers,
         monthlyHistory = monthlyHistory,
         pendingPaymentsCount = pendingMembers.size,
-        pendingAmount = pendingMembers.sumOf { it.shareAmount }
+        pendingAmount = pendingMembers.sumOf { it.shareAmount },
+        adminName = adminName
     )
 }

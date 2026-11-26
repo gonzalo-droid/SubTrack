@@ -26,7 +26,15 @@ object WhatsAppHelper {
             Toast.makeText(context, "Número de teléfono inválido", Toast.LENGTH_SHORT).show()
             return
         }
-        val uri = Uri.parse("https://wa.me/$cleanPhone?text=${Uri.encode(message)}")
+        launch(context, Uri.parse("https://wa.me/$cleanPhone?text=${Uri.encode(message)}"))
+    }
+
+    /** Opens WhatsApp with the message pre-filled and lets the user pick the chat. */
+    fun shareToWhatsApp(context: Context, message: String) {
+        launch(context, Uri.parse("https://wa.me/?text=${Uri.encode(message)}"))
+    }
+
+    private fun launch(context: Context, uri: Uri) {
         val whatsAppIntent = Intent(Intent.ACTION_VIEW, uri).apply {
             setPackage("com.whatsapp")
         }

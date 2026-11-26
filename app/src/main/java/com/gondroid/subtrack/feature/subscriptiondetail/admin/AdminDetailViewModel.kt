@@ -15,6 +15,7 @@ import com.gondroid.subtrack.domain.usecase.member.RemoveMemberUseCase
 import com.gondroid.subtrack.domain.usecase.member.UpdateMemberUseCase
 import com.gondroid.subtrack.domain.usecase.payment.GetPaymentHistoryUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
+import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +51,7 @@ sealed interface AdminDetailEvent {
     data class MemberArchived(val name: String) : AdminDetailEvent
     data class MemberForgiven(val name: String) : AdminDetailEvent
     data class MemberUpdated(val name: String) : AdminDetailEvent
-    data object BulkReminderStarted : AdminDetailEvent
+    data class BulkReminderSent(val count: Int) : AdminDetailEvent
     data class Error(val message: String) : AdminDetailEvent
 }
 
@@ -64,6 +65,7 @@ class AdminDetailViewModel @Inject constructor(
     getMembersForSubscription: GetMembersForSubscriptionUseCase,
     getArchivedMembers: GetArchivedMembersUseCase,
     getPaymentHistory: GetPaymentHistoryUseCase,
+    getCurrentUser: GetCurrentUserUseCase,
     private val addMemberUseCase: AddMemberUseCase,
     private val updateMemberUseCase: UpdateMemberUseCase,
     private val archiveMemberUseCase: ArchiveMemberUseCase,
@@ -75,13 +77,14 @@ class AdminDetailViewModel @Inject constructor(
         getSubscriptionDetail(subscriptionId),
         getMembersForSubscription(subscriptionId),
         getArchivedMembers(subscriptionId),
-        getPaymentHistory(subscriptionId, months = 3)
-    ) { subscription, activeMembers, archivedMembers, history ->
+        getPaymentHistory(subscriptionId, months = 3),
+        getCurrentUser()
+    ) { subscription, activeMembers, archivedMembers, history, user ->
         if (subscription == null) {
             AdminDetailUiState.NotFound
         } else {
             AdminDetailUiState.Success(
-                buildAdminDetailData(subscription, activeMembers, archivedMembers, history)
+                buildAdminDetailData(subscription, activeMembers, archivedMembers, history, user?.name.orEmpty())
             )
         }
     }.stateIn(
@@ -183,9 +186,9 @@ class AdminDetailViewModel @Inject constructor(
         }
     }
 
-    fun onBulkReminderSent() {
+    fun onBulkReminderSent(count: Int) {
         viewModelScope.launch {
-            _events.emit(AdminDetailEvent.BulkReminderStarted)
+            _events.emit(AdminDetailEvent.BulkReminderSent(count))
         }
     }
 

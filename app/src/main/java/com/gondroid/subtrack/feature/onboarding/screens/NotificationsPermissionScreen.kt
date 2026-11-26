@@ -78,7 +78,7 @@ fun NotificationsPermissionScreen(
     val launcher = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
-        ) { onGrant() }
+        ) { granted -> if (granted) onGrant() else onSkip() }
     } else null
 
     Column(

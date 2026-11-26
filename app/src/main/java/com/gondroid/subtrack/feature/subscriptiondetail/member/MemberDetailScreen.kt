@@ -110,7 +110,7 @@ fun MemberDetailScreen(
 
     when (val state = uiState) {
         is MemberDetailUiState.Loading -> {}
-        is MemberDetailUiState.NotFound -> { onBack() }
+        is MemberDetailUiState.NotFound -> LaunchedEffect(Unit) { onBack() }
         is MemberDetailUiState.Success -> {
             MemberDetailContent(
                 view = state.view,

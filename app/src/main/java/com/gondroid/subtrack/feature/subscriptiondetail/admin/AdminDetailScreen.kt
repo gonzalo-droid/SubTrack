@@ -111,8 +111,8 @@ fun AdminDetailScreen(
                     context.getString(R.string.member_sheet_forgiven_toast, event.name)
                 is AdminDetailEvent.MemberUpdated ->
                     context.getString(R.string.member_sheet_updated_toast, event.name)
-                is AdminDetailEvent.BulkReminderStarted ->
-                    context.getString(R.string.member_sheet_bulk_started_toast, 0)
+                is AdminDetailEvent.BulkReminderSent ->
+                    context.resources.getQuantityString(R.plurals.member_sheet_bulk_done, event.count, event.count)
                 is AdminDetailEvent.Error -> event.message
             }
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
@@ -181,7 +181,7 @@ fun AdminDetailScreen(
                                         memberName = member.name,
                                         serviceName = sub?.name ?: "",
                                         amount = "%.2f".format(member.shareAmount),
-                                        adminName = successState?.data?.subscription?.ownerId ?: ""
+                                        adminName = successState?.data?.adminName.orEmpty()
                                     )
                                     WhatsAppHelper.openWhatsApp(context, member.phone, msg)
                                     viewModel.closeSheet()
@@ -252,9 +252,9 @@ fun AdminDetailScreen(
                                 )
                             },
                             templates = com.gondroid.subtrack.data.mock.MockData.templates,
-                            adminName = "Gonzalo",
-                            onDone = {
-                                viewModel.onBulkReminderSent()
+                            adminName = successState?.data?.adminName.orEmpty(),
+                            onDone = { sent ->
+                                viewModel.onBulkReminderSent(sent)
                                 viewModel.closeSheet()
                             }
                         )
@@ -553,7 +553,7 @@ private fun previewData(includeArchived: Boolean = true): AdminDetailData {
         MonthlyPaymentSummary("2026-04", 10.98,
             active.map { MemberPaymentStatus(it.id, it.name, it.currentStatus) })
     )
-    return buildAdminDetailData(sub, active, archived, history)
+    return buildAdminDetailData(sub, active, archived, history, adminName = "Gonzalo")
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success – con archivados")

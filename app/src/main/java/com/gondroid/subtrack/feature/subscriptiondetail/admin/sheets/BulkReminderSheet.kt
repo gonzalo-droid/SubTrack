@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gondroid.subtrack.R
@@ -69,7 +70,7 @@ fun BulkReminderSheet(
     pendingItems: List<BulkReminderItem>,
     templates: List<Template>,
     adminName: String,
-    onDone: () -> Unit
+    onDone: (sentCount: Int) -> Unit
 ) {
     val context = LocalContext.current
     var selectedMemberIds by remember { mutableStateOf(pendingItems.map { it.member.id }.toSet()) }
@@ -85,7 +86,7 @@ fun BulkReminderSheet(
         // Sending mode: show current member + next button
         val currentItem = selectedItems.getOrNull(sendingIndex)
         if (currentItem == null) {
-            onDone()
+            LaunchedEffect(Unit) { onDone(selectedItems.size) }
             return
         }
         val current = currentItem.member
@@ -132,7 +133,7 @@ fun BulkReminderSheet(
                             } ?: ""
                             WhatsAppHelper.openWhatsApp(context, next.phone, msg)
                         } else {
-                            onDone()
+                            onDone(selectedItems.size)
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
