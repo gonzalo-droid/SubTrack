@@ -76,6 +76,18 @@ class LocalStoreSyncTest {
         assertTrue(runBlocking { dao.subscriptions().none { it.id == shared.id } })
     }
 
+    @Test fun `editing one subscription rewrites only its members`() {
+        LocalStoreSync(dao).start()
+        val shared = DemoData.subscriptions.filter { it.members.size > 1 }
+        val edited = shared.first()
+        val others = runBlocking { dao.members() }.filter { it.subscriptionId != edited.id }
+        AppStore.subscriptions.value = DemoData.subscriptions.map {
+            if (it.id == edited.id) it.copy(members = it.members.drop(1)) else it
+        }
+        eventually { runBlocking { dao.members().count { it.subscriptionId == edited.id } } == edited.members.size - 1 + edited.archivedMembers.size }
+        assertEquals(others, runBlocking { dao.members() }.filter { it.subscriptionId != edited.id })
+    }
+
     @Test fun `an empty users table alone does not reseed over real data`() {
         val first = LocalStoreSync(dao).also { it.start() }
         AppStore.subscriptions.value = listOf(DemoData.subscriptions.first().copy(name = "Mía"))
