@@ -377,8 +377,7 @@ private fun AdminDetailContent(
                     STIconButton(
                         icon = Icons.Outlined.Add,
                         contentDescription = stringResource(R.string.member_sheet_add_step1_title),
-                        onClick = onAddMember,
-                        modifier = Modifier.size(28.dp)
+                        onClick = onAddMember
                     )
                 }
             }

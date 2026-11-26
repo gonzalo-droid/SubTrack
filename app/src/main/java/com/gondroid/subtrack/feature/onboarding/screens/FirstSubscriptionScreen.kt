@@ -35,6 +35,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
@@ -87,7 +89,8 @@ fun FirstSubscriptionScreen(
                 style = SubTrackType.bodyS,
                 color = TextSecondary,
                 modifier = Modifier
-                    .clickable(onClick = onSkip)
+                    .clickable(role = Role.Button, onClick = onSkip)
+                    .minimumInteractiveComponentSize()
                     .padding(start = Spacing.m, top = Spacing.xs, bottom = Spacing.xs)
             )
         }

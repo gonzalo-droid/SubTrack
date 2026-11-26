@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.R
 import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.components.indicators.ProgressDots
@@ -62,7 +64,8 @@ fun ValueSlideLayout(
                 style = SubTrackType.bodyS,
                 color = TextSecondary,
                 modifier = Modifier
-                    .clickable(onClick = onSkip)
+                    .clickable(role = Role.Button, onClick = onSkip)
+                    .minimumInteractiveComponentSize()
                     .padding(start = Spacing.m, top = Spacing.xs, bottom = Spacing.xs)
             )
         }
