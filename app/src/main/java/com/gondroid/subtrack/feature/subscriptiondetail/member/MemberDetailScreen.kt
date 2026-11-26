@@ -78,6 +78,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -468,38 +469,6 @@ private fun SectionCard(
 @Composable
 private fun PlanInfoRow(label: String) {
     Text(label, style = SubTrackType.bodyXS, color = TextSecondary)
-}
-
-@Composable
-private fun PaymentHistoryRow(payment: Payment, modifier: Modifier = Modifier) {
-    val dateStr = payment.paidAt?.let {
-        SimpleDateFormat("d MMM yyyy", Locale.forLanguageTag("es")).format(Date(it))
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = Spacing.s),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            Text(payment.monthKey, style = SubTrackType.monoXS, color = TextSecondary)
-            if (dateStr != null) {
-                Text(
-                    stringResource(R.string.member_history_paid_on, dateStr),
-                    style = SubTrackType.bodyXS,
-                    color = TextTertiary
-                )
-            }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.s)
-        ) {
-            Text("S/ %.2f".format(payment.amount), style = SubTrackType.monoS, color = TextPrimary)
-            StatusPill(status = payment.status)
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

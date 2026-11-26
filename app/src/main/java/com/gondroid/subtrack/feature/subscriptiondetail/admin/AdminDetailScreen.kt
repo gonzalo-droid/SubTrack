@@ -107,6 +107,7 @@ fun AdminDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
     onEdit: () -> Unit,
+    onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AdminDetailViewModel = viewModel(factory = AdminDetailViewModelFactory(subscriptionId))
 ) {
@@ -220,8 +221,8 @@ fun AdminDetailScreen(
                                 onMarkAsPaid = { viewModel.markAsPaid(member.id) },
                                 onEditData = { viewModel.openEditMemberData(member.id) },
                                 onViewHistory = {
-                                    // TODO: [milestone-7] Navigate to member history screen
-                                    messenger.show(R.string.coming_soon_history)
+                                    viewModel.closeSheet()
+                                    onMemberHistory(member.id)
                                 },
                                 onRemove = {
                                     val hasPending = member.currentStatus.isUnpaid

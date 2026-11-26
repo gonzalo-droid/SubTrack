@@ -20,6 +20,8 @@ import com.gondroid.subtrack.feature.profile.templates.TemplatesScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.SubscriptionDetailScreen
 import com.gondroid.subtrack.feature.subscriptionlist.SubscriptionListScreen
 import androidx.compose.runtime.LaunchedEffect
+import com.gondroid.subtrack.feature.subscriptiondetail.history.MemberHistoryScreen
+import com.gondroid.subtrack.feature.profile.settings.SettingsScreen
 
 @Composable
 fun SubTrackNavHost(
@@ -71,6 +73,7 @@ fun SubTrackNavHost(
                 onNavigateToReferral = { navController.navigate(Route.Referral) },
                 onNavigateToAliasEdit = { navController.navigate(Route.AliasEdit) },
                 onNavigateToEditUser = { navController.navigate(Route.EditUser) },
+                onNavigateToSettings = { navController.navigate(Route.Settings) },
                 onNavigateToEditTemplate = { id -> navController.navigate(Route.EditTemplate(id)) },
                 onDebugOnboarding = {
                     navController.navigate(Route.Onboarding) {
@@ -98,7 +101,24 @@ fun SubTrackNavHost(
             SubscriptionDetailScreen(
                 subscriptionId = args.id,
                 onBack = { navController.popBackStack() },
-                onEdit = { navController.navigate(Route.EditSubscription(args.id)) }
+                onEdit = { navController.navigate(Route.EditSubscription(args.id)) },
+                onMemberHistory = { memberId -> navController.navigate(Route.MemberHistory(args.id, memberId)) }
+            )
+        }
+
+        composable<Route.MemberHistory> { entry ->
+            val args = entry.toRoute<Route.MemberHistory>()
+            MemberHistoryScreen(
+                subscriptionId = args.subscriptionId,
+                memberId = args.memberId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<Route.Settings> {
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onEditUser = { navController.navigate(Route.EditUser) }
             )
         }
 

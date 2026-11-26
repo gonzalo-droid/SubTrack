@@ -20,6 +20,7 @@ fun SubscriptionDetailScreen(
     subscriptionId: String,
     onBack: () -> Unit,
     onEdit: () -> Unit,
+    onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val vm: SubscriptionDetailRouterViewModel = viewModel(
@@ -35,6 +36,7 @@ fun SubscriptionDetailScreen(
             subscriptionId = state.subscriptionId,
             onBack = onBack,
             onEdit = onEdit,
+            onMemberHistory = onMemberHistory,
             modifier = modifier
         )
         is RoleState.MemberOf -> MemberDetailScreen(

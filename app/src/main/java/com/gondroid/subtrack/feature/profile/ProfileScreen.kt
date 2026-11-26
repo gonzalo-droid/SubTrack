@@ -88,6 +88,9 @@ import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.model.UserAlias
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
+import com.gondroid.subtrack.core.designsystem.components.list.SettingsRow
+import com.gondroid.subtrack.core.designsystem.components.list.SettingsDivider
+import com.gondroid.subtrack.BuildConfig
 
 @Composable
 fun ProfileScreen(
@@ -95,6 +98,7 @@ fun ProfileScreen(
     onNavigateToReferral: () -> Unit,
     onNavigateToAliasEdit: () -> Unit = {},
     onNavigateToEditUser: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
     onNavigateToEditTemplate: (String?) -> Unit = {},
     onDebugOnboarding: () -> Unit = {},
     onDebugData: () -> Unit = {},
@@ -110,6 +114,7 @@ fun ProfileScreen(
             onNavigateToAliasEdit = onNavigateToAliasEdit,
             onNavigateToReferral = onNavigateToReferral,
             onNavigateToEditUser = onNavigateToEditUser,
+            onNavigateToSettings = onNavigateToSettings,
             onNavigateToEditTemplate = onNavigateToEditTemplate,
             onNavigateToTemplates = onNavigateToTemplates,
             modifier = modifier
@@ -123,14 +128,13 @@ private fun ProfileContent(
     onNavigateToAliasEdit: () -> Unit,
     onNavigateToReferral: () -> Unit,
     onNavigateToEditUser: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onNavigateToEditTemplate: (String?) -> Unit,
     onNavigateToTemplates: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showLegalSheet by remember { mutableStateOf(false) }
-    var darkModeEnabled by remember { mutableStateOf(true) }
-    var faceIdEnabled by remember { mutableStateOf(false) }
 
     if (showLogoutDialog) {
         AlertDialog(
@@ -165,7 +169,7 @@ private fun ProfileContent(
                     style = SubTrackType.headlineL,
                     color = TextPrimary
                 )
-                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = {})
+                STIconButton(icon = Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings), onClick = onNavigateToSettings)
             }
         }
 
@@ -291,83 +295,6 @@ private fun ProfileContent(
         item { Spacer(Modifier.height(Spacing.base)) }
 
         // Account section
-        item {
-            Eyebrow(
-                text = stringResource(R.string.profile_account_section),
-                modifier = Modifier.padding(horizontal = Spacing.base, vertical = Spacing.s)
-            )
-        }
-        item {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = Spacing.base)
-                    .clip(SubTrackShapes.l)
-                    .background(BgSurface)
-                    .border(1.dp, BorderDefault, SubTrackShapes.l)
-            ) {
-                SettingsRow(
-                    icon = Icons.Outlined.AccountCircle,
-                    iconBg = AccentBlueBg,
-                    iconTint = AccentBlue,
-                    title = stringResource(R.string.profile_account_personal),
-                    onClick = onNavigateToEditUser
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.Language,
-                    iconBg = AccentPurpleBg,
-                    iconTint = AccentPurple,
-                    title = stringResource(R.string.profile_account_locale),
-                    value = "Perú · S/ PEN",
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.NotificationsNone,
-                    iconBg = AccentAmberBg,
-                    iconTint = AccentAmber,
-                    title = stringResource(R.string.profile_account_notifications),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.Lock,
-                    iconBg = AccentBlueBg,
-                    iconTint = AccentBlue,
-                    title = stringResource(R.string.profile_account_faceid),
-                    trailing = {
-                        Switch(
-                            checked = faceIdEnabled,
-                            onCheckedChange = { faceIdEnabled = it },
-                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = AccentGreen)
-                        )
-                    }
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.CloudDownload,
-                    iconBg = Color.White.copy(alpha = 0.06f),
-                    iconTint = TextSecondary,
-                    title = stringResource(R.string.profile_account_export),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.DarkMode,
-                    iconBg = Color.White.copy(alpha = 0.06f),
-                    iconTint = TextSecondary,
-                    title = stringResource(R.string.profile_account_dark_theme),
-                    trailing = {
-                        Switch(
-                            checked = darkModeEnabled,
-                            onCheckedChange = { darkModeEnabled = it },
-                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = AccentGreen)
-                        )
-                    }
-                )
-            }
-        }
-
         // Referral card
         item {
             ReferralEntryCard(
@@ -395,22 +322,6 @@ private fun ProfileContent(
                     .border(1.dp, BorderDefault, SubTrackShapes.l)
             ) {
                 SettingsRow(
-                    icon = Icons.Outlined.HelpOutline,
-                    iconBg = AccentGreenBg,
-                    iconTint = AccentGreen,
-                    title = stringResource(R.string.profile_support_help),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
-                    icon = Icons.Outlined.NotificationsNone,
-                    iconBg = AccentPurpleBg,
-                    iconTint = AccentPurple,
-                    title = stringResource(R.string.profile_support_feedback),
-                    onClick = {}
-                )
-                SettingsDivider()
-                SettingsRow(
                     icon = Icons.Outlined.Lock,
                     iconBg = Color.White.copy(alpha = 0.06f),
                     iconTint = TextSecondary,
@@ -434,7 +345,7 @@ private fun ProfileContent(
         // Footer
         item {
             Text(
-                text = stringResource(R.string.profile_version, "0.1.0", 128),
+                text = stringResource(R.string.profile_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
                 style = SubTrackType.monoXS,
                 color = TextTertiary,
                 modifier = Modifier
@@ -700,47 +611,6 @@ private fun TemplateCard(template: Template, onClick: () -> Unit, modifier: Modi
         }
     }
 }
-
-@Composable
-private fun SettingsRow(
-    icon: ImageVector,
-    iconBg: Color,
-    iconTint: Color,
-    title: String,
-    titleColor: Color = TextPrimary,
-    value: String? = null,
-    showChevron: Boolean = true,
-    trailing: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = Spacing.m, vertical = Spacing.s),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.m)
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(32.dp).clip(SubTrackShapes.base).background(iconBg)
-        ) {
-            Icon(icon, null, tint = iconTint, modifier = Modifier.size(18.dp))
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            Text(title, style = SubTrackType.bodyS, color = titleColor)
-            if (value != null) Text(value, style = SubTrackType.monoXS, color = TextTertiary)
-        }
-        if (trailing != null) trailing()
-        else if (showChevron) Icon(Icons.Outlined.ChevronRight, null, tint = TextTertiary, modifier = Modifier.size(16.dp))
-    }
-}
-
-@Composable
-private fun SettingsDivider() = HorizontalDivider(
-    modifier = Modifier.padding(start = 56.dp),
-    color = BorderDefault
-)
 
 @Composable
 private fun ReferralEntryCard(
