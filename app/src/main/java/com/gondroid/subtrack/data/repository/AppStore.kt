@@ -23,10 +23,17 @@ object AppStore {
     val currentUser = MutableStateFlow<User?>(if (demo) DemoData.currentUser else null)
     val exitRequests = MutableStateFlow<List<ExitRequest>>(emptyList())
 
-    // Toggle Pro state for debug
-    val isProUser = MutableStateFlow(true)
-
     val userAlias = MutableStateFlow(if (demo) DemoData.userAlias else UserAlias())
     val referralInfo = MutableStateFlow<ReferralInfo>(DemoData.referralInfo)
     val referralRecords = MutableStateFlow<List<ReferralRecord>>(DemoData.referralRecords)
+
+    /** Sign-out / account deletion: back to an empty install (the default templates stay). */
+    fun clear() {
+        subscriptions.value = emptyList()
+        payments.value = emptyList()
+        templates.value = DemoData.templates
+        currentUser.value = null
+        exitRequests.value = emptyList()
+        userAlias.value = UserAlias()
+    }
 }

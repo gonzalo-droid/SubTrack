@@ -37,6 +37,7 @@ sealed interface EditTemplateUiState {
 sealed interface EditTemplateEvent {
     data object Saved : EditTemplateEvent
     data object Deleted : EditTemplateEvent
-    /** Null message: the UI shows the generic error from strings.xml. */
-    data class Error(val message: String?) : EditTemplateEvent
+    /** Generic failure; the UI shows common_error_generic, never the exception text. */
+    data object Error : EditTemplateEvent
+    data object CannotDeleteDefault : EditTemplateEvent
 }

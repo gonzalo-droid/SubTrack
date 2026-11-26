@@ -3,6 +3,10 @@ package com.gondroid.subtrack.feature.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.alias.GetUserAliasUseCase
+import com.gondroid.subtrack.domain.usecase.auth.SignOutUseCase
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
@@ -19,8 +23,19 @@ class ProfileViewModel @Inject constructor(
     private val getUserAlias: GetUserAliasUseCase,
     private val getSubscriptions: GetSubscriptionsUseCase,
     private val getTemplates: GetAllTemplatesUseCase,
-    private val getReferralInfo: GetReferralInfoUseCase
+    private val getReferralInfo: GetReferralInfoUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
+
+    private val _signOutFailed = Channel<Unit>(Channel.BUFFERED)
+    /** Emits when the sign-out failed; on success the app goes back to the onboarding by itself. */
+    val signOutFailed = _signOutFailed.receiveAsFlow()
+
+    fun signOut() {
+        viewModelScope.launch {
+            signOutUseCase().onFailure { _signOutFailed.send(Unit) }
+        }
+    }
 
     val uiState = combine(
         getCurrentUser(),

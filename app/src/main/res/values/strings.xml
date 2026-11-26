@@ -318,6 +318,18 @@
     <string name="profile_logout">Cerrar sesión</string>
     <string name="profile_logout_title">¿Cerrar sesión?</string>
     <string name="profile_logout_confirm">Cerrar sesión</string>
+    <string name="profile_logout_error">No se pudo cerrar sesión. Inténtalo de nuevo.</string>
+    <string name="settings_legal_section">Legal</string>
+    <string name="settings_privacy">Política de privacidad</string>
+    <string name="settings_terms">Términos y condiciones</string>
+    <string name="settings_privacy_url">https://nekodojo.app/apps/subtrack/privacy</string>
+    <string name="settings_terms_url">https://nekodojo.app/apps/subtrack/terms</string>
+    <string name="settings_delete_account">Eliminar cuenta</string>
+    <string name="settings_delete_account_title">¿Eliminar tu cuenta?</string>
+    <string name="settings_delete_account_body">Se borran tu cuenta y todas tus suscripciones, miembros, pagos y plantillas, en la nube y en este teléfono. No se puede deshacer. Para confirmar, vuelve a elegir tu cuenta de Google.</string>
+    <string name="settings_delete_account_confirm">Eliminar</string>
+    <string name="settings_deleting_account">Eliminando tu cuenta…</string>
+    <string name="settings_delete_account_error">No se pudo eliminar la cuenta. Revisa tu conexión e inténtalo de nuevo.</string>
     <string name="profile_referral_title">Invita y gana Pro</string>
     <plurals name="profile_referral_months">
         <item quantity="one">%1$d mes ganado</item>
@@ -530,7 +542,7 @@
     <string name="onboarding_auth_title">Crea tu cuenta</string>
     <string name="onboarding_auth_subtitle">Inicia sesión con un tap. Tus datos están seguros.</string>
     <string name="onboarding_auth_google">Continuar con Google</string>
-    <string name="onboarding_auth_terms">Al continuar aceptas nuestros Términos de servicio y Política de privacidad.</string>
+    <string name="onboarding_auth_terms"><![CDATA[Al continuar aceptas nuestros <a href="https://nekodojo.app/apps/subtrack/terms">Términos de servicio</a> y <a href="https://nekodojo.app/apps/subtrack/privacy">Política de privacidad</a>.]]></string>
 
     <!-- Onboarding — Notifications -->
     <string name="onboarding_notif_eyebrow">Permiso importante</string>

@@ -132,7 +132,8 @@ fun EditTemplateScreen(
                     onBack()
                 }
                 is EditTemplateEvent.Deleted -> onBack()
-                is EditTemplateEvent.Error -> messenger.show(event.message, R.string.common_error_generic)
+                EditTemplateEvent.Error -> messenger.show(R.string.common_error_generic)
+                EditTemplateEvent.CannotDeleteDefault -> messenger.show(R.string.template_action_delete_disabled)
             }
         }
     }

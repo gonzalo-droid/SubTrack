@@ -110,6 +110,14 @@ Cuando recibas una tarea:
    - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo; los flujos lanzan la app con `fakeAuth: true`, que en debug salta el login real de Google) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
+## Publicación (firma y respaldos)
+
+- **Llave de subida** (SEC-03): vive fuera del repo, en `~/.config/subtrack-signing/upload.jks`, alias `upload`. Se creó una sola vez con:
+  `keytool -genkeypair -v -keystore ~/.config/subtrack-signing/upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000`
+- `local.properties` (fuera de git) le da la ruta y las contraseñas al build de release: `subtrack.signing.storeFile`, `subtrack.signing.storePassword`, `subtrack.signing.keyAlias`, `subtrack.signing.keyPassword`. Sin ellas el release sale sin firmar y Gradle avisa.
+- Play App Signing debe quedar activado en Play Console: Google guarda la llave de la app y la de subida se puede cambiar si se pierde.
+- **Respaldo** (SEC-04), dónde va y no la llave en sí: la keystore y sus contraseñas se guardan en el gestor de contraseñas del dueño, con una copia del `.jks` fuera de este Mac; `app/google-services.json` se vuelve a bajar desde la consola de Firebase (proyecto `subtrack-f4dd3`).
+
 ## Nunca hagas esto
 
 - Agregar dependencias sin consultar

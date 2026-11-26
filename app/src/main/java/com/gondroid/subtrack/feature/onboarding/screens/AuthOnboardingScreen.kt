@@ -1,5 +1,10 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -151,9 +156,12 @@ fun AuthOnboardingScreen(
 
         Spacer(Modifier.height(Spacing.m))
 
-        // Terms
+        // Terms, with links to the published pages (they open in the browser)
         Text(
-            stringResource(R.string.onboarding_auth_terms),
+            AnnotatedString.fromHtml(
+                stringResource(R.string.onboarding_auth_terms),
+                linkStyles = TextLinkStyles(SpanStyle(color = TextSecondary, textDecoration = TextDecoration.Underline))
+            ),
             style = SubTrackType.bodyXS,
             color = TextTertiary,
             textAlign = TextAlign.Center

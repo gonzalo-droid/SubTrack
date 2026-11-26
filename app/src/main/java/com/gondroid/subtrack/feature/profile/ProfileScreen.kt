@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile
 
+import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -94,6 +96,10 @@ fun ProfileScreen(
 ) {
     val viewModel: ProfileViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val messenger = LocalSnackbarMessenger.current
+    LaunchedEffect(Unit) {
+        viewModel.signOutFailed.collect { messenger.show(R.string.profile_logout_error) }
+    }
 
     when (val state = uiState) {
         is ProfileUiState.Loading -> Box(modifier.fillMaxSize())
@@ -105,6 +111,7 @@ fun ProfileScreen(
             onNavigateToSettings = onNavigateToSettings,
             onNavigateToEditTemplate = onNavigateToEditTemplate,
             onNavigateToTemplates = onNavigateToTemplates,
+            onSignOut = viewModel::signOut,
             modifier = modifier
         )
     }
@@ -119,6 +126,7 @@ private fun ProfileContent(
     onNavigateToSettings: () -> Unit,
     onNavigateToEditTemplate: (String?) -> Unit,
     onNavigateToTemplates: () -> Unit,
+    onSignOut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -129,7 +137,10 @@ private fun ProfileContent(
             onDismissRequest = { showLogoutDialog = false },
             title = { Text(stringResource(R.string.profile_logout_title), color = TextPrimary) },
             confirmButton = {
-                TextButton(onClick = { showLogoutDialog = false }) {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                    onSignOut()
+                }) {
                     Text(stringResource(R.string.profile_logout_confirm), color = AccentRed)
                 }
             },

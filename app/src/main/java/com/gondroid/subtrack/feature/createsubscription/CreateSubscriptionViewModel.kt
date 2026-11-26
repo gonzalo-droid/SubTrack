@@ -253,7 +253,7 @@ class CreateSubscriptionViewModel @AssistedInject constructor(
         viewModelScope.launch {
             updateSubscriptionDetails(id, form.totalAmountDouble, form.currency, form.cycle, form.cutoffDay)
                 .onSuccess { _uiState.value = CreateSubscriptionUiState.Saved }
-                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message) }
+                .onFailure { _uiState.value = CreateSubscriptionUiState.Error }
         }
     }
 
@@ -316,7 +316,7 @@ class CreateSubscriptionViewModel @AssistedInject constructor(
                         memberCount = members.size
                     )
                 }
-                .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message) }
+                .onFailure { _uiState.value = CreateSubscriptionUiState.Error }
         }
     }
 

@@ -48,8 +48,8 @@ sealed interface MemberActionSheet {
 sealed interface MemberDetailEvent {
     data object PaymentMarked : MemberDetailEvent
     data object ExitRequested : MemberDetailEvent
-    /** Null message: the UI shows the generic error from strings.xml. */
-    data class Error(val message: String?) : MemberDetailEvent
+    /** Generic failure; the UI shows common_error_generic, never the exception text. */
+    data object Error : MemberDetailEvent
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ class MemberDetailViewModel @AssistedInject constructor(
                     _events.emit(MemberDetailEvent.PaymentMarked)
                     closeSheet()
                 }
-                .onFailure { _events.emit(MemberDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(MemberDetailEvent.Error) }
         }
     }
 
@@ -114,7 +114,7 @@ class MemberDetailViewModel @AssistedInject constructor(
                     _events.emit(MemberDetailEvent.ExitRequested)
                     closeSheet()
                 }
-                .onFailure { _events.emit(MemberDetailEvent.Error(it.message)) }
+                .onFailure { _events.emit(MemberDetailEvent.Error) }
         }
     }
 
