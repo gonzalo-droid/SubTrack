@@ -147,7 +147,17 @@ fun CreateSubscriptionScreen(
     BackHandler(onBack = goBack)
 
     LaunchedEffect(uiState) {
-        (uiState as? CreateSubscriptionUiState.Error)?.let { messenger.show(it.message) }
+        when (val state = uiState) {
+            is CreateSubscriptionUiState.Error -> {
+                messenger.show(state.message)
+                viewModel.errorShown()
+            }
+            CreateSubscriptionUiState.NotFound -> {
+                messenger.show(R.string.edit_subscription_not_found)
+                onBack()
+            }
+            else -> Unit
+        }
     }
 
     if (showCancelDialog) {

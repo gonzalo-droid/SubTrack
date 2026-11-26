@@ -114,7 +114,7 @@ class CreateSubscriptionViewModel @Inject constructor(
         viewModelScope.launch {
             val sub = getSubscriptionDetail(id).first()
             if (sub == null) {
-                _uiState.value = CreateSubscriptionUiState.Error("Suscripción no encontrada")
+                _uiState.value = CreateSubscriptionUiState.NotFound
                 return@launch
             }
             _form.value = CreateSubscriptionFormState(
@@ -308,6 +308,11 @@ class CreateSubscriptionViewModel @Inject constructor(
                 }
                 .onFailure { _uiState.value = CreateSubscriptionUiState.Error(it.message ?: "Error al crear") }
         }
+    }
+
+    /** The screen showed the error; go back to Idle so it isn't shown again (e.g. on rotation). */
+    fun errorShown() {
+        if (_uiState.value is CreateSubscriptionUiState.Error) _uiState.value = CreateSubscriptionUiState.Idle
     }
 
     fun resetWizard() {

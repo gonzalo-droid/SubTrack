@@ -118,6 +118,7 @@
     <string name="edit_subscription_eyebrow">Editar suscripción</string>
     <string name="edit_subscription_save">Guardar cambios</string>
     <string name="edit_subscription_saved">Cambios guardados</string>
+    <string name="edit_subscription_not_found">Esta suscripción ya no existe</string>
 
     <!-- Subscription detail — top nav -->
     <string name="subscription_detail_back_cd">Volver</string>
