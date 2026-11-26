@@ -453,6 +453,7 @@ private fun AdminDetailContent(
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 @Composable
+                    singlePendingName = data.singlePendingName,
 private fun CutoffPill(cutoffDay: Int) {
     val next = nextCutoff(cutoffDay)
     val dateStr = stringResource(

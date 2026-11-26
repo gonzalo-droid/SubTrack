@@ -12,7 +12,9 @@ data class AdminDetailData(
     val monthlyHistory: List<MonthlyPaymentSummary>,
     val pendingPaymentsCount: Int,
     val pendingAmount: Double,
-    val adminName: String
+    val adminName: String,
+    /** Name of the only member who owes, so the CTA can say "Cobrar a Ana". */
+    val singlePendingName: String? = null
 )
 
 sealed interface AdminDetailUiState {
@@ -39,6 +41,7 @@ fun buildAdminDetailData(
         monthlyHistory = monthlyHistory,
         pendingPaymentsCount = pendingMembers.size,
         pendingAmount = pendingMembers.sumOf { it.shareAmount },
-        adminName = adminName
+        adminName = adminName,
+        singlePendingName = pendingMembers.singleOrNull()?.name?.substringBefore(" ")
     )
 }

@@ -104,6 +104,20 @@
     <string name="member_detail_payment_marked">Pago registrado</string>
     <string name="member_detail_exit_requested">Solicitud enviada</string>
     <string name="coming_soon_history">Próximamente: historial</string>
+    <string name="subscription_detail_collect_one">Cobrar a %1$s</string>
+    <string name="subscription_menu_edit">Editar</string>
+    <string name="subscription_menu_pause">Pausar</string>
+    <string name="subscription_menu_resume">Reanudar</string>
+    <string name="subscription_menu_delete">Eliminar</string>
+    <string name="subscription_paused_tag">PAUSADA</string>
+    <string name="subscription_paused_toast">Suscripción pausada. No cuenta en tus totales.</string>
+    <string name="subscription_resumed_toast">Suscripción reanudada</string>
+    <string name="subscription_deleted_toast">Suscripción eliminada</string>
+    <string name="subscription_delete_title">¿Eliminar %1$s?</string>
+    <string name="subscription_delete_desc">Se borra la suscripción con sus miembros e historial. No se puede deshacer.</string>
+    <string name="edit_subscription_eyebrow">Editar suscripción</string>
+    <string name="edit_subscription_save">Guardar cambios</string>
+    <string name="edit_subscription_saved">Cambios guardados</string>
 
     <!-- Subscription detail — top nav -->
     <string name="subscription_detail_back_cd">Volver</string>

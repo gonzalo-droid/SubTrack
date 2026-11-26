@@ -51,10 +51,12 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.delay
+import androidx.compose.ui.semantics.Role
 
 @Composable
 fun CobranzaBar(
     pendingCount: Int,
+    singlePendingName: String?,
     totalAmount: Double,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -102,13 +104,16 @@ fun CobranzaBar(
                     )
                 }
             }
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = Spacing.base),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = pluralStringResource(R.plurals.subscription_detail_collect_title, pendingCount, pendingCount),
+                text = if (singlePendingName != null)
+                    stringResource(R.string.subscription_detail_collect_one, singlePendingName)
+                else
+                    pluralStringResource(R.plurals.subscription_detail_collect_title, pendingCount, pendingCount),
                 style = SubTrackType.headlineS,
                 color = TextPrimary
             )
@@ -144,6 +149,7 @@ private fun CobranzaBarPreview() {
     SubTrackTheme {
         CobranzaBar(
             pendingCount = 2,
+            singlePendingName = null,
             totalAmount = 21.96,
             onClick = {},
             modifier = Modifier.padding(Spacing.base)
