@@ -55,7 +55,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.util.toComposeColor
-import com.gondroid.subtrack.data.mock.ServiceTemplates
+import com.gondroid.subtrack.data.repository.ServiceTemplates
 import com.gondroid.subtrack.domain.model.ServiceTemplate
 
 private val PRESET_COLORS = listOf("#E50914", "#1DB954", "#0A84FF", "#BF5AF2", "#FFB340", "#888888")

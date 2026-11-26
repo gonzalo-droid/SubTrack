@@ -8,7 +8,7 @@ import com.gondroid.subtrack.data.local.UserEntity
 import com.gondroid.subtrack.data.local.memberEntities
 import com.gondroid.subtrack.data.local.toDomain
 import com.gondroid.subtrack.data.local.toEntity
-import com.gondroid.subtrack.data.mock.MockDataStore
+import com.gondroid.subtrack.data.repository.AppStore
 import com.gondroid.subtrack.domain.model.User
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Mirrors the in-memory store ([MockDataStore], persisted to Room by LocalStoreSync) to
+ * Mirrors the in-memory store ([AppStore], persisted to Room by LocalStoreSync) to
  * Firestore under `users/{uid}`: profile + alias in the user document, and the
  * `subscriptions`, `payments` and `templates` subcollections. Room stays the offline cache;
  * Firestore's own offline queue delivers writes made without network.
@@ -52,11 +52,11 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
         if (remote.exists()) {
             restore(root, remote.data.orEmpty(), user)
         } else {
-            val localUserId = MockDataStore.currentUser.value?.id
+            val localUserId = AppStore.currentUser.value?.id
             if (localUserId != null) {
-                MockDataStore.subscriptions.value = MockDataStore.subscriptions.value.claimedBy(localUserId, user.id)
+                AppStore.subscriptions.value = AppStore.subscriptions.value.claimedBy(localUserId, user.id)
             }
-            MockDataStore.currentUser.value = user
+            AppStore.currentUser.value = user
             upload(root)
         }
         mirror(user.id)
@@ -82,17 +82,17 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
             .map { it.data.orEmpty().fromFirestore<TemplateEntity>() }
             .sortedBy { it.position }.map { it.toDomain() }
 
-        MockDataStore.subscriptions.value = subs
-        MockDataStore.payments.value = payments
-        if (templates.isNotEmpty()) MockDataStore.templates.value = templates
+        AppStore.subscriptions.value = subs
+        AppStore.payments.value = payments
+        if (templates.isNotEmpty()) AppStore.templates.value = templates
         (profile[ALIAS] as? Map<*, *>)?.let { alias ->
             @Suppress("UNCHECKED_CAST")
-            MockDataStore.userAlias.value = (alias as Map<String, Any?>).fromFirestore<UserAliasEntity>().toDomain()
+            AppStore.userAlias.value = (alias as Map<String, Any?>).fromFirestore<UserAliasEntity>().toDomain()
         }
         // The stored profile keeps edits (phone, name); the Google account fills what is missing
         @Suppress("UNCHECKED_CAST")
         val stored = (profile[PROFILE] as? Map<String, Any?>)?.fromFirestore<UserEntity>()?.toDomain()
-        MockDataStore.currentUser.value = stored ?: user
+        AppStore.currentUser.value = stored ?: user
     }
 
     private suspend fun upload(root: DocumentReference) {
@@ -108,14 +108,14 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
         if (mirrorJob != null) return
         val root = userDoc(uid)
         mirrorJob = scope.launch {
-            mirrorCollection(root, SUBSCRIPTIONS, MockDataStore.subscriptions) { subscriptionDocs() }
-            mirrorCollection(root, PAYMENTS, MockDataStore.payments) { paymentDocs() }
-            mirrorCollection(root, TEMPLATES, MockDataStore.templates) { templateDocs() }
+            mirrorCollection(root, SUBSCRIPTIONS, AppStore.subscriptions) { subscriptionDocs() }
+            mirrorCollection(root, PAYMENTS, AppStore.payments) { paymentDocs() }
+            mirrorCollection(root, TEMPLATES, AppStore.templates) { templateDocs() }
             launch(start = CoroutineStart.UNDISPATCHED) {
-                MockDataStore.currentUser.drop(1).collect { root.set(profileDoc()).await() }
+                AppStore.currentUser.drop(1).collect { root.set(profileDoc()).await() }
             }
             launch(start = CoroutineStart.UNDISPATCHED) {
-                MockDataStore.userAlias.drop(1).collect { root.set(profileDoc()).await() }
+                AppStore.userAlias.drop(1).collect { root.set(profileDoc()).await() }
             }
         }
     }
@@ -140,17 +140,17 @@ class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
     }
 
     private fun profileDoc(): Map<String, Any?> = mapOf(
-        PROFILE to MockDataStore.currentUser.value?.toEntity()?.toFirestore(),
-        ALIAS to MockDataStore.userAlias.value.toEntity().toFirestore()
+        PROFILE to AppStore.currentUser.value?.toEntity()?.toFirestore(),
+        ALIAS to AppStore.userAlias.value.toEntity().toFirestore()
     )
 
-    private fun subscriptionDocs() = MockDataStore.subscriptions.value.associate {
+    private fun subscriptionDocs() = AppStore.subscriptions.value.associate {
         it.id to RemoteSubscription(it.toEntity(), it.memberEntities()).toFirestore()
     }
 
-    private fun paymentDocs() = MockDataStore.payments.value.associate { it.id to it.toEntity().toFirestore() }
+    private fun paymentDocs() = AppStore.payments.value.associate { it.id to it.toEntity().toFirestore() }
 
-    private fun templateDocs() = MockDataStore.templates.value.mapIndexed { i, t -> t.id to t.toEntity(i).toFirestore() }.toMap()
+    private fun templateDocs() = AppStore.templates.value.mapIndexed { i, t -> t.id to t.toEntity(i).toFirestore() }.toMap()
 
     private fun userDoc(uid: String) = db.collection(USERS).document(uid)
 

@@ -960,7 +960,7 @@ private fun DashboardPersonalOnlyPreview() {
 }
 
 private fun previewDashboardData(): DashboardData {
-    val subs = com.gondroid.subtrack.data.mock.MockData.subscriptions
+    val subs = com.gondroid.subtrack.data.demo.DemoData.subscriptions
     val personal = subs.filter { !it.isShared }
     val shared = subs.filter { it.isShared }
     val debtors = shared.flatMap { sub ->
@@ -981,7 +981,7 @@ private fun previewDashboardData(): DashboardData {
             }
     }
     return DashboardData(
-        user = com.gondroid.subtrack.data.mock.MockData.currentUser,
+        user = com.gondroid.subtrack.data.demo.DemoData.currentUser,
         dayLabel = "Viernes · Abril",
         totalMonthlySpend = subs.sumOf { it.totalAmount },
         personalAmount = personal.sumOf { it.totalAmount },

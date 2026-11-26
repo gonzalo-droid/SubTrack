@@ -4,7 +4,7 @@ import com.gondroid.subtrack.data.local.PaymentEntity
 import com.gondroid.subtrack.data.local.memberEntities
 import com.gondroid.subtrack.data.local.toDomain
 import com.gondroid.subtrack.data.local.toEntity
-import com.gondroid.subtrack.data.mock.MockData
+import com.gondroid.subtrack.data.demo.DemoData
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -14,7 +14,7 @@ class FirestoreMappingTest {
 
     @Test
     fun `subscription with members survives the Firestore round trip`() {
-        val sub = MockData.subscriptions.first { it.members.isNotEmpty() }
+        val sub = DemoData.subscriptions.first { it.members.isNotEmpty() }
         val doc = RemoteSubscription(sub.toEntity(), sub.memberEntities()).toFirestore()
 
         val back = doc.fromFirestore<RemoteSubscription>()
@@ -34,8 +34,8 @@ class FirestoreMappingTest {
 
     @Test
     fun `claim moves owner and member links to the new uid only`() {
-        val subs = MockData.subscriptions
-        val oldId = MockData.currentUser.id
+        val subs = DemoData.subscriptions
+        val oldId = DemoData.currentUser.id
 
         val claimed = subs.claimedBy(oldId, "uid_123")
 

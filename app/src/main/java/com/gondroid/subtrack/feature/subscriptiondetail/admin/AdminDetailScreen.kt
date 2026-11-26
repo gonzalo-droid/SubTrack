@@ -63,7 +63,7 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.util.WhatsAppHelper
 import com.gondroid.subtrack.core.util.toComposeColor
-import com.gondroid.subtrack.data.mock.MockData
+import com.gondroid.subtrack.data.demo.DemoData
 import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.MemberPaymentStatus
 import com.gondroid.subtrack.domain.model.MonthlyPaymentSummary
@@ -283,7 +283,7 @@ fun AdminDetailScreen(
                                     subscriptionName = sub?.name ?: ""
                                 )
                             },
-                            templates = com.gondroid.subtrack.data.mock.MockData.templates,
+                            templates = com.gondroid.subtrack.data.demo.DemoData.templates,
                             adminName = successState?.data?.adminName.orEmpty(),
                             onDone = { sent ->
                                 viewModel.onBulkReminderSent(sent)
@@ -657,9 +657,9 @@ private fun AdminDetailNotFound(onBack: () -> Unit) {
 // ── Previews ──────────────────────────────────────────────────────────────────
 
 private fun previewData(includeArchived: Boolean = true): AdminDetailData {
-    val sub = MockData.subscriptions.first { it.id == "sub_netflix" }
+    val sub = DemoData.subscriptions.first { it.id == "sub_netflix" }
     val active = sub.members
-    val archived = if (includeArchived) listOf(MockData.memCarlos) else emptyList()
+    val archived = if (includeArchived) listOf(DemoData.memCarlos) else emptyList()
     val history = listOf(
         MonthlyPaymentSummary("2026-02", 21.96,
             active.map { MemberPaymentStatus(it.id, it.name, if (it.id == "mem_maria") PaymentStatus.LATE else PaymentStatus.PAID) }),

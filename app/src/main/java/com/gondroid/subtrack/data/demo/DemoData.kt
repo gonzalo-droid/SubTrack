@@ -1,4 +1,4 @@
-package com.gondroid.subtrack.data.mock
+package com.gondroid.subtrack.data.demo
 
 import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.Payment
@@ -18,7 +18,7 @@ import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import java.util.Calendar
 import java.util.Locale
 
-object MockData {
+object DemoData {
 
     // ── Timestamps ──────────────────────────────────────────────────────────
     // Recent history is relative to today (M6): "this month" is always the current month and

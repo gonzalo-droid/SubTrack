@@ -155,12 +155,12 @@ private fun SubscriptionRowPreview() {
     SubTrackTheme {
         Column(modifier = Modifier.padding(Spacing.base), verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
             SubscriptionRow(
-                subscription = com.gondroid.subtrack.data.mock.MockData.subscriptions.first(),
+                subscription = com.gondroid.subtrack.data.demo.DemoData.subscriptions.first(),
                 isAdmin = true,
                 onClick = {}
             )
             SubscriptionRow(
-                subscription = com.gondroid.subtrack.data.mock.MockData.subscriptions[2],
+                subscription = com.gondroid.subtrack.data.demo.DemoData.subscriptions[2],
                 isAdmin = true,
                 onClick = {}
             )

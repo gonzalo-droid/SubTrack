@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 /**
- * Reads and replaces whole tables. The in-memory store (MockDataStore) stays the working copy
+ * Reads and replaces whole tables. The in-memory store (AppStore) stays the working copy
  * in phase 1; this DAO persists it so changes survive restarts.
  */
 @Dao
