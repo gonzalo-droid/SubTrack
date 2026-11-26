@@ -471,7 +471,7 @@
     <string name="create_subscription_success_view_desc">Ir al detalle de %1$s.</string>
     <string name="create_subscription_success_another">Crear otra suscripción</string>
     <string name="create_subscription_success_another_desc">Vuelve al paso 1 con el wizard limpio.</string>
-    <string name="create_subscription_success_home">Ir al inicio</string>
+    <string name="create_subscription_success_home">Listo</string>
 
     <!-- Onboarding — common -->
     <string name="onboarding_skip">Saltar</string>
@@ -541,7 +541,6 @@
     <string name="onboarding_success_share_desc">DIVIDE NETFLIX · AHORRA S/ 41</string>
     <string name="onboarding_success_go_home">Ir al inicio</string>
     <string name="onboarding_success_go_home_desc">VER TU DASHBOARD</string>
-    <string name="onboarding_success_skip_home">Ir al inicio</string>
 
     <!-- Member detail screen -->
     <string name="member_detail_eyebrow">MI SUSCRIPCIÓN</string>
