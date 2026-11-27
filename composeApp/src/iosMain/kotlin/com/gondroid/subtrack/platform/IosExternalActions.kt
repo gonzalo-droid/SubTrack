@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.platform
 
+import platform.StoreKit.SKStoreReviewController
+
 import platform.SafariServices.SFSafariViewController
 
 import kotlinx.cinterop.BetaInteropApi
@@ -44,7 +46,23 @@ class IosExternalActions : ExternalActions {
         if (written) present(listOf(NSURL.fileURLWithPath(path))) else share(content)
     }
 
-    override fun email(subject: String): Boolean = open("mailto:?subject=${subject.encoded()}")
+    override fun email(to: String, subject: String, body: String): Boolean =
+        open("mailto:$to?subject=${subject.encoded()}&body=${body.encoded()}")
+
+    override fun openStoreReview() {
+        if (APP_STORE_ID.isNotEmpty()) {
+            open("itms-apps://apps.apple.com/app/id$APP_STORE_ID?action=write-review")
+            return
+        }
+        // Not in the App Store yet: the system review prompt (it decides whether to show it)
+        val scene = UIApplication.sharedApplication.connectedScenes.filterIsInstance<UIWindowScene>().firstOrNull() ?: return
+        SKStoreReviewController.requestReviewInScene(scene)
+    }
+
+    private companion object {
+        // TODO: [publicación iOS] the App Store id once the listing exists
+        const val APP_STORE_ID = ""
+    }
 
     override fun openNotificationSettings() {
         open(UIApplicationOpenNotificationSettingsURLString)

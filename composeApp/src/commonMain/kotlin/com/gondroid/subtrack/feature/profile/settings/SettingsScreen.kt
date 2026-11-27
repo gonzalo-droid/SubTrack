@@ -1,5 +1,29 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.resources.settings_support_email
+
+import com.gondroid.subtrack.resources.settings_download_url
+
+import com.gondroid.subtrack.resources.settings_feedback_body
+
+import com.gondroid.subtrack.resources.settings_licenses
+
+import com.gondroid.subtrack.resources.settings_rate_app
+
+import com.gondroid.subtrack.resources.settings_share_app_message
+
+import com.gondroid.subtrack.resources.settings_share_app
+
+import com.gondroid.subtrack.resources.settings_community_section
+
+import androidx.compose.material.icons.outlined.Code
+
+import androidx.compose.material.icons.outlined.StarOutline
+
+import androidx.compose.material.icons.outlined.Share
+
+import com.gondroid.subtrack.platform.deviceSummary
+
 import com.gondroid.subtrack.resources.common_error_offline
 
 import com.gondroid.subtrack.core.result.isConnectivity
@@ -134,6 +158,12 @@ fun SettingsScreen(
     val termsUrl = stringResource(Res.string.settings_terms_url)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showLicenses by remember { mutableStateOf(false) }
+    val supportEmail = stringResource(Res.string.settings_support_email)
+    val feedbackBody = stringResource(Res.string.settings_feedback_body, AppInfo.VERSION_NAME, AppInfo.VERSION_CODE, deviceSummary())
+    val shareMessage = stringResource(Res.string.settings_share_app_message, stringResource(Res.string.settings_download_url))
+
+    if (showLicenses) LicensesSheet(onDismiss = { showLicenses = false })
 
     LaunchedEffect(Unit) {
         viewModel.deleteFailed.collect { error ->
@@ -173,8 +203,11 @@ fun SettingsScreen(
         onTerms = { uriHandler.openUri(termsUrl) },
         onDeleteAccount = { showDeleteDialog = true },
         onFeedback = {
-            if (!externalActions.email(feedbackSubject)) messenger.show(Res.string.settings_feedback_no_app)
+            if (!externalActions.email(supportEmail, feedbackSubject, feedbackBody)) messenger.show(Res.string.settings_feedback_no_app)
         },
+        onShareApp = { externalActions.share(shareMessage) },
+        onRateApp = externalActions::openStoreReview,
+        onLicenses = { showLicenses = true },
         modifier = modifier
     )
 }
@@ -188,6 +221,9 @@ private fun SettingsContent(
     onLanguage: (() -> Unit)?,
     onExport: () -> Unit,
     onFeedback: () -> Unit,
+    onShareApp: () -> Unit,
+    onRateApp: () -> Unit,
+    onLicenses: () -> Unit,
     onPrivacy: () -> Unit,
     onTerms: () -> Unit,
     onDeleteAccount: () -> Unit,
@@ -259,11 +295,29 @@ private fun SettingsContent(
             )
         }
 
+        Eyebrow(text = stringResource(Res.string.settings_community_section), modifier = Modifier.padding(top = Spacing.s))
+        SettingsGroup {
+            SettingsRow(
+                Icons.Outlined.Share, AccentGreenBg, AccentGreen,
+                stringResource(Res.string.settings_share_app), onClick = onShareApp
+            )
+            SettingsDivider()
+            SettingsRow(
+                Icons.Outlined.StarOutline, AccentAmberBg, AccentAmber,
+                stringResource(Res.string.settings_rate_app), onClick = onRateApp
+            )
+        }
+
         Eyebrow(text = stringResource(Res.string.profile_support_section), modifier = Modifier.padding(top = Spacing.s))
         SettingsGroup {
             SettingsRow(
                 Icons.Outlined.MailOutline, AccentPurpleBg, AccentPurple,
                 stringResource(Res.string.profile_support_feedback), onClick = onFeedback
+            )
+            SettingsDivider()
+            SettingsRow(
+                Icons.Outlined.Code, Color.White.copy(alpha = 0.06f), TextSecondary,
+                stringResource(Res.string.settings_licenses), onClick = onLicenses
             )
             SettingsDivider()
             SettingsRow(
@@ -340,7 +394,7 @@ private fun SettingsContentPreview() {
     SubTrackTheme {
         SettingsContent(
             onBack = {}, onEditUser = {}, onNotifications = {}, onLanguage = {}, onExport = {}, onFeedback = {},
-            onPrivacy = {}, onTerms = {}, onDeleteAccount = {}
+            onShareApp = {}, onRateApp = {}, onLicenses = {}, onPrivacy = {}, onTerms = {}, onDeleteAccount = {}
         )
     }
 }

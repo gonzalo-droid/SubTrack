@@ -7,7 +7,7 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 ## Alta: antes del primer build para tienda
 
 - [ ] **Login real** — Probar Google + Firestore con una cuenta real en un dispositivo: el usuario aparece en Authentication, sus datos en `users/{uid}`, y "Eliminar cuenta" borra ambos.
-- [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte y borrado de cuenta). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
+- [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte, borrado de cuenta y la redirección `/apps/subtrack/download` que comparte "Compartir la app"). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
 - [ ] **SEC-03** — Crear la llave de subida con el comando de "Publicación" en `CLAUDE.md`, poner `subtrack.signing.*` en `local.properties`, guardar el respaldo y activar Play App Signing.
 
 ### iOS (migración a KMP, 2026-11-26)
@@ -20,7 +20,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Media
 
-- [ ] **AJU-01 / AJU-02 / AJU-03 / AJU-05** — Ajustes (privacidad y términos ya están): licencias, "Compartir la app" (hoja del sistema), "Valorar la app" (`market://details?id=com.gondroid.subtrack`) y contacto con destinatario + versión, modelo y Android en el cuerpo.
 - [ ] **UPD-01 / UPD-02 / UPD-04** — Versión mínima (`minVersionCode`) en un documento de Firestore, pantalla "Actualiza la app" que nunca bloquea sin red, y `schemaVersion` en el perfil `users/{uid}`.
 - [ ] **DOC-02 / DOC-03** — `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (KMP, Compose Multiplatform, Koin, Room KMP, Firebase con puentes Swift).
 - [ ] **GIT-01 / GIT-02 / GIT-08 / PUB-16** — Flujo `release/0.1.0` → `master` con tag `v0.1.0`; borrar las ramas ya unidas en GitHub (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`).
