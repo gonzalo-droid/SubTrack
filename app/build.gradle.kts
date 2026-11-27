@@ -7,7 +7,15 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.roborazzi)
-    alias(libs.plugins.google.services)
+}
+
+// SEC-02: google-services.json is not in git (public repo). Without it the build still runs,
+// but Firebase is not configured and sign-in/sync fail at runtime.
+val hasGoogleServices = file("google-services.json").exists()
+if (hasGoogleServices) {
+    apply(plugin = libs.plugins.google.services.get().pluginId)
+} else {
+    logger.warn("w: app/google-services.json missing: building without Firebase config (download it from the Firebase console, project subtrack-f4dd3)")
 }
 
 // Upload key for Play (SEC-03): kept outside the repo, paths and passwords in local.properties.
@@ -25,13 +33,15 @@ android {
         applicationId = "com.gondroid.subtrack"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = libs.versions.app.versionCode.get().toInt()
+        versionName = libs.versions.app.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+        // The google-services plugin generates this string; without the JSON, Google sign-in gets an empty client id
+        if (!hasGoogleServices) resValue("string", "default_web_client_id", "")
     }
 
     signingConfigs {
@@ -66,6 +76,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = !hasGoogleServices
     }
 
     testOptions {
