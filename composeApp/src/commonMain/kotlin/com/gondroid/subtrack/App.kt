@@ -1,6 +1,10 @@
 package com.gondroid.subtrack
 
 import androidx.compose.foundation.background
+import org.koin.compose.koinInject
+import com.gondroid.subtrack.platform.ExternalActions
+import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,6 +45,30 @@ private fun NavDestination?.isMainRoute(): Boolean =
 /** Root of the UI, shared by every platform's entry point. */
 @Composable
 fun App() {
+    val externalActions = koinInject<ExternalActions>()
+    val systemUriHandler = LocalUriHandler.current
+    val uriHandler = remember(externalActions, systemUriHandler) { OwnPagesUriHandler(externalActions, systemUriHandler) }
+    CompositionLocalProvider(LocalUriHandler provides uriHandler) {
+        AppContent()
+    }
+}
+
+/** LNK-01: our own pages open inside the app; everything else (WhatsApp, stores) goes to the system. */
+private class OwnPagesUriHandler(
+    private val externalActions: ExternalActions,
+    private val system: UriHandler
+) : UriHandler {
+    override fun openUri(uri: String) {
+        if (uri.startsWith(OWN_PAGES)) externalActions.openInAppBrowser(uri) else system.openUri(uri)
+    }
+
+    private companion object {
+        const val OWN_PAGES = "https://nekodojo.app/"
+    }
+}
+
+@Composable
+private fun AppContent() {
     SubTrackTheme {
         val appStateVm: AppStateViewModel = koinViewModel()
         val appState by appStateVm.state.collectAsStateWithLifecycle()

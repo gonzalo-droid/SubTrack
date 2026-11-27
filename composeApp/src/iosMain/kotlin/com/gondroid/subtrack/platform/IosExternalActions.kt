@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.platform
 
+import platform.SafariServices.SFSafariViewController
+
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSCharacterSet
@@ -25,6 +27,12 @@ class IosExternalActions : ExternalActions {
     // The universal link opens WhatsApp when installed and its web page (with the install button) otherwise
     override fun openWhatsApp(phone: String?, message: String): Boolean =
         open("https://wa.me/${phone.orEmpty().removePrefix("+")}?text=${message.encoded()}")
+
+    override fun openInAppBrowser(url: String) {
+        val nsUrl = NSURL.URLWithString(url) ?: return
+        val presenter = topViewController() ?: run { open(url); return }
+        presenter.presentViewController(SFSafariViewController(uRL = nsUrl), animated = true, completion = null)
+    }
 
     override fun share(text: String) = present(listOf(text))
 

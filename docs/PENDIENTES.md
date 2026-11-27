@@ -20,9 +20,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Media
 
-- [ ] **ARQ-03** — Errores tipados (`DataError`) en la capa de datos, para que la UI distinga sin conexión de otros fallos (hoy muestra siempre el mensaje genérico).
-- [ ] **LNK-01** — La política y los términos se abren en el navegador; la base pide WebView para páginas propias. Decidir y anotar.
-- [ ] **ACC-04** — Permitir usar la app sin cuenta (los datos ya son locales), o anotar en `DECISIONES.md` por qué se exige.
 - [ ] **AJU-01 / AJU-02 / AJU-03 / AJU-05** — Ajustes (privacidad y términos ya están): licencias, "Compartir la app" (hoja del sistema), "Valorar la app" (`market://details?id=com.gondroid.subtrack`) y contacto con destinatario + versión, modelo y Android en el cuerpo.
 - [ ] **UPD-01 / UPD-02 / UPD-04** — Versión mínima (`minVersionCode`) en un documento de Firestore, pantalla "Actualiza la app" que nunca bloquea sin red, y `schemaVersion` en el perfil `users/{uid}`.
 - [ ] **DOC-02 / DOC-03** — `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (KMP, Compose Multiplatform, Koin, Room KMP, Firebase con puentes Swift).

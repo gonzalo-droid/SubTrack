@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.platform
 
+import androidx.browser.customtabs.CustomTabsIntent
+
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -18,6 +20,11 @@ class AndroidExternalActions(private val context: Context) : ExternalActions {
         return launch(Intent(Intent.ACTION_VIEW, uri).setPackage(WHATSAPP)) ||
             // WhatsApp not installed: its Play Store page
             launch(Intent(Intent.ACTION_VIEW, "market://details?id=$WHATSAPP".toUri()))
+    }
+
+    override fun openInAppBrowser(url: String) {
+        val intent = CustomTabsIntent.Builder().setShowTitle(true).build().intent.setData(url.toUri())
+        if (!launch(intent)) launch(Intent(Intent.ACTION_VIEW, url.toUri()))
     }
 
     override fun share(text: String) {

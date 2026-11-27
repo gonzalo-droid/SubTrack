@@ -11,6 +11,12 @@ interface ExternalActions {
      */
     fun openWhatsApp(phone: String?, message: String): Boolean
 
+    /**
+     * Opens one of our own pages (privacy, terms) without leaving the app (LNK-01): Custom Tabs on
+     * Android, SFSafariViewController on iOS.
+     */
+    fun openInAppBrowser(url: String)
+
     /** System share sheet with plain text. */
     fun share(text: String)
 
