@@ -1,13 +1,9 @@
-package com.gondroid.subtrack.core.di
+package com.gondroid.subtrack.di
 
-import android.content.Context
-import androidx.room.Room
-import com.gondroid.subtrack.AppStateViewModel
-import com.gondroid.subtrack.core.config.AppEnvironment
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.data.local.LocalStoreSync
 import com.gondroid.subtrack.data.local.SubTrackDatabase
-import com.gondroid.subtrack.data.remote.FirebaseAuthRepository
+import com.gondroid.subtrack.data.remote.AuthRepositoryImpl
 import com.gondroid.subtrack.data.remote.FirestoreSync
 import com.gondroid.subtrack.data.repository.MemberRepositoryImpl
 import com.gondroid.subtrack.data.repository.PaymentRepositoryImpl
@@ -73,47 +69,24 @@ import com.gondroid.subtrack.domain.usecase.template.SaveTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetUserProfileUseCase
 import com.gondroid.subtrack.domain.usecase.user.UpdateUserUseCase
-import com.gondroid.subtrack.feature.createsubscription.CreateSubscriptionViewModel
-import com.gondroid.subtrack.feature.dashboard.DashboardViewModel
-import com.gondroid.subtrack.feature.onboarding.OnboardingViewModel
-import com.gondroid.subtrack.feature.people.PeopleViewModel
-import com.gondroid.subtrack.feature.profile.ProfileViewModel
-import com.gondroid.subtrack.feature.profile.alias.AliasEditViewModel
-import com.gondroid.subtrack.feature.profile.editprofile.EditProfileViewModel
-import com.gondroid.subtrack.feature.profile.referral.ReferralViewModel
-import com.gondroid.subtrack.feature.profile.settings.SettingsViewModel
-import com.gondroid.subtrack.feature.profile.templates.EditTemplateViewModel
-import com.gondroid.subtrack.feature.profile.templates.TemplatesViewModel
-import com.gondroid.subtrack.feature.subscriptiondetail.SubscriptionDetailRouterViewModel
-import com.gondroid.subtrack.feature.subscriptiondetail.admin.AdminDetailViewModel
-import com.gondroid.subtrack.feature.subscriptiondetail.history.MemberHistoryViewModel
-import com.gondroid.subtrack.feature.subscriptiondetail.member.MemberDetailViewModel
-import com.gondroid.subtrack.feature.subscriptionlist.SubscriptionListViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.KoinApplication
-import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-// ARQ-04: Koin in four modules. platformModule holds what needs the Android Context or an Android SDK.
-val platformModule = module {
-    single { Room.databaseBuilder(get<Context>(), SubTrackDatabase::class.java, SubTrackDatabase.NAME).build() }
-    single { get<SubTrackDatabase>().snapshotDao() }
-    single { FirebaseAuth.getInstance() }
-    single { FirebaseFirestore.getInstance() }
-    singleOf(::UserPreferences)
-}
+/**
+ * ARQ-04: Koin in four modules. [platformModule] gives each platform's database, DataStore and
+ * Firebase bridges; data and domain are common; the UI module joins them at the entry point.
+ */
+expect val platformModule: Module
 
 val dataModule = module {
+    single { get<SubTrackDatabase>().snapshotDao() }
+    singleOf(::UserPreferences)
     singleOf(::LocalStoreSync)
     singleOf(::FirestoreSync)
-    singleOf(::FirebaseAuthRepository) { bind<AuthRepository>() }
+    singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
     singleOf(::MemberRepositoryImpl) { bind<MemberRepository>() }
     singleOf(::PaymentRepositoryImpl) { bind<PaymentRepository>() }
     singleOf(::ReferralRepositoryImpl) { bind<ReferralRepository>() }
@@ -172,32 +145,4 @@ val domainModule = module {
     factoryOf(::GetCurrentUserUseCase)
     factoryOf(::GetUserProfileUseCase)
     factoryOf(::UpdateUserUseCase)
-}
-
-val uiModule = module {
-    viewModelOf(::AppStateViewModel)
-    viewModel { (startWithShared: Boolean, editSubscriptionId: String?) -> CreateSubscriptionViewModel(startWithShared, editSubscriptionId, get(), get(), get(), get(), get(), get()) }
-    viewModelOf(::DashboardViewModel)
-    viewModelOf(::OnboardingViewModel)
-    viewModelOf(::PeopleViewModel)
-    viewModelOf(::ProfileViewModel)
-    viewModelOf(::AliasEditViewModel)
-    viewModelOf(::EditProfileViewModel)
-    viewModelOf(::ReferralViewModel)
-    viewModelOf(::SettingsViewModel)
-    viewModel { (templateId: String?) -> EditTemplateViewModel(templateId, get(), get(), get()) }
-    viewModelOf(::TemplatesViewModel)
-    viewModel { (subscriptionId: String) -> SubscriptionDetailRouterViewModel(subscriptionId, get(), get()) }
-    viewModel { (subscriptionId: String) -> AdminDetailViewModel(subscriptionId, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { (subscriptionId: String, memberId: String) -> MemberHistoryViewModel(subscriptionId, memberId, get(), get(), get()) }
-    viewModel { (memberId: String, subscriptionId: String) -> MemberDetailViewModel(memberId, subscriptionId, get(), get(), get(), get()) }
-    viewModelOf(::SubscriptionListViewModel)
-}
-
-fun initKoin(context: Context, isDebug: Boolean): KoinApplication {
-    AppEnvironment.isDebug = isDebug
-    return startKoin {
-        androidContext(context)
-        modules(platformModule, dataModule, domainModule, uiModule)
-    }
 }

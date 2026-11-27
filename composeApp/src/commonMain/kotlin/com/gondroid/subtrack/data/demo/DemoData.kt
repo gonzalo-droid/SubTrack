@@ -15,30 +15,40 @@ import com.gondroid.subtrack.domain.model.enums.ReferralStatus
 import com.gondroid.subtrack.domain.model.enums.SplitType
 import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
-import java.util.Calendar
-import java.util.Locale
+import com.gondroid.subtrack.domain.util.currentTimeMillis
+import com.gondroid.subtrack.domain.util.monthKey
+import com.gondroid.subtrack.domain.util.today
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 
 object DemoData {
 
     // ── Timestamps ──────────────────────────────────────────────────────────
     // Recent history is relative to today (M6): "this month" is always the current month and
     // the payment history covers the last months, so the demo never looks stale.
-    private val now = System.currentTimeMillis()
+    private val now = currentTimeMillis()
 
     /** "yyyy-MM" for [offset] months from the current one (0 = this month, -1 = last month). */
-    private fun monthKey(offset: Int): String {
-        val cal = Calendar.getInstance().apply { add(Calendar.MONTH, offset) }
-        return String.format(Locale.US, "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
+    private fun monthKey(offset: Int): String = firstOfMonth(offset).monthKey()
+
+    private fun firstOfMonth(offset: Int): LocalDate {
+        val today = today()
+        return LocalDate(today.year, today.month, 1).plus(offset, DateTimeUnit.MONTH)
     }
 
     /** Timestamp for [day] of the month [offset] months away, never later than now. */
     private fun dayOf(offset: Int, day: Int): Long {
-        val cal = Calendar.getInstance().apply {
-            add(Calendar.MONTH, offset)
-            set(Calendar.DAY_OF_MONTH, day.coerceAtMost(getActualMaximum(Calendar.DAY_OF_MONTH)))
-            set(Calendar.HOUR_OF_DAY, 12)
-        }
-        return minOf(cal.timeInMillis, now)
+        val first = firstOfMonth(offset)
+        val lastDay = first.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY).day
+        val date = LocalDate(first.year, first.month, day.coerceAtMost(lastDay))
+        val millis = date.atTime(LocalTime(12, 0)).toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+        return minOf(millis, now)
     }
 
     private const val T_2025_01 = 1735689600000L  // 2025-01-01

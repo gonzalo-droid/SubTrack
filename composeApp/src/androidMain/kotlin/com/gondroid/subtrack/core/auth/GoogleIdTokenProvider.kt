@@ -7,6 +7,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.gondroid.subtrack.domain.model.GoogleCredential
 
 /**
  * Shows Google's account picker (Credential Manager) and returns the account's ID token.
@@ -21,14 +22,14 @@ object GoogleIdTokenProvider {
     var webClientId: String = ""
 
     /** Null when the user closed the picker; failure for any other problem. */
-    suspend fun request(activityContext: Context): Result<String?> {
-        if (AuthConfig.useFakeAuth) return Result.success(FAKE_TOKEN)
+    suspend fun request(activityContext: Context): Result<GoogleCredential?> {
+        if (AuthConfig.useFakeAuth) return Result.success(GoogleCredential(FAKE_TOKEN))
         val option = GetSignInWithGoogleOption.Builder(webClientId).build()
         val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
         return try {
             val credential = CredentialManager.create(activityContext).getCredential(activityContext, request).credential
             if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                Result.success(GoogleIdTokenCredential.createFrom(credential.data).idToken)
+                Result.success(GoogleCredential(GoogleIdTokenCredential.createFrom(credential.data).idToken))
             } else {
                 Result.failure(IllegalStateException("Unexpected credential type ${credential.type}"))
             }

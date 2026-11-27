@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.data.repository
 
+import com.gondroid.subtrack.domain.util.currentTimeMillis
+
 import com.gondroid.subtrack.domain.model.Payment
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.PaymentRepository
@@ -22,7 +24,7 @@ class PaymentRepositoryImpl : PaymentRepository {
         proofUrl: String?,
         note: String?
     ): Result<Unit> {
-        val now = System.currentTimeMillis()
+        val now = currentTimeMillis()
         store.value = store.value.map { payment ->
             if (payment.memberId == memberId && payment.monthKey == monthKey) {
                 payment.copy(

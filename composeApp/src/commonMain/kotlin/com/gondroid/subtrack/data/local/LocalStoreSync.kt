@@ -1,12 +1,12 @@
 package com.gondroid.subtrack.data.local
 
 import com.gondroid.subtrack.data.repository.AppStore
-import android.util.Log
-import androidx.annotation.VisibleForTesting
+import com.gondroid.subtrack.core.util.logError
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ class LocalStoreSync(private val dao: SnapshotDao) {
 
     // A failed write (e.g. SQLite error) is logged and skipped instead of crashing the app
     private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> Log.e(TAG, "Persist failed", e) }
+        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> logError(TAG, "Persist failed", e) }
     )
 
     fun start() {
@@ -44,7 +44,6 @@ class LocalStoreSync(private val dao: SnapshotDao) {
     }
 
     /** Stops persisting; the app never calls it (the process ends instead), tests do. */
-    @VisibleForTesting
     fun close() = scope.cancel()
 
     private suspend fun seed() {

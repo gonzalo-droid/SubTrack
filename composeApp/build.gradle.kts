@@ -65,6 +65,12 @@ kotlin {
                 implementation(libs.compose.runtime)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.androidx.datastore.preferences.core)
+                implementation(project.dependencies.platform(libs.koin.bom))
+                implementation(libs.koin.core)
             }
         }
         commonTest.dependencies {
@@ -103,9 +109,6 @@ kotlin {
             implementation(libs.androidx.credentials)
             implementation(libs.androidx.credentials.play.services.auth)
             implementation(libs.googleid)
-            implementation(libs.androidx.datastore.preferences)
-            implementation(libs.room.runtime)
-            implementation(libs.room.ktx)
 
             implementation(libs.coil.compose)
             implementation(libs.zxing.core)
@@ -119,6 +122,8 @@ kotlin {
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.compose)
             implementation(libs.roborazzi.junit.rule)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.test)
         }
     }
 }
@@ -129,6 +134,6 @@ room {
 }
 
 dependencies {
-    add("kspAndroid", libs.room.compiler)
+    listOf("kspAndroid", "kspIosArm64", "kspIosSimulatorArm64").forEach { add(it, libs.room.compiler) }
     add("androidRuntimeClasspath", libs.androidx.compose.ui.tooling)
 }

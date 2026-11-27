@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import com.gondroid.subtrack.domain.model.GoogleCredential
+
 import android.util.Log
 
 import androidx.lifecycle.ViewModel
@@ -100,7 +102,7 @@ class OnboardingViewModel(
 
     // ── Auth ──────────────────────────────────────────────────────────────────
 
-    fun authenticateWithGoogle(idToken: String) = authenticate { authenticateUser.withGoogle(idToken) }
+    fun authenticateWithGoogle(credential: GoogleCredential) = authenticate { authenticateUser.withGoogle(credential) }
 
     /** The account picker failed before reaching Firebase (no Google account, no network...). */
     fun onGoogleSignInFailed() {

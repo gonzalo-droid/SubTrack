@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.domain.model.GoogleCredential
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.auth.DeleteAccountUseCase
@@ -27,11 +29,11 @@ class SettingsViewModel(
 
     suspend fun buildExport(): String = exportSubscriptionsCsv()
 
-    /** [idToken] comes from a fresh Google sign-in (Firebase needs a recent login to delete). */
-    fun deleteAccount(idToken: String) {
+    /** [credential] comes from a fresh Google sign-in (Firebase needs a recent login to delete). */
+    fun deleteAccount(credential: GoogleCredential) {
         viewModelScope.launch {
             _uiState.value = SettingsUiState(isDeletingAccount = true)
-            deleteAccountUseCase(idToken).onFailure { _deleteFailed.send(Unit) }
+            deleteAccountUseCase(credential).onFailure { _deleteFailed.send(Unit) }
             _uiState.value = SettingsUiState()
         }
     }

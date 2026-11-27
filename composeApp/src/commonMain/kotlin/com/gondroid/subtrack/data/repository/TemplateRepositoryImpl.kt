@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.data.repository
 
+import com.gondroid.subtrack.domain.util.currentTimeMillis
+
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.repository.TemplateRepository
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +40,7 @@ class TemplateRepositoryImpl : TemplateRepository {
         val original = store.value.find { it.id == id }
             ?: return Result.failure(Exception("Template not found"))
         val copy = original.copy(
-            id = "tpl_copy_${System.currentTimeMillis()}",
+            id = "tpl_copy_${currentTimeMillis()}",
             name = "Copia de ${original.name}",
             isDefault = false,
             isUserCreated = true
