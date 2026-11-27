@@ -49,7 +49,11 @@ kotlin {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
         androidResources { enable = true }
         // Robolectric renders Compose with the real resources for the screenshot tests
-        withHostTest { isIncludeAndroidResources = true }
+        withHostTest {
+            isIncludeAndroidResources = true
+            // android.util.Log and friends return defaults in plain JVM tests (logError in common code)
+            isReturnDefaultValues = true
+        }
     }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -92,6 +96,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
         }
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)
