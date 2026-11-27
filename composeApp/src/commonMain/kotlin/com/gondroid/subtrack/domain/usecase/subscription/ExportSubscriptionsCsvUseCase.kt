@@ -3,7 +3,7 @@ package com.gondroid.subtrack.domain.usecase.subscription
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.flow.first
-import java.util.Locale
+import com.gondroid.subtrack.domain.util.formatTwoDecimals
 
 /** "Exportar mis datos": every subscription as CSV (one row per subscription). */
 class ExportSubscriptionsCsvUseCase(
@@ -17,7 +17,7 @@ class ExportSubscriptionsCsvUseCase(
             appendLine(
                 listOf(
                     csvField(s.name),
-                    String.format(Locale.US, "%.2f", s.totalAmount),
+                    formatTwoDecimals(s.totalAmount),
                     s.currency,
                     s.cycle.name,
                     s.cutoffDay,

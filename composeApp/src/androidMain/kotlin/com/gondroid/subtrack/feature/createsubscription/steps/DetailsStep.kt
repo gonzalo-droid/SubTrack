@@ -54,7 +54,6 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.semantics.Role
 import com.gondroid.subtrack.domain.util.nextCutoff
-import java.util.Calendar
 
 private val CURRENCIES = listOf("PEN", "USD")
 private val CYCLES = listOf(BillingCycle.MONTHLY, BillingCycle.YEARLY)
@@ -251,8 +250,8 @@ fun DetailsStep(
                     R.string.create_subscription_cutoff_next,
                     stringResource(
                         R.string.date_day_of_month,
-                        next.get(Calendar.DAY_OF_MONTH),
-                        stringArrayResource(R.array.month_names)[next.get(Calendar.MONTH)]
+                        next.day,
+                        stringArrayResource(R.array.month_names)[next.month.ordinal]
                     )
                 ),
                 style = SubTrackType.bodyXS,

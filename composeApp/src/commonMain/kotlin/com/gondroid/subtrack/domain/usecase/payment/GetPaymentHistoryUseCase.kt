@@ -7,7 +7,7 @@ import com.gondroid.subtrack.domain.repository.MemberRepository
 import com.gondroid.subtrack.domain.repository.PaymentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import java.util.Calendar
+import com.gondroid.subtrack.domain.util.recentMonthKeys
 
 class GetPaymentHistoryUseCase(
     private val paymentRepository: PaymentRepository,
@@ -18,7 +18,7 @@ class GetPaymentHistoryUseCase(
             paymentRepository.getPaymentsForSubscription(subscriptionId),
             memberRepository.getMembersForSubscription(subscriptionId)
         ) { payments, activeMembers ->
-            val targetMonthKeys = buildRecentMonthKeys(months)
+            val targetMonthKeys = recentMonthKeys(months)
 
             targetMonthKeys.map { monthKey ->
                 val monthPayments = payments.filter { it.monthKey == monthKey }
@@ -41,13 +41,4 @@ class GetPaymentHistoryUseCase(
                 )
             }
         }
-
-    private fun buildRecentMonthKeys(count: Int): List<String> {
-        val cal = Calendar.getInstance()
-        return (0 until count).map {
-            val key = "%04d-%02d".format(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1)
-            cal.add(Calendar.MONTH, -1)
-            key
-        }.reversed()
-    }
 }

@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.domain.usecase.subscription
 
+import com.gondroid.subtrack.domain.util.currentTimeMillis
+
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 
 class PauseSubscriptionUseCase(
@@ -9,7 +11,7 @@ class PauseSubscriptionUseCase(
         val subscription = repository.getSubscriptionById(id)
             ?: return Result.failure(NoSuchElementException("Subscription $id not found"))
         return repository.updateSubscription(
-            subscription.copy(isPaused = paused, updatedAt = System.currentTimeMillis())
+            subscription.copy(isPaused = paused, updatedAt = currentTimeMillis())
         )
     }
 }

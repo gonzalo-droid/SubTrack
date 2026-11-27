@@ -571,8 +571,8 @@ private fun CutoffPill(cutoffDay: Int) {
     val next = nextCutoff(cutoffDay)
     val dateStr = stringResource(
         R.string.date_day_of_month,
-        next.get(java.util.Calendar.DAY_OF_MONTH),
-        stringArrayResource(R.array.month_names)[next.get(java.util.Calendar.MONTH)]
+        next.day,
+        stringArrayResource(R.array.month_names)[next.month.ordinal]
     )
     val (bg, color, text) = if (daysUntilCutoff(cutoffDay) == 0) {
         Triple(AccentAmberBg, AccentAmber, stringResource(R.string.subscription_detail_cutoff_today, dateStr))

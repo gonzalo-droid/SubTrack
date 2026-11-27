@@ -51,9 +51,25 @@ kotlin {
         withHostTest { isIncludeAndroidResources = true }
     }
 
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
+
     sourceSets {
         commonMain {
             kotlin.srcDir(generateAppInfo)
+            dependencies {
+                implementation(libs.compose.runtime)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
+            }
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)

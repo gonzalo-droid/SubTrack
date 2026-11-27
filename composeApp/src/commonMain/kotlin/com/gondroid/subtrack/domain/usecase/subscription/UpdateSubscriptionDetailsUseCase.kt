@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.domain.usecase.subscription
 
+import com.gondroid.subtrack.domain.util.currentTimeMillis
+
 import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.model.enums.SplitType
@@ -24,7 +26,7 @@ class UpdateSubscriptionDetailsUseCase(
             cycle = cycle,
             cutoffDay = cutoffDay,
             members = rescaleShares(current, totalAmount),
-            updatedAt = System.currentTimeMillis()
+            updatedAt = currentTimeMillis()
         )
         return repository.updateSubscription(updated)
     }

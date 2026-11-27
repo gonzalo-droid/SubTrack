@@ -48,7 +48,6 @@ import com.gondroid.subtrack.domain.usecase.member.RequestExitUseCase
 import com.gondroid.subtrack.domain.usecase.member.RequestGroupExitUseCase
 import com.gondroid.subtrack.domain.usecase.member.SendReminderUseCase
 import com.gondroid.subtrack.domain.usecase.member.UpdateMemberUseCase
-import com.gondroid.subtrack.domain.usecase.onboarding.MarkOnboardingCompleteUseCase
 import com.gondroid.subtrack.domain.usecase.payment.GetPaymentHistoryUseCase
 import com.gondroid.subtrack.domain.usecase.referral.GetRecentReferralsUseCase
 import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
@@ -148,7 +147,6 @@ val domainModule = module {
     factoryOf(::RequestGroupExitUseCase)
     factoryOf(::SendReminderUseCase)
     factoryOf(::UpdateMemberUseCase)
-    factoryOf(::MarkOnboardingCompleteUseCase)
     factoryOf(::GetPaymentHistoryUseCase)
     factoryOf(::GetRecentReferralsUseCase)
     factoryOf(::GetReferralInfoUseCase)
