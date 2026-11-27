@@ -1,0 +1,9 @@
+#!/bin/sh
+# CI-01: run unit tests and lint before every push. Enable once per clone with:
+#   git config core.hooksPath .githooks
+# Skip in an emergency with: git push --no-verify
+cd "$(git rev-parse --show-toplevel)" || exit 1
+./gradlew check --quiet || {
+  echo "pre-push: ./gradlew check failed, push cancelled" >&2
+  exit 1
+}
