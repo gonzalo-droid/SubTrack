@@ -1,3 +1,5 @@
+> **Histórico:** describe el proyecto antes de la migración a Kotlin Multiplatform (un módulo `:app`, Hilt). La estructura y el stack actuales están en `CLAUDE.md` y `docs/plans/2026-11-26-kmp-migration.md`.
+
 # SCAFFOLDING.md — SubTrack
 
 Estructura inicial del proyecto: paquetes, navegación, pantallas vacías y dependencias. Este archivo define el **esqueleto** antes de implementar features reales.

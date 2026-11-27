@@ -23,5 +23,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "SubTrack"
-include(":app")
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+include(":androidApp")
+include(":composeApp")
  
