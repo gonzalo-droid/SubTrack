@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.createsubscription.steps
 
+import androidx.compose.foundation.layout.BoxWithConstraints
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.common_cancel
 import com.gondroid.subtrack.resources.common_confirm
@@ -160,11 +162,13 @@ fun ServiceStep(
         )
         Spacer(Modifier.height(Spacing.l))
 
-        // 3-column grid using FlowRow
+        // TIE-04: 3 columns on a phone, more on a tablet (tiles at least 104 dp wide) instead of huge tiles
+        BoxWithConstraints {
+        val columns = (maxWidth / 112.dp).toInt().coerceAtLeast(3)
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(Spacing.s),
             verticalArrangement = Arrangement.spacedBy(Spacing.s),
-            maxItemsInEachRow = 3
+            maxItemsInEachRow = columns
         ) {
             services.forEach { service ->
                 ServiceTile(
@@ -186,12 +190,13 @@ fun ServiceStep(
             )
             // Fill remaining cells in last row (maintain grid alignment)
             val totalItems = services.size + 1
-            val remainder = totalItems % 3
+            val remainder = totalItems % columns
             if (remainder != 0) {
-                repeat(3 - remainder) {
+                repeat(columns - remainder) {
                     Box(modifier = Modifier.weight(1f))
                 }
             }
+        }
         }
 
         Spacer(Modifier.height(Spacing.xl))
