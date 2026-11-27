@@ -1,5 +1,29 @@
 package com.gondroid.subtrack.core.designsystem.components.avatar
 
+import com.gondroid.subtrack.core.designsystem.theme.AccentGreenDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentCyanDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentBlueDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPinkDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPink
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentGreen
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentCyan
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentBlue
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentAmberDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
+
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -7,27 +31,27 @@ import kotlin.math.abs
 
 private val gradients = listOf(
     Brush.linearGradient(
-        colors = listOf(Color(0xFF0A84FF), Color(0xFF0040CC)),
+        colors = listOf(AccentBlue, AccentBlueDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
     Brush.linearGradient(
-        colors = listOf(Color(0xFFBF5AF2), Color(0xFF7B2FBE)),
+        colors = listOf(AccentPurple, AccentPurpleDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
     Brush.linearGradient(
-        colors = listOf(Color(0xFF32D74B), Color(0xFF1A7A28)),
+        colors = listOf(AccentGreen, AccentGreenDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
     Brush.linearGradient(
-        colors = listOf(Color(0xFFFFB340), Color(0xFFCC7A00)),
+        colors = listOf(AccentAmber, AccentAmberDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
     Brush.linearGradient(
-        colors = listOf(Color(0xFFFF375F), Color(0xFFCC0035)),
+        colors = listOf(AccentPink, AccentPinkDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
     Brush.linearGradient(
-        colors = listOf(Color(0xFF64D2FF), Color(0xFF0090CC)),
+        colors = listOf(AccentCyan, AccentCyanDark),
         start = Offset(0f, 0f), end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
     ),
 )

@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.data.remote
 
-import com.gondroid.subtrack.core.util.logError
 import com.gondroid.subtrack.data.local.PaymentEntity
 import com.gondroid.subtrack.data.local.TemplateEntity
 import com.gondroid.subtrack.data.local.UserAliasEntity
@@ -12,13 +11,9 @@ import com.gondroid.subtrack.data.repository.AppStore
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.platform.RemoteDocuments
 import com.gondroid.subtrack.platform.RemoteWrite
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -32,11 +27,8 @@ import kotlinx.coroutines.launch
  * shortcut: pulls only at sign-in, no live listener; enough for one device per account,
  * add snapshot listeners when the same account is used on several devices.
  */
-class FirestoreSync(private val remote: RemoteDocuments) {
+class FirestoreSync(private val remote: RemoteDocuments, private val scope: CoroutineScope) {
 
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> logError(TAG, "Firestore sync failed", e) }
-    )
     private var mirrorJob: Job? = null
 
     /**
@@ -156,6 +148,8 @@ class FirestoreSync(private val remote: RemoteDocuments) {
     }
 
     private fun profileDoc(): Map<String, Any?> = mapOf(
+        // UPD-04: new fields stay optional; an incompatible change bumps this and the min version (config/app)
+        SCHEMA_VERSION to CURRENT_SCHEMA_VERSION,
         PROFILE to AppStore.currentUser.value?.toEntity()?.toFirestore(),
         ALIAS to AppStore.userAlias.value.toEntity().toFirestore()
     )
@@ -171,13 +165,14 @@ class FirestoreSync(private val remote: RemoteDocuments) {
     private fun userDoc(uid: String) = "$USERS/$uid"
 
     private companion object {
-        const val TAG = "FirestoreSync"
         const val USERS = "users"
         const val SUBSCRIPTIONS = "subscriptions"
         const val PAYMENTS = "payments"
         const val TEMPLATES = "templates"
         const val PROFILE = "profile"
         const val ALIAS = "alias"
+        const val SCHEMA_VERSION = "schemaVersion"
+        const val CURRENT_SCHEMA_VERSION = 1
         const val MAX_BATCH_WRITES = 450 // Firestore allows 500 writes per batch
     }
 }

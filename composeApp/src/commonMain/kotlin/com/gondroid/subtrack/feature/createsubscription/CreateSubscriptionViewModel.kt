@@ -66,6 +66,7 @@ class CreateSubscriptionViewModel(
     val uiState: StateFlow<CreateSubscriptionUiState> = _uiState.asStateFlow()
 
     val popularServices: List<ServiceTemplate> = getPopularServices()
+    val otherService: ServiceTemplate = getPopularServices.other()
 
     val totalSteps: StateFlow<Int> = _form
         .map { wizardSteps(it.shared, it.isEditing).size }

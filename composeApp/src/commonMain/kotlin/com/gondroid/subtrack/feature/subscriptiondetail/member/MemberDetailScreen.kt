@@ -1,25 +1,13 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.member
 
+import com.gondroid.subtrack.core.util.asMoney
+
 import com.gondroid.subtrack.platform.ExternalActions
-
 import org.koin.compose.koinInject
-
 import com.gondroid.subtrack.core.util.monthYear
-
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
-
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.common_back
-import com.gondroid.subtrack.resources.common_cancel
 import com.gondroid.subtrack.resources.common_error_generic
-import com.gondroid.subtrack.resources.member_action_exit_confirm
-import com.gondroid.subtrack.resources.member_action_exit_desc
-import com.gondroid.subtrack.resources.member_action_exit_title
-import com.gondroid.subtrack.resources.member_action_mark_paid_confirm
-import com.gondroid.subtrack.resources.member_action_mark_paid_desc
-import com.gondroid.subtrack.resources.member_action_mark_paid_note_label
-import com.gondroid.subtrack.resources.member_action_mark_paid_note_placeholder
-import com.gondroid.subtrack.resources.member_action_mark_paid_title
 import com.gondroid.subtrack.resources.member_detail_admin_section
 import com.gondroid.subtrack.resources.member_detail_contact_admin
 import com.gondroid.subtrack.resources.member_detail_cycle_monthly
@@ -39,10 +27,8 @@ import com.gondroid.subtrack.resources.member_detail_plan_cycle
 import com.gondroid.subtrack.resources.member_detail_plan_section
 import com.gondroid.subtrack.resources.member_detail_stats_section
 import com.gondroid.subtrack.resources.member_detail_status_section
-
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -58,7 +44,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Warning
@@ -71,13 +56,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.SolidColor
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -85,7 +67,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gondroid.subtrack.core.designsystem.components.avatar.Avatar
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
-import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
 import com.gondroid.subtrack.core.designsystem.components.text.AmountDisplay
 import com.gondroid.subtrack.core.designsystem.components.text.AmountSize
@@ -98,7 +79,6 @@ import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
 import com.gondroid.subtrack.core.designsystem.theme.BgSheet
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
-import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
@@ -190,7 +170,7 @@ fun MemberDetailScreen(
 }
 
 @Composable
-private fun MemberDetailContent(
+internal fun MemberDetailContent(
     view: MemberSubscriptionView,
     recentPayments: List<Payment>,
     onBack: () -> Unit,
@@ -307,7 +287,7 @@ private fun MemberDetailContent(
                 ) {
                     Column {
                         Text(
-                            "S/ " + formatTwoDecimals(view.myShareAmount),
+                            view.myShareAmount.asMoney(),
                             style = SubTrackType.headlineL,
                             color = when (view.myCurrentStatus) {
                                 PaymentStatus.PAID -> AccentGreen
@@ -484,126 +464,9 @@ private fun MemberDetailContent(
     }
 }
 
-@Composable
-private fun SectionCard(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(SubTrackShapes.l)
-            .background(BgSurface)
-            .border(1.dp, BorderDefault, SubTrackShapes.l)
-            .padding(Spacing.m)
-    ) {
-        content()
-    }
-}
-
-@Composable
-private fun PlanInfoRow(label: String) {
-    Text(label, style = SubTrackType.bodyXS, color = TextSecondary)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MarkAsPaidSheetContent(
-    shareAmount: Double,
-    adminName: String,
-    onConfirm: (String?) -> Unit,
-    onCancel: () -> Unit
-) {
-    var note by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(Spacing.base)
-            .padding(bottom = Spacing.xl)
-    ) {
-        Text(stringResource(Res.string.member_action_mark_paid_title), style = SubTrackType.headlineL, color = TextPrimary)
-        Spacer(Modifier.height(Spacing.xs))
-        Text(
-            stringResource(Res.string.member_action_mark_paid_desc, formatTwoDecimals(shareAmount), adminName),
-            style = SubTrackType.bodyS,
-            color = TextSecondary
-        )
-        Spacer(Modifier.height(Spacing.m))
-        Eyebrow(text = stringResource(Res.string.member_action_mark_paid_note_label))
-        Spacer(Modifier.height(Spacing.xs))
-        BasicTextField(
-            value = note,
-            onValueChange = { note = it },
-            textStyle = SubTrackType.bodyS.copy(color = TextPrimary),
-            cursorBrush = SolidColor(AccentGreen),
-            singleLine = true,
-            decorationBox = { inner ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(SubTrackShapes.m)
-                        .background(BgSurfaceEl)
-                        .border(1.dp, BorderDefault, SubTrackShapes.m)
-                        .padding(Spacing.m)
-                ) {
-                    if (note.isEmpty()) {
-                        Text(stringResource(Res.string.member_action_mark_paid_note_placeholder),
-                            style = SubTrackType.bodyS, color = TextTertiary)
-                    }
-                    inner()
-                }
-            }
-        )
-        Spacer(Modifier.height(Spacing.m))
-        PrimaryButton(
-            text = stringResource(Res.string.member_action_mark_paid_confirm),
-            onClick = { onConfirm(note.ifBlank { null }) },
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-private fun RequestExitSheetContent(
-    serviceName: String,
-    onConfirm: () -> Unit,
-    onCancel: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(Spacing.base)
-            .padding(bottom = Spacing.xl)
-    ) {
-        Text(stringResource(Res.string.member_action_exit_title), style = SubTrackType.headlineL, color = TextPrimary)
-        Spacer(Modifier.height(Spacing.xs))
-        Text(
-            stringResource(Res.string.member_action_exit_desc, serviceName),
-            style = SubTrackType.bodyS,
-            color = TextSecondary
-        )
-        Spacer(Modifier.height(Spacing.m))
-        PrimaryButton(
-            text = stringResource(Res.string.member_action_exit_confirm),
-            onClick = onConfirm,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(Spacing.s))
-        Text(
-            stringResource(Res.string.common_cancel),
-            style = SubTrackType.bodyS,
-            color = TextSecondary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onCancel)
-                .padding(vertical = Spacing.s),
-        )
-    }
-}
-
 @Preview(showBackground = true, backgroundColor = 0xFF050506)
 @Composable
-private fun MemberDetailPreview() {
+internal fun MemberDetailPreview() {
     SubTrackTheme {
         MemberDetailContent(
             view = MemberSubscriptionView(

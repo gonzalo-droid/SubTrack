@@ -1,5 +1,13 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import com.gondroid.subtrack.core.result.onSuccess
+
+import com.gondroid.subtrack.core.result.onFailure
+
+import com.gondroid.subtrack.core.result.DataError
+
+import com.gondroid.subtrack.core.result.AppResult
+
 import com.gondroid.subtrack.platform.notificationsNeedPermission
 
 import com.gondroid.subtrack.domain.util.randomId
@@ -42,8 +50,8 @@ sealed interface AuthState {
     data object Idle : AuthState
     data object Authenticating : AuthState
     data class Authenticated(val user: User) : AuthState
-    /** The UI shows the generic error from strings.xml; the cause goes to the log. */
-    data object Error : AuthState
+    /** The UI explains [error] (no connection or generic); the cause goes to the log. */
+    data class Error(val error: DataError) : AuthState
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -110,10 +118,10 @@ class OnboardingViewModel(
 
     /** The account picker failed before reaching Firebase (no Google account, no network...). */
     fun onGoogleSignInFailed() {
-        _authState.value = AuthState.Error
+        _authState.value = AuthState.Error(DataError.Unknown("Google sign-in failed"))
     }
 
-    private fun authenticate(block: suspend () -> Result<User>) {
+    private fun authenticate(block: suspend () -> AppResult<User>) {
         viewModelScope.launch {
             _authState.value = AuthState.Authenticating
             block()
@@ -122,8 +130,8 @@ class OnboardingViewModel(
                     _currentStep.value = OnboardingStep.FIRST_SUBSCRIPTION
                 }
                 .onFailure { error ->
-                    logError(TAG, "Sign-in failed", error)
-                    _authState.value = AuthState.Error
+                    logError(TAG, "Sign-in failed: $error")
+                    _authState.value = AuthState.Error(error)
                 }
         }
     }

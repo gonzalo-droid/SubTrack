@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import com.gondroid.subtrack.resources.onboarding_notif_preview_time
+
 import com.gondroid.subtrack.platform.rememberNotificationPermissionRequest
 
 import org.jetbrains.compose.resources.StringResource
@@ -221,7 +223,7 @@ private fun NotifPreviewCard(textRes: StringResource, alpha: Float) {
                 Text("SubTrack", style = SubTrackType.monoXS.copy(
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 ), color = TextPrimary.copy(alpha = alpha))
-                Text("ahora", style = SubTrackType.monoXS, color = TextTertiary.copy(alpha = alpha))
+                Text(stringResource(Res.string.onboarding_notif_preview_time), style = SubTrackType.monoXS, color = TextTertiary.copy(alpha = alpha))
             }
             Text(
                 stringResource(textRes),

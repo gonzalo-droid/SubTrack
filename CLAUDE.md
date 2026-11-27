@@ -107,6 +107,13 @@ Cuando recibas una tarea:
    - Versión: `./gradlew check` falla si `iosApp/Configuration/Config.xcconfig` no repite la de `libs.versions.toml` (VER-02)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
+## Ramas y versiones (GIT-01 a GIT-08)
+
+- `master`: solo versiones publicadas, con tag `vX.Y.Z` en cada merge desde una `release/…`. Sin PRs directos.
+- `release/X.Y.Z`: candidata a tienda, creada desde `master`; su primer commit sube la versión en `libs.versions.toml` y en `iosApp/Configuration/Config.xcconfig`. Todos los PRs apuntan a la release abierta (hoy `release/0.1.0`). Al publicar: merge normal a `master`, tag `vX.Y.Z` y fecha en `CHANGELOG.md`.
+- `feature/…`, `fix/…`, `chore/…`: desde la release abierta, con PR a ella; se borran al unirlas.
+- `hotfix/…`: desde `master` hacia una `release/X.Y.(Z+1)` nueva.
+
 ## Publicación (firma y respaldos)
 
 - **Llave de subida** (SEC-03): vive fuera del repo, en `~/.config/subtrack-signing/upload.jks`, alias `upload`. Se creó una sola vez con:

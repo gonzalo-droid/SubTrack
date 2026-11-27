@@ -45,10 +45,10 @@ Sistema de diseño de la app. **Fuente de verdad única**: todo color, tipograf�
 |---|---|---|
 | `accent_green` | `#32D74B` | Éxito, pagado, admin, CTA positivo |
 | `accent_amber` | `#FFB340` | Atención, pendiente, Pro, advertencia |
-| `accent_red` | `#FF453A` | Error, vencido, destructivo |
-| `accent_blue` | `#0A84FF` | Links, info, miembro, neutral |
-| `accent_purple` | `#BF5AF2` | Secondary, personal |
-| `accent_pink` | `#FF375F` | Alertas especiales |
+| `accent_red` | `#FF6961` | Error, vencido, destructivo |
+| `accent_blue` | `#409CFF` | Links, info, miembro, neutral |
+| `accent_purple` | `#DA8FFF` | Secondary, personal |
+| `accent_pink` | `#FF6482` | Alertas especiales |
 | `accent_cyan` | `#64D2FF` | Decorativo |
 
 ### Fondos tintados (para secciones/tarjetas de color)
@@ -59,9 +59,9 @@ Cada acento tiene su variante tintada (con 12% alpha aprox) para fondos de cards
 |---|---|
 | `accent_green_bg` | `rgba(50, 215, 75, 0.12)` — fondo de tags "Pagado", "Admin" |
 | `accent_amber_bg` | `rgba(255, 179, 64, 0.12)` — fondo de tags "Pendiente", "Pro" |
-| `accent_red_bg` | `rgba(255, 69, 58, 0.12)` — fondo de tags "Vencido" |
-| `accent_blue_bg` | `rgba(10, 132, 255, 0.12)` — fondo de tags "Miembro", insights |
-| `accent_purple_bg` | `rgba(191, 90, 242, 0.12)` |
+| `accent_red_bg` | `rgba(255, 105, 97, 0.12)` — fondo de tags "Vencido" |
+| `accent_blue_bg` | `rgba(64, 156, 255, 0.12)` — fondo de tags "Miembro", insights |
+| `accent_purple_bg` | `rgba(218, 143, 255, 0.12)` |
 
 ## Tipografía
 
@@ -261,3 +261,11 @@ Al implementar pantallas, **comparar con los mockups HTML** en `/mockups/`:
 - `07_onboarding.html` — Flujo de onboarding de 7 pantallas
 
 Los mockups son la fuente de verdad visual. Si algo es ambiguo, preguntar antes de interpretar.
+## Tokens agregados en la migración a KMP (2026-11-27)
+
+- **Contraste:** rojo, azul, morado y rosa pasaron a las variantes de alto contraste de Apple para modo oscuro, para cumplir AA (4.5:1) sobre todas las superficies. `ContrastTest` (`composeApp/src/commonTest`) lo verifica.
+- **Paradas de degradado** (nunca solas): `AccentAmberDeep #FF9500`, `AccentAmberDark #CC7A00`, `AccentPinkDark #CC0035`, `AccentPurpleDark #7B2FBE`, `AccentPurpleDeep #7048E8`, `AccentGreenDeep #1FA838`, `AccentGreenDark #1A7A28`, `AccentBlueDark #0040CC`, `AccentCyanDark #0090CC`; tarjeta oscura de Perfil `CardGradientTop #1A1A1A` → `CardGradientBottom #0F0F0F`.
+- **Marcas usadas como UI:** `BrandWhatsApp #25D366`, `BrandWhatsAppDark #128C7E`, `BrandWhatsAppBubble #1FAD4E`, `BrandGoogleText #202124`, `BrandYape #6B2A86`, `BrandPlin #00B5E2`, `BrandNetflix`, `BrandSpotify`, `BrandOpenAI`, `BrandHbo` (ilustración del onboarding). Los colores de logo de cada servicio siguen como datos en `ServiceLogoRegistry`.
+- **Ilustración del onboarding:** `IllustrationCoral #FF6B6B`, `IllustrationCoralDark #C92A2A`, `IllustrationYellow #FFD93D`, `IllustrationOrange #F08C00`.
+
+Todos viven en `core/designsystem/theme/Color.kt`; ningún archivo de `feature/` usa `Color(0x…)` directo.

@@ -1,0 +1,33 @@
+# README screenshots (readme-format). Maestro flow: run with docs/screenshots/capture.sh on the Android emulator.
+# Debug build, fakeAuth (demo data), English, demo-mode status bar. Output: docs/screenshots/NN-*.png
+appId: com.gondroid.subtrack
+---
+- launchApp:
+    clearState: true
+    arguments:
+      fakeAuth: true
+- extendedWaitUntil:
+    visible: "Skip"
+    timeout: 90000
+- takeScreenshot: docs/screenshots/01-onboarding
+- tapOn: "Skip"
+- tapOn: "Continue with Google"
+- extendedWaitUntil:
+    visible: "Skip"
+    timeout: 15000
+- tapOn: "Skip"
+- tapOn: "Go to home"
+- extendedWaitUntil:
+    visible: "Subscriptions"
+    timeout: 30000
+- takeScreenshot: docs/screenshots/02-home
+- tapOn: "Subscriptions"
+- takeScreenshot: docs/screenshots/03-subscriptions
+- tapOn: "Netflix Premium"
+- takeScreenshot: docs/screenshots/04-detail
+- back
+- tapOn: "People"
+- takeScreenshot: docs/screenshots/05-people
+- tapOn: "Subscriptions"
+- tapOn: "Create subscription"
+- takeScreenshot: docs/screenshots/06-create

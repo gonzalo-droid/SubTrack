@@ -1,5 +1,15 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandSpotify
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandOpenAI
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandNetflix
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandHbo
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentCyan
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.onboarding_next
 import com.gondroid.subtrack.resources.onboarding_tracker_desc_bold
@@ -61,10 +71,10 @@ private data class OrbitCard(
 )
 
 private val ORBIT_CARDS = listOf(
-    OrbitCard("N", Color(0xFFE50914), "Netflix", "S/ 54.90", 0),
-    OrbitCard("S", Color(0xFF1DB954), "Spotify", "S/ 26.90", 500),
-    OrbitCard("G", Color(0xFF10A37F), "ChatGPT", "S/ 74.90", 1000),
-    OrbitCard("H", Color(0xFF9A1FD4), "HBO Max", "S/ 39.90", 1500),
+    OrbitCard("N", BrandNetflix, "Netflix", "S/ 54.90", 0),
+    OrbitCard("S", BrandSpotify, "Spotify", "S/ 26.90", 500),
+    OrbitCard("G", BrandOpenAI, "ChatGPT", "S/ 74.90", 1000),
+    OrbitCard("H", BrandHbo, "HBO Max", "S/ 39.90", 1500),
 )
 
 @Composable
@@ -110,7 +120,7 @@ private fun TrackerVisual() {
                 .size(80.dp)
                 .shadow(24.dp, SubTrackShapes.xxl, spotColor = AccentBlue.copy(alpha = 0.4f))
                 .clip(SubTrackShapes.xxl)
-                .background(Brush.linearGradient(listOf(Color(0xFF0A84FF), Color(0xFF64D2FF))))
+                .background(Brush.linearGradient(listOf(AccentBlue, AccentCyan)))
         ) {
             Icon(Icons.Outlined.List, null, tint = Color.White, modifier = Modifier.size(32.dp))
         }

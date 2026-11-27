@@ -11,14 +11,26 @@ interface ExternalActions {
      */
     fun openWhatsApp(phone: String?, message: String): Boolean
 
+    /**
+     * Opens one of our own pages (privacy, terms) without leaving the app (LNK-01): Custom Tabs on
+     * Android, SFSafariViewController on iOS.
+     */
+    fun openInAppBrowser(url: String)
+
     /** System share sheet with plain text. */
     fun share(text: String)
 
     /** Shares [content] as a file attachment named [fileName] (e.g. the CSV export). */
     fun shareFile(fileName: String, mimeType: String, content: String, chooserTitle: String)
 
-    /** Opens the mail app with [subject]; false when there is none. */
-    fun email(subject: String): Boolean
+    /** Opens the mail app to [to] with [subject] and [body]; false when there is none. */
+    fun email(to: String, subject: String, body: String): Boolean
+
+    /** The app's store page, to update it (UPD-02). */
+    fun openStorePage()
+
+    /** The app's store page, ready to write a review (AJU-05). */
+    fun openStoreReview()
 
     /** This app's notification settings (or its settings page where there is none). */
     fun openNotificationSettings()

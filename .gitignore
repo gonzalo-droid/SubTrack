@@ -29,3 +29,8 @@ xcuserdata/
 *.xcuserstate
 /iosApp/build/
 DerivedData/
+
+# Store and marketing material (SEC-05): generated images live outside git
+/docs/capturas/
+/store-screenshots/
+/marketing/

@@ -21,6 +21,14 @@
     <string name="common_cancel">Cancel</string>
     <string name="common_confirm">Confirm</string>
     <string name="common_loading">Loading…</string>
+    <string name="update_required_title">Update SubTrack</string>
+    <string name="update_required_body">This version no longer works with your cloud data. Update the app to keep using it; your subscriptions are safe.</string>
+    <string name="update_required_cta">Go to the store</string>
+    <string name="onboarding_notif_preview_time">now</string>
+    <string name="template_yours_tag">· yours</string>
+    <string name="template_emoji_picker_title">Pick an emoji</string>
+    <string name="common_amount_per_month">%1$s/mo</string>
+    <string name="common_error_offline">No connection. Check your internet and try again.</string>
     <string name="common_error_generic">Something went wrong. Please try again.</string>
 
     <!-- Dashboard — header -->
@@ -322,6 +330,14 @@
     <string name="settings_export_desc">Share your subscriptions as CSV</string>
     <string name="settings_export_chooser">Export subscriptions</string>
     <string name="settings_export_file_name">subtrack.csv</string>
+    <string name="settings_community_section">Community</string>
+    <string name="settings_share_app">Share the app</string>
+    <string name="settings_share_app_message">I use SubTrack to see what I spend on subscriptions and collect my share of the shared ones over WhatsApp, without the awkwardness. It might help you too: %1$s</string>
+    <string name="settings_rate_app">Rate the app</string>
+    <string name="settings_licenses">Open source licenses</string>
+    <string name="settings_feedback_body">\n\n—\nSubTrack %1$s (%2$s)\n%3$s</string>
+    <string name="settings_download_url">https://nekodojo.app/en/apps/subtrack/download</string>
+    <string name="settings_support_email">gonzalo.lozg@gmail.com</string>
     <string name="settings_feedback_subject">SubTrack %1$s · feedback</string>
     <string name="settings_feedback_no_app">No email app is installed</string>
     <string name="settings_version">Version</string>

@@ -1,5 +1,6 @@
 package com.gondroid.subtrack.platform
 
+import com.gondroid.subtrack.core.result.DataError
 import com.gondroid.subtrack.data.remote.toJsonElement
 import com.gondroid.subtrack.data.remote.toPlain
 import com.gondroid.subtrack.domain.model.GoogleCredential
@@ -17,6 +18,13 @@ import kotlin.coroutines.resumeWithException
 private val json = Json { ignoreUnknownKeys = true }
 
 class NativeBridgeException(message: String) : Exception(message)
+
+/** Swift marks connectivity errors with "network:" (NativeBridges.swift); the rest are unclassified. */
+private fun bridgeFailure(message: String): Throwable =
+    if (message.startsWith(NETWORK_PREFIX)) RemoteFailure(DataError.Network, NativeBridgeException(message.removePrefix(NETWORK_PREFIX)))
+    else NativeBridgeException(message)
+
+private const val NETWORK_PREFIX = "network:"
 
 /** [RemoteDocuments] over the Swift Firestore bridge. */
 class IosRemoteDocuments(private val bridge: FirestoreNativeBridge) : RemoteDocuments {
@@ -85,12 +93,12 @@ class IosAuthBridge(private val bridge: AuthNativeBridge) : AuthBridge {
 private suspend fun awaitJson(call: ((String?, String?) -> Unit) -> Unit): String? =
     suspendCancellableCoroutine { cont ->
         call { body, error ->
-            if (error != null) cont.resumeWithException(NativeBridgeException(error)) else cont.resume(body)
+            if (error != null) cont.resumeWithException(bridgeFailure(error)) else cont.resume(body)
         }
     }
 
 private suspend fun awaitUnit(call: ((String?) -> Unit) -> Unit): Unit =
     suspendCancellableCoroutine { cont ->
-        call { error -> if (error != null) cont.resumeWithException(NativeBridgeException(error)) else cont.resume(Unit) }
+        call { error -> if (error != null) cont.resumeWithException(bridgeFailure(error)) else cont.resume(Unit) }
     }
 

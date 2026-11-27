@@ -1,5 +1,15 @@
 package com.gondroid.subtrack.di
 
+import com.gondroid.subtrack.core.config.createAppScope
+
+import com.gondroid.subtrack.core.config.APP_SCOPE
+
+import com.gondroid.subtrack.domain.usecase.app.IsUpdateRequiredUseCase
+
+import com.gondroid.subtrack.domain.repository.AppConfigRepository
+
+import com.gondroid.subtrack.data.remote.AppConfigRepositoryImpl
+
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.data.local.LocalStoreSync
 import com.gondroid.subtrack.data.local.SubTrackDatabase
@@ -103,9 +113,11 @@ expect val platformModule: Module
 val dataModule = module {
     single { get<SubTrackDatabase>().snapshotDao() }
     singleOf(::UserPreferences)
-    singleOf(::LocalStoreSync)
-    singleOf(::FirestoreSync)
+    single(APP_SCOPE) { createAppScope() }
+    single { LocalStoreSync(get(), get(APP_SCOPE)) }
+    single { FirestoreSync(get(), get(APP_SCOPE)) }
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
+    singleOf(::AppConfigRepositoryImpl) { bind<AppConfigRepository>() }
     singleOf(::MemberRepositoryImpl) { bind<MemberRepository>() }
     singleOf(::PaymentRepositoryImpl) { bind<PaymentRepository>() }
     singleOf(::ReferralRepositoryImpl) { bind<ReferralRepository>() }
@@ -117,6 +129,7 @@ val dataModule = module {
 }
 
 val domainModule = module {
+    factoryOf(::IsUpdateRequiredUseCase)
     factoryOf(::GetUserAliasUseCase)
     factoryOf(::UpdateUserAliasUseCase)
     factoryOf(::AuthenticateUserUseCase)
@@ -180,7 +193,7 @@ val uiModule = module {
     viewModel { (templateId: String?) -> EditTemplateViewModel(templateId, get(), get(), get()) }
     viewModelOf(::TemplatesViewModel)
     viewModel { (subscriptionId: String) -> SubscriptionDetailRouterViewModel(subscriptionId, get(), get()) }
-    viewModel { (subscriptionId: String) -> AdminDetailViewModel(subscriptionId, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { (subscriptionId: String) -> AdminDetailViewModel(subscriptionId, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
     viewModel { (subscriptionId: String, memberId: String) -> MemberHistoryViewModel(subscriptionId, memberId, get(), get(), get()) }
     viewModel { (memberId: String, subscriptionId: String) -> MemberDetailViewModel(memberId, subscriptionId, get(), get(), get(), get()) }
     viewModelOf(::SubscriptionListViewModel)

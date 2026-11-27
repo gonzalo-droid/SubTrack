@@ -21,6 +21,14 @@
     <string name="common_cancel">Cancelar</string>
     <string name="common_confirm">Confirmar</string>
     <string name="common_loading">Cargando…</string>
+    <string name="update_required_title">Actualiza SubTrack</string>
+    <string name="update_required_body">Esta versión ya no es compatible con tus datos en la nube. Actualiza la app para seguir usándola; tus suscripciones están a salvo.</string>
+    <string name="update_required_cta">Ir a la tienda</string>
+    <string name="onboarding_notif_preview_time">ahora</string>
+    <string name="template_yours_tag">· tuya</string>
+    <string name="template_emoji_picker_title">Elige un emoji</string>
+    <string name="common_amount_per_month">%1$s/mes</string>
+    <string name="common_error_offline">Sin conexión. Revisa tu internet e inténtalo de nuevo.</string>
     <string name="common_error_generic">Algo salió mal. Intenta de nuevo.</string>
 
     <!-- Dashboard — header -->
@@ -334,6 +342,14 @@
     <string name="settings_export_desc">Comparte tus suscripciones en CSV</string>
     <string name="settings_export_chooser">Exportar suscripciones</string>
     <string name="settings_export_file_name">subtrack.csv</string>
+    <string name="settings_community_section">Comunidad</string>
+    <string name="settings_share_app">Compartir la app</string>
+    <string name="settings_share_app_message">Uso SubTrack para ver cuánto gasto en suscripciones y cobrar mi parte de las compartidas por WhatsApp, sin incomodar. Te puede servir: %1$s</string>
+    <string name="settings_rate_app">Valorar la app</string>
+    <string name="settings_licenses">Licencias de código abierto</string>
+    <string name="settings_feedback_body">\n\n—\nSubTrack %1$s (%2$s)\n%3$s</string>
+    <string name="settings_download_url">https://nekodojo.app/apps/subtrack/download</string>
+    <string name="settings_support_email">gonzalo.lozg@gmail.com</string>
     <string name="settings_feedback_subject">SubTrack %1$s · comentarios</string>
     <string name="settings_feedback_no_app">No hay una app de correo instalada</string>
     <string name="settings_version">Versión</string>

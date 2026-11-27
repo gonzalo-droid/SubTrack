@@ -1,8 +1,9 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.components
 
+import com.gondroid.subtrack.core.util.asMoney
+
 import com.gondroid.subtrack.core.util.dayMonthYear
 
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
 
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.member_history_paid_on
@@ -65,7 +66,7 @@ fun PaymentHistoryRow(payment: Payment, modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Spacing.s)
         ) {
-            Text("S/ " + formatTwoDecimals(payment.amount), style = SubTrackType.monoS, color = TextSecondary)
+            Text(payment.amount.asMoney(), style = SubTrackType.monoS, color = TextSecondary)
             StatusPill(status = payment.status)
         }
     }

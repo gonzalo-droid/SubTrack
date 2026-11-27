@@ -1,14 +1,15 @@
 package com.gondroid.subtrack.data.local
 
+import kotlinx.coroutines.plus
+
+import kotlinx.coroutines.Job
+
 import com.gondroid.subtrack.data.repository.AppStore
-import com.gondroid.subtrack.core.util.logError
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
@@ -20,12 +21,11 @@ import kotlinx.coroutines.runBlocking
  * it from the database at startup (seeding the demo data on a debug first run) and writes every
  * later change back, row by row.
  */
-class LocalStoreSync(private val dao: SnapshotDao) {
+class LocalStoreSync(private val dao: SnapshotDao, appScope: CoroutineScope) {
 
-    // A failed write (e.g. SQLite error) is logged and skipped instead of crashing the app
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> logError(TAG, "Persist failed", e) }
-    )
+    // Child of the app scope, so close() (tests) stops only this sync; failures are logged by the app scope
+    private val job = SupervisorJob(appScope.coroutineContext[Job])
+    private val scope = appScope + job
 
     fun start() {
         // Blocking on purpose: the first screen must read persisted data, not the demo seed.
@@ -44,7 +44,7 @@ class LocalStoreSync(private val dao: SnapshotDao) {
     }
 
     /** Stops persisting; the app never calls it (the process ends instead), tests do. */
-    fun close() = scope.cancel()
+    fun close() = job.cancel()
 
     private suspend fun seed() {
         val subs = AppStore.subscriptions.value
@@ -87,9 +87,5 @@ class LocalStoreSync(private val dao: SnapshotDao) {
     private fun <T> persist(flow: Flow<T>, write: suspend (T) -> Unit) {
         // UNDISPATCHED: subscribe right now, so a change made before the IO thread starts isn't lost
         scope.launch(start = CoroutineStart.UNDISPATCHED) { flow.drop(1).collect { write(it) } }
-    }
-
-    private companion object {
-        const val TAG = "LocalStoreSync"
     }
 }
