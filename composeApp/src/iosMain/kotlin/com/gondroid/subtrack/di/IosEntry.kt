@@ -22,7 +22,7 @@ fun startSubTrack(
 ) {
     // Kotlin/Native only writes uncaught errors to stderr; NSLog puts them in the system log before the abort
     setUnhandledExceptionHook { error ->
-        NSLog("SubTrack: uncaught Kotlin exception: %@", error.stackTraceToString())
+        NSLog("SubTrack: uncaught Kotlin exception: ${error.stackTraceToString()}".replace("%", "%%"))
         terminateWithUnhandledException(error)
     }
     val koin = initKoinIos(firestore, auth, googleSignIn, isDebug).koin

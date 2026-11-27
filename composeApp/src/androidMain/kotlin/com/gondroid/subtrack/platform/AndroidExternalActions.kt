@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.platform
 
+import androidx.browser.customtabs.CustomTabsIntent
+
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -20,6 +22,11 @@ class AndroidExternalActions(private val context: Context) : ExternalActions {
             launch(Intent(Intent.ACTION_VIEW, "market://details?id=$WHATSAPP".toUri()))
     }
 
+    override fun openInAppBrowser(url: String) {
+        val intent = CustomTabsIntent.Builder().setShowTitle(true).build().intent.setData(url.toUri())
+        if (!launch(intent)) launch(Intent(Intent.ACTION_VIEW, url.toUri()))
+    }
+
     override fun share(text: String) {
         val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
         launch(Intent.createChooser(send, null))
@@ -38,8 +45,24 @@ class AndroidExternalActions(private val context: Context) : ExternalActions {
         launch(Intent.createChooser(send, chooserTitle))
     }
 
-    override fun email(subject: String): Boolean =
-        launch(Intent(Intent.ACTION_SENDTO, "mailto:".toUri()).putExtra(Intent.EXTRA_SUBJECT, subject))
+    override fun email(to: String, subject: String, body: String): Boolean {
+        // TRP-07: Gmail ignores an encoded recipient in the URI, so it also goes in EXTRA_EMAIL
+        val intent = Intent(Intent.ACTION_SENDTO, "mailto:$to".toUri()).apply {
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+        return launch(intent)
+    }
+
+    override fun openStorePage() = openStoreReview()
+
+    override fun openStoreReview() {
+        val pkg = context.packageName
+        if (!launch(Intent(Intent.ACTION_VIEW, "market://details?id=$pkg".toUri()))) {
+            launch(Intent(Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$pkg".toUri()))
+        }
+    }
 
     override fun openNotificationSettings() {
         val opened = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&

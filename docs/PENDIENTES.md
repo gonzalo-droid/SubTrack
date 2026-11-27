@@ -7,8 +7,10 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 ## Alta: antes del primer build para tienda
 
 - [ ] **Login real** — Probar Google + Firestore con una cuenta real en un dispositivo: el usuario aparece en Authentication, sus datos en `users/{uid}`, y "Eliminar cuenta" borra ambos.
-- [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte y borrado de cuenta). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
+- [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte, borrado de cuenta y la redirección `/apps/subtrack/download` que comparte "Compartir la app"). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
 - [ ] **SEC-03** — Crear la llave de subida con el comando de "Publicación" en `CLAUDE.md`, poner `subtrack.signing.*` en `local.properties`, guardar el respaldo y activar Play App Signing.
+
+- [ ] **Versión mínima (UPD-01)** — Desplegar `firestore.rules` (`firebase deploy --only firestore:rules`) y crear en la consola el documento `config/app` con `minVersionCode` (Android) y `minVersionIos` en `1`. Subirlos fuerza a actualizar a quien tenga una versión menor.
 
 ### iOS (migración a KMP, 2026-11-26)
 
@@ -20,27 +22,14 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Media
 
-- [ ] **ARQ-03** — Errores tipados (`DataError`) en la capa de datos, para que la UI distinga sin conexión de otros fallos (hoy muestra siempre el mensaje genérico).
-- [ ] **LNK-01** — La política y los términos se abren en el navegador; la base pide WebView para páginas propias. Decidir y anotar.
-- [ ] **ACC-04** — Permitir usar la app sin cuenta (los datos ya son locales), o anotar en `DECISIONES.md` por qué se exige.
-- [ ] **AJU-01 / AJU-02 / AJU-03 / AJU-05** — Ajustes (privacidad y términos ya están): licencias, "Compartir la app" (hoja del sistema), "Valorar la app" (`market://details?id=com.gondroid.subtrack`) y contacto con destinatario + versión, modelo y Android en el cuerpo.
-- [ ] **UPD-01 / UPD-02 / UPD-04** — Versión mínima (`minVersionCode`) en un documento de Firestore, pantalla "Actualiza la app" que nunca bloquea sin red, y `schemaVersion` en el perfil `users/{uid}`.
-- [ ] **DOC-02 / DOC-03** — `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (KMP, Compose Multiplatform, Koin, Room KMP, Firebase con puentes Swift).
-- [ ] **GIT-01 / GIT-02 / GIT-08 / PUB-16** — Flujo `release/0.1.0` → `master` con tag `v0.1.0`; borrar las ramas ya unidas en GitHub (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`).
-- [ ] **COD-02 / TST-06** — `ContrastTest` (4.5:1 texto, 3:1 elementos) y los 66 colores fijos de `feature/` pasados a tokens.
+- [ ] **Titular del copyright** — `README.md` (sección License) tiene un TODO: decidir si el titular es una persona o Nekodojo; recién ahí crear el archivo `LICENSE`.
+- [ ] **GIT-01 / GIT-08 / PUB-16** — Al publicar la 0.1.0: merge de `release/0.1.0` a `master`, tag `v0.1.0` y fecha en el CHANGELOG. Borrar en GitHub las ramas ya unidas (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`, `feature/kmp`).
 
 ## Baja
 
-- [ ] **TST-05** — Tests de ViewModel con Turbine en `commonTest` (empezar por `OnboardingViewModel` y `CreateSubscriptionViewModel`).
-- [ ] **TST-01 / TST-02** — Pasar a `commonTest` los tests de dominio y mappers que siguen en `androidHostTest` (usan `runBlocking`, `java.lang.reflect.Proxy` y nombres con espacios, que Kotlin/Native no acepta).
-- [ ] **Logos cruzados** — `ic_service_appletv.xml` tiene el trazado de Apple Music y el de Apple Music no es el suyo (ya pasaba antes de la migración): volver a bajarlos de Simple Icons.
-- [ ] **TIE-04** — En tablet, la grilla de servicios del asistente dibuja celdas cuadradas enormes y los servicios quedan fuera de la pantalla.
-- [ ] **COD-05** — Separar en archivos las secciones de las pantallas de más de 300 líneas (empezar por `DashboardScreen.kt`, 1004).
-- [ ] **ARQ-01 / ARQ-02 / ARQ-05** — `UiState` + `StateFlow` en Settings, Profile, Referral y SubscriptionDetailRouter; catálogo de servicios por caso de uso; un `@ApplicationScope` de Hilt compartido.
-- [ ] **COD-01 / A11Y-02 / I18N-02** — Literales y `contentDescription` (`STIconButton.kt:105-126`) a `strings.xml`; formateo de montos centralizado y testeado.
-- [ ] **PERF-01** — Medir tamaño del AAB y arranque en frío antes del primer release.
-- [ ] **DOC-04 / SEC-05** — Capturas de tienda (`store-screenshots`) y regla en `.gitignore` para el material de marketing.
-- [ ] **TST-07** — Preparar `MigrationTestHelper` antes de la versión 2 de la base de datos.
+- [ ] **COD-05** — Las secciones ya están en archivos propios; quedan largas las funciones de contenido de `AdminDetailScreen.kt` (575), `MemberDetailScreen.kt` (490) y `EditTemplateScreen.kt` (417): partirlas exige separar estado de layout, no solo mover código.
+- [ ] **PERF-01 (iOS)** — Medir el `.ipa` de Release y el arranque en un iPhone real; Android 0.1.0 ya está en `docs/RENDIMIENTO.md`.
+- [ ] **DOC-04** — Capturas de tienda con la skill `store-screenshots` al preparar la ficha (después de Sign in with Apple y el ícono de iOS, que cambian la UI). La regla de `.gitignore` (SEC-05) ya está.
 
 ## Antes de activar una función planeada
 

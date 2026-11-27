@@ -135,7 +135,8 @@ fun FirstSubscriptionScreen(
 
         // Service grid
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            // TIE-04: 3 columns on a phone, more on a tablet instead of huge tiles
+            columns = GridCells.Adaptive(minSize = 104.dp),
             horizontalArrangement = Arrangement.spacedBy(Spacing.s),
             verticalArrangement = Arrangement.spacedBy(Spacing.s),
             modifier = Modifier.weight(1f)

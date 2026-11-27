@@ -1,5 +1,15 @@
 package com.gondroid.subtrack
 
+import kotlinx.coroutines.flow.onStart
+
+import kotlinx.coroutines.flow.flow
+
+import kotlinx.coroutines.flow.combine
+
+import com.gondroid.subtrack.domain.usecase.app.IsUpdateRequiredUseCase
+
+import com.gondroid.subtrack.core.config.AppInfo
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.core.preferences.UserPreferences
@@ -16,16 +26,25 @@ sealed interface AppReadyState {
     data object Loading : AppReadyState
     data object ShowOnboarding : AppReadyState
     data object ShowMain : AppReadyState
+    /** The installed build is below the remote minimum (UPD-02): only the store can fix it. */
+    data object UpdateRequired : AppReadyState
 }
 
 class AppStateViewModel(
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    isUpdateRequired: IsUpdateRequiredUseCase
 ) : ViewModel() {
 
-    val state: StateFlow<AppReadyState> = userPreferences.onboardingCompleted
-        .map { completed ->
-            if (completed) AppReadyState.ShowMain else AppReadyState.ShowOnboarding
+    // Checked in the background: the app shows right away and only switches if the build is too old
+    private val updateRequired = flow { emit(isUpdateRequired(AppInfo.VERSION_CODE)) }.onStart { emit(false) }
+
+    val state: StateFlow<AppReadyState> = combine(userPreferences.onboardingCompleted, updateRequired) { completed, outdated ->
+        when {
+            outdated -> AppReadyState.UpdateRequired
+            completed -> AppReadyState.ShowMain
+            else -> AppReadyState.ShowOnboarding
         }
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

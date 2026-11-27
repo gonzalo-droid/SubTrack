@@ -1,8 +1,11 @@
 package com.gondroid.subtrack.feature.people
 
+import com.gondroid.subtrack.resources.common_amount_per_month
+
+import com.gondroid.subtrack.core.util.asMoney
+
 import com.gondroid.subtrack.core.util.monthYear
 
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
 
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.people_detail_archived_label
@@ -143,7 +146,7 @@ private fun PersonDetailContent(person: PersonSummary) {
             }
             PersonStatItem(
                 label = stringResource(Res.string.people_detail_monthly),
-                value = "S/ ${formatTwoDecimals(person.totalMonthlyContribution)}"
+                value = person.totalMonthlyContribution.asMoney()
             )
             Box(modifier = Modifier.height(32.dp).width(1.dp).background(BorderDefault))
             PersonStatItem(
@@ -210,7 +213,7 @@ private fun ParticipationRow(participation: SubscriptionParticipation) {
         Column(modifier = Modifier.weight(1f)) {
             Text(participation.subscriptionName, style = SubTrackType.titleL, color = TextPrimary)
             Text(
-                "S/ ${formatTwoDecimals(participation.shareAmount)}/mes",
+                stringResource(Res.string.common_amount_per_month, participation.shareAmount.asMoney()),
                 style = SubTrackType.monoXS,
                 color = TextTertiary
             )

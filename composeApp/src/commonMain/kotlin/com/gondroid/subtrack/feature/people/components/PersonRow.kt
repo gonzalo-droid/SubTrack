@@ -1,6 +1,7 @@
 package com.gondroid.subtrack.feature.people.components
 
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
+import com.gondroid.subtrack.core.util.asMoney
+
 
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.people_has_app_tag
@@ -111,7 +112,7 @@ fun PersonRow(
                 Badge(text = stringResource(Res.string.subscription_paused_tag), variant = BadgeVariant.NEUTRAL)
             } else if (person.totalDebt > 0) {
                 Text(
-                    text = "S/ ${formatTwoDecimals(person.totalDebt)}",
+                    text = person.totalDebt.asMoney(),
                     style = SubTrackType.monoS,
                     color = com.gondroid.subtrack.core.designsystem.theme.AccentRed
                 )
@@ -122,7 +123,7 @@ fun PersonRow(
                 )
             } else {
                 Text(
-                    text = "S/ ${formatTwoDecimals(person.totalMonthlyContribution)}",
+                    text = person.totalMonthlyContribution.asMoney(),
                     style = SubTrackType.monoS,
                     color = TextPrimary
                 )

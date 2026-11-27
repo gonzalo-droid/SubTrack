@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.core.result.onFailure
+
+import com.gondroid.subtrack.core.result.DataError
+
 import com.gondroid.subtrack.domain.model.GoogleCredential
 
 import androidx.lifecycle.ViewModel
@@ -23,7 +27,7 @@ class SettingsViewModel(
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    private val _deleteFailed = Channel<Unit>(Channel.BUFFERED)
+    private val _deleteFailed = Channel<DataError>(Channel.BUFFERED)
     /** Emits when the deletion failed; on success the app goes back to the onboarding by itself. */
     val deleteFailed = _deleteFailed.receiveAsFlow()
 
@@ -33,12 +37,12 @@ class SettingsViewModel(
     fun deleteAccount(credential: GoogleCredential) {
         viewModelScope.launch {
             _uiState.value = SettingsUiState(isDeletingAccount = true)
-            deleteAccountUseCase(credential).onFailure { _deleteFailed.send(Unit) }
+            deleteAccountUseCase(credential).onFailure { _deleteFailed.send(it) }
             _uiState.value = SettingsUiState()
         }
     }
 
     fun onReauthFailed() {
-        viewModelScope.launch { _deleteFailed.send(Unit) }
+        viewModelScope.launch { _deleteFailed.send(DataError.Unknown("Google re-authentication failed")) }
     }
 }

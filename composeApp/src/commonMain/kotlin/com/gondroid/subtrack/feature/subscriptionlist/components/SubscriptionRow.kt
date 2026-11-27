@@ -1,6 +1,7 @@
 package com.gondroid.subtrack.feature.subscriptionlist.components
 
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
+import com.gondroid.subtrack.core.util.asMoney
+
 
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.subscription_list_tag_admin
@@ -123,7 +124,7 @@ fun SubscriptionRow(
 
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = "S/ ${formatTwoDecimals(subscription.totalAmount)}",
+                text = subscription.totalAmount.asMoney(),
                 style = SubTrackType.monoS,
                 color = TextPrimary
             )

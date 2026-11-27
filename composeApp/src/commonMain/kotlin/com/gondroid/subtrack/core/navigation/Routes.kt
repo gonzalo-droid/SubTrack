@@ -3,8 +3,6 @@ package com.gondroid.subtrack.core.navigation
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
-    @Serializable data object Onboarding : Route
-    @Serializable data object Auth : Route
 
     @Serializable data object Dashboard : Route
     @Serializable data object SubscriptionList : Route

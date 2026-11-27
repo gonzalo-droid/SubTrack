@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.createsubscription.steps
 
+import com.gondroid.subtrack.core.util.asMoney
+
 import kotlin.math.roundToInt
 
 import com.gondroid.subtrack.domain.util.formatTwoDecimals
@@ -132,10 +134,10 @@ fun SplitStep(
                     Spacer(Modifier.height(Spacing.m))
                     val equalShare = if (peopleCount > 0) totalAmount / peopleCount else 0.0
                     members.forEachIndexed { index, member ->
-                        SplitMemberRow(name = member.name, amount = "S/ " + formatTwoDecimals(equalShare))
+                        SplitMemberRow(name = member.name, amount = equalShare.asMoney())
                         if (index < members.lastIndex) Spacer(Modifier.height(Spacing.s))
                     }
-                    SplitMemberRow(name = stringResource(Res.string.create_subscription_split_you), amount = "S/ " + formatTwoDecimals(equalShare))
+                    SplitMemberRow(name = stringResource(Res.string.create_subscription_split_you), amount = equalShare.asMoney())
                 }
             }
         }
@@ -171,7 +173,7 @@ fun SplitStep(
                                 Text(member.name, style = SubTrackType.bodyS, color = TextPrimary, modifier = Modifier.weight(1f))
                                 Text("${pct.roundToInt()}%", style = SubTrackType.monoS, color = AccentGreen)
                                 Spacer(Modifier.width(Spacing.s))
-                                Text("S/ " + formatTwoDecimals(totalAmount * pct / 100.0), style = SubTrackType.monoXS, color = TextTertiary)
+                                Text((totalAmount * pct / 100.0).asMoney(), style = SubTrackType.monoXS, color = TextTertiary)
                             }
                             Slider(
                                 value = pct.toFloat(),
@@ -188,7 +190,7 @@ fun SplitStep(
                     }
                     SplitMemberRow(
                         name = stringResource(Res.string.create_subscription_split_you),
-                        amount = "${adminPct.roundToInt()}% · S/ ${formatTwoDecimals(totalAmount * adminPct / 100.0)}"
+                        amount = "${adminPct.roundToInt()}% · ${(totalAmount * adminPct / 100.0).asMoney()}"
                     )
                 }
             }
@@ -253,7 +255,7 @@ fun SplitStep(
                     Spacer(Modifier.height(Spacing.s))
                     SplitMemberRow(
                         name = stringResource(Res.string.create_subscription_split_you),
-                        amount = "S/ " + formatTwoDecimals(adminAmount)
+                        amount = adminAmount.asMoney()
                     )
                     // Amber warning if sum doesn't match
                     if (abs(diff) > 0.01 && membersSum > 0) {

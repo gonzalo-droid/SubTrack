@@ -31,6 +31,18 @@ Formato: fecha, decisión, por qué, y qué la haría cambiar.
 - **Decisión:** `IPHONEOS_DEPLOYMENT_TARGET = 16.0`.
 - **Por qué:** abrir los ajustes de notificaciones de la app (`UIApplicationOpenNotificationSettingsURLString`) necesita iOS 16, y la app aún no tiene usuarios en versiones anteriores.
 
+## 2026-11-27 — Páginas propias en el navegador de la app (LNK-01)
+
+- **Decisión:** privacidad y términos (`https://nekodojo.app/…`) se abren con Custom Tabs en Android y `SFSafariViewController` en iOS, sin salir de la app; WhatsApp y las tiendas siguen yendo a la app del sistema. Lo decide `OwnPagesUriHandler` en `App.kt`.
+- **Por qué:** cumple la intención de la regla (no sacar al usuario de la app) sin mantener un WebView propio ni su política de enlaces.
+- **Cambiaría si:** hace falta interactuar con la página desde la app (por ejemplo, un formulario de borrado de cuenta embebido).
+
+## 2026-11-27 — Cuenta obligatoria (ACC-04)
+
+- **Decisión:** la app sigue pidiendo iniciar sesión con Google en el onboarding; no hay modo sin cuenta.
+- **Por qué:** la cobranza compartida (miembros con app, solicitudes de salida) y el respaldo en Firestore dependen de una cuenta; un modo local duplicaría el flujo y el soporte de migración de datos.
+- **Cambiaría si:** las métricas muestran abandono en el paso de login, o la app se usa sobre todo para suscripciones personales.
+
 ## 2026-11-26 — Koin en vez de Hilt (ARQ-04)
 
 - **Decisión:** se reemplazó Hilt por Koin 4.2 como primer paso de la migración a KMP (`docs/plans/2026-11-26-kmp-migration.md`).

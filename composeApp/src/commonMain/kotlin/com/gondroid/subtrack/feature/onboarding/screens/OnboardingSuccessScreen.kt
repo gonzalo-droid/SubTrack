@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import com.gondroid.subtrack.core.designsystem.theme.AccentGreenDeep
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.onboarding_success_add_another
 import com.gondroid.subtrack.resources.onboarding_success_add_another_desc
@@ -189,7 +191,7 @@ private fun SuccessHero() {
                 .graphicsLayer { scaleX = scale; scaleY = scale }
                 .shadow(24.dp, SubTrackShapes.xxl, spotColor = AccentGreen.copy(alpha = 0.45f))
                 .clip(SubTrackShapes.xxl)
-                .background(Brush.linearGradient(listOf(AccentGreen, Color(0xFF1FA838))))
+                .background(Brush.linearGradient(listOf(AccentGreen, AccentGreenDeep)))
         ) {
             Icon(Icons.Outlined.Check, null, tint = Color.Black, modifier = Modifier.size(40.dp))
         }

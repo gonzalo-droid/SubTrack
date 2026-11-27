@@ -1,5 +1,23 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsAppDark
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPurpleDeep
+
+import com.gondroid.subtrack.core.designsystem.theme.IllustrationYellow
+
+import com.gondroid.subtrack.core.designsystem.theme.IllustrationOrange
+
+import com.gondroid.subtrack.core.designsystem.theme.IllustrationCoralDark
+
+import com.gondroid.subtrack.core.designsystem.theme.IllustrationCoral
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsApp
+
+import com.gondroid.subtrack.core.designsystem.theme.BgApp
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentPurple
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.onboarding_next
 import com.gondroid.subtrack.resources.onboarding_share_bubble
@@ -63,9 +81,9 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import kotlinx.coroutines.delay
 
 private val MEMBER_COLORS = listOf(
-    Brush.linearGradient(listOf(Color(0xFFFF6B6B), Color(0xFFC92A2A))),
-    Brush.linearGradient(listOf(Color(0xFFFFD93D), Color(0xFFF08C00))),
-    Brush.linearGradient(listOf(Color(0xFFBF5AF2), Color(0xFF7048E8)))
+    Brush.linearGradient(listOf(IllustrationCoral, IllustrationCoralDark)),
+    Brush.linearGradient(listOf(IllustrationYellow, IllustrationOrange)),
+    Brush.linearGradient(listOf(AccentPurple, AccentPurpleDeep))
 )
 private val MEMBER_INITIALS = listOf("M", "C", "S")
 
@@ -125,8 +143,8 @@ private fun ShareVisual() {
         Box(
             modifier = Modifier
                 .clip(SubTrackShapes.l)
-                .background(Brush.linearGradient(listOf(Color(0xFF25D366), Color(0xFF128C7E))))
-                .shadow(16.dp, SubTrackShapes.l, spotColor = Color(0xFF25D366).copy(alpha = 0.3f))
+                .background(Brush.linearGradient(listOf(BrandWhatsApp, BrandWhatsAppDark)))
+                .shadow(16.dp, SubTrackShapes.l, spotColor = BrandWhatsApp.copy(alpha = 0.3f))
                 .padding(horizontal = Spacing.m, vertical = Spacing.s)
         ) {
             Text(
@@ -155,7 +173,7 @@ private fun ShareVisual() {
                         .size(44.dp)
                         .clip(SubTrackShapes.circle)
                         .background(MEMBER_COLORS[i])
-                        .border(3.dp, Color(0xFF0A0A0C), SubTrackShapes.circle)
+                        .border(3.dp, BgApp, SubTrackShapes.circle)
                 ) {
                     Text(initial, style = SubTrackType.titleL, color = Color.White)
                 }

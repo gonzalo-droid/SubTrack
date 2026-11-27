@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.createsubscription.steps
 
+import androidx.compose.foundation.layout.BoxWithConstraints
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.common_cancel
 import com.gondroid.subtrack.resources.common_confirm
@@ -75,6 +77,7 @@ private val PRESET_COLORS = listOf("#E50914", "#1DB954", "#0A84FF", "#BF5AF2", "
 @Composable
 fun ServiceStep(
     services: List<ServiceTemplate>,
+    otherService: ServiceTemplate,
     selectedService: ServiceTemplate?,
     customServiceName: String,
     onSelectService: (ServiceTemplate) -> Unit,
@@ -121,7 +124,7 @@ fun ServiceStep(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    onSelectService(ServiceTemplates.other.copy(brandColor = dialogColor))
+                    onSelectService(otherService.copy(brandColor = dialogColor))
                     onUpdateCustomName(dialogName)
                     onUpdateCustomColor(dialogColor)
                     showCustomDialog = false
@@ -160,11 +163,13 @@ fun ServiceStep(
         )
         Spacer(Modifier.height(Spacing.l))
 
-        // 3-column grid using FlowRow
+        // TIE-04: 3 columns on a phone, more on a tablet (tiles at least 104 dp wide) instead of huge tiles
+        BoxWithConstraints {
+        val columns = (maxWidth / 112.dp).toInt().coerceAtLeast(3)
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(Spacing.s),
             verticalArrangement = Arrangement.spacedBy(Spacing.s),
-            maxItemsInEachRow = 3
+            maxItemsInEachRow = columns
         ) {
             services.forEach { service ->
                 ServiceTile(
@@ -186,12 +191,13 @@ fun ServiceStep(
             )
             // Fill remaining cells in last row (maintain grid alignment)
             val totalItems = services.size + 1
-            val remainder = totalItems % 3
+            val remainder = totalItems % columns
             if (remainder != 0) {
-                repeat(3 - remainder) {
+                repeat(columns - remainder) {
                     Box(modifier = Modifier.weight(1f))
                 }
             }
+        }
         }
 
         Spacer(Modifier.height(Spacing.xl))
@@ -285,6 +291,7 @@ private fun ServiceStepPreview() {
     SubTrackTheme {
         ServiceStep(
             services = ServiceTemplates.popular,
+            otherService = ServiceTemplates.other,
             selectedService = ServiceTemplates.popular[0],
             customServiceName = "",
             onSelectService = {},

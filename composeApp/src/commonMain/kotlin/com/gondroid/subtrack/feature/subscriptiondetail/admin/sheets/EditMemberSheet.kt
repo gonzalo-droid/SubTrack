@@ -1,8 +1,11 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets
 
+import com.gondroid.subtrack.core.util.asMoney
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsApp
+
 import com.gondroid.subtrack.domain.util.currentTimeMillis
 
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
 
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.member_sheet_edit_action_data
@@ -125,7 +128,7 @@ fun EditMemberSheet(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 StatItem(
-                    value = if (hasPendingDebt) "S/ ${formatTwoDecimals(member.shareAmount)}" else "—",
+                    value = if (hasPendingDebt) member.shareAmount.asMoney() else "—",
                     label = "Debe",
                     valueColor = if (hasPendingDebt) AccentAmber else TextTertiary
                 )
@@ -139,8 +142,8 @@ fun EditMemberSheet(
             // Actions
             ActionRow(
                 icon = CustomIcons.WhatsApp,
-                iconColor = Color(0xFF25D366),
-                iconBg = Color(0xFF25D366).copy(alpha = 0.12f),
+                iconColor = BrandWhatsApp,
+                iconBg = BrandWhatsApp.copy(alpha = 0.12f),
                 title = stringResource(Res.string.member_sheet_edit_action_remind),
                 subtitle = stringResource(Res.string.member_sheet_edit_action_remind_sub),
                 onClick = onSendReminder
