@@ -24,6 +24,10 @@
     <string name="update_required_title">Actualiza SubTrack</string>
     <string name="update_required_body">Esta versión ya no es compatible con tus datos en la nube. Actualiza la app para seguir usándola; tus suscripciones están a salvo.</string>
     <string name="update_required_cta">Ir a la tienda</string>
+    <string name="onboarding_notif_preview_time">ahora</string>
+    <string name="template_yours_tag">· tuya</string>
+    <string name="template_emoji_picker_title">Elige un emoji</string>
+    <string name="common_amount_per_month">%1$s/mes</string>
     <string name="common_error_offline">Sin conexión. Revisa tu internet e inténtalo de nuevo.</string>
     <string name="common_error_generic">Algo salió mal. Intenta de nuevo.</string>
 

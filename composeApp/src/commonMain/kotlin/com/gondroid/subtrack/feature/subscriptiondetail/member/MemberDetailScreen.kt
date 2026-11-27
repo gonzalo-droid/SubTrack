@@ -1,9 +1,10 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.member
 
+import com.gondroid.subtrack.core.util.asMoney
+
 import com.gondroid.subtrack.platform.ExternalActions
 import org.koin.compose.koinInject
 import com.gondroid.subtrack.core.util.monthYear
-import com.gondroid.subtrack.domain.util.formatTwoDecimals
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.common_back
 import com.gondroid.subtrack.resources.common_error_generic
@@ -286,7 +287,7 @@ internal fun MemberDetailContent(
                 ) {
                     Column {
                         Text(
-                            "S/ " + formatTwoDecimals(view.myShareAmount),
+                            view.myShareAmount.asMoney(),
                             style = SubTrackType.headlineL,
                             color = when (view.myCurrentStatus) {
                                 PaymentStatus.PAID -> AccentGreen

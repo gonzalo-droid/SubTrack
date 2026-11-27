@@ -2,6 +2,12 @@
 
 package com.gondroid.subtrack.feature.profile.templates
 
+import com.gondroid.subtrack.resources.template_emoji_picker_title
+
+import com.gondroid.subtrack.resources.Res
+
+import org.jetbrains.compose.resources.stringResource
+
 import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsAppBubble
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -170,7 +176,7 @@ internal fun EmojiPickerSheetContent(
                 .background(Color.White.copy(alpha = 0.15f))
                 .align(Alignment.CenterHorizontally)
         )
-        Text("Elige un emoji", style = SubTrackType.headlineS, color = TextPrimary)
+        Text(stringResource(Res.string.template_emoji_picker_title), style = SubTrackType.headlineS, color = TextPrimary)
         Spacer(Modifier.height(Spacing.m))
         LazyVerticalGrid(
             columns = GridCells.Fixed(6),

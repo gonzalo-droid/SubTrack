@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.templates
 
+import com.gondroid.subtrack.resources.template_yours_tag
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.template_action_delete
 import com.gondroid.subtrack.resources.template_action_delete_disabled
@@ -130,7 +132,7 @@ fun TemplateCard(
             Text(template.tone.displayName, style = SubTrackType.monoXS, color = TextTertiary)
             if (template.isUserCreated) {
                 Spacer(Modifier.width(Spacing.s))
-                Text("· tuya", style = SubTrackType.monoXS, color = TextTertiary)
+                Text(stringResource(Res.string.template_yours_tag), style = SubTrackType.monoXS, color = TextTertiary)
             }
         }
     }

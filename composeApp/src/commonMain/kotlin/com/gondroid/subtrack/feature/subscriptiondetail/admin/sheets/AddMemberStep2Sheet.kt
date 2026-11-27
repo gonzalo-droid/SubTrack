@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets
 
+import com.gondroid.subtrack.core.util.asMoney
+
 import com.gondroid.subtrack.domain.util.formatTwoDecimals
 
 import com.gondroid.subtrack.resources.Res
@@ -132,7 +134,7 @@ fun AddMemberStep2Sheet(
                 )
                 Spacer(Modifier.height(Spacing.xs))
                 Text(
-                    text = "S/ ${formatTwoDecimals(shareAmount)}",
+                    text = shareAmount.asMoney(),
                     style = SubTrackType.displayM,
                     color = AccentGreen
                 )
@@ -164,24 +166,24 @@ fun AddMemberStep2Sheet(
             ) {
                 MathRow(
                     label = stringResource(Res.string.member_sheet_add_math_total, subscriptionName),
-                    value = "S/ ${formatTwoDecimals(subscriptionTotal)}",
+                    value = subscriptionTotal.asMoney(),
                     valueColor = TextPrimary
                 )
                 MathRow(
                     label = stringResource(Res.string.member_sheet_add_math_current),
-                    value = "S/ ${formatTwoDecimals(currentMembersTotal)}",
+                    value = currentMembersTotal.asMoney(),
                     valueColor = TextSecondary
                 )
                 MathRow(
                     label = stringResource(Res.string.member_sheet_add_math_new),
-                    value = "+ S/ ${formatTwoDecimals(shareAmount)}",
+                    value = "+ " + shareAmount.asMoney(),
                     valueColor = AccentGreen
                 )
                 if (adminCovers > 0) {
                     HorizontalDivider(color = BorderDefault, thickness = 0.5.dp)
                     MathRow(
                         label = stringResource(Res.string.member_sheet_add_math_you_cover),
-                        value = "S/ ${formatTwoDecimals(adminCovers)}",
+                        value = adminCovers.asMoney(),
                         valueColor = AccentAmber
                     )
                 }

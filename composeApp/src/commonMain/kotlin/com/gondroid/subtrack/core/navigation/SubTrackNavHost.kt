@@ -1,16 +1,18 @@
 package com.gondroid.subtrack.core.navigation
 
+import org.koin.compose.viewmodel.koinViewModel
+
+import com.gondroid.subtrack.AppStateViewModel
+
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.gondroid.subtrack.feature.auth.AuthScreen
 import com.gondroid.subtrack.feature.profile.debug.DebugScreen
 import com.gondroid.subtrack.feature.createsubscription.CreateSubscriptionScreen
 import com.gondroid.subtrack.feature.dashboard.DashboardScreen
-import com.gondroid.subtrack.feature.onboarding.OnboardingScreen
 import com.gondroid.subtrack.feature.people.PeopleScreen
 import com.gondroid.subtrack.feature.profile.ProfileScreen
 import com.gondroid.subtrack.feature.profile.alias.AliasEditScreen
@@ -32,19 +34,9 @@ fun SubTrackNavHost(
     pendingRoute: Route? = null,
     onPendingRouteOpened: () -> Unit = {}
 ) {
+    val appState: AppStateViewModel = koinViewModel()
     NavHost(navController = navController, startDestination = startDestination, modifier = modifier) {
 
-        composable<Route.Onboarding> {
-            OnboardingScreen(onFinish = { navController.navigate(Route.Auth) })
-        }
-
-        composable<Route.Auth> {
-            AuthScreen(onAuthenticated = {
-                navController.navigate(Route.Dashboard) {
-                    popUpTo(Route.Onboarding) { inclusive = true }
-                }
-            })
-        }
 
         composable<Route.Dashboard> {
             DashboardScreen(
@@ -76,11 +68,8 @@ fun SubTrackNavHost(
                 onNavigateToEditUser = { navController.navigate(Route.EditUser) },
                 onNavigateToSettings = { navController.navigate(Route.Settings) },
                 onNavigateToEditTemplate = { id -> navController.navigate(Route.EditTemplate(id)) },
-                onDebugOnboarding = {
-                    navController.navigate(Route.Onboarding) {
-                        popUpTo(Route.Dashboard) { inclusive = true }
-                    }
-                },
+                // The root follows the same DataStore flag, so the real onboarding shows
+                onDebugOnboarding = appState::resetOnboarding,
                 onDebugData = { navController.navigate(Route.Debug) }
             )
         }

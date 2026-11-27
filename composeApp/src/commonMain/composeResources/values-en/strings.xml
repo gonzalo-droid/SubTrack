@@ -24,6 +24,10 @@
     <string name="update_required_title">Update SubTrack</string>
     <string name="update_required_body">This version no longer works with your cloud data. Update the app to keep using it; your subscriptions are safe.</string>
     <string name="update_required_cta">Go to the store</string>
+    <string name="onboarding_notif_preview_time">now</string>
+    <string name="template_yours_tag">· yours</string>
+    <string name="template_emoji_picker_title">Pick an emoji</string>
+    <string name="common_amount_per_month">%1$s/mo</string>
     <string name="common_error_offline">No connection. Check your internet and try again.</string>
     <string name="common_error_generic">Something went wrong. Please try again.</string>
 

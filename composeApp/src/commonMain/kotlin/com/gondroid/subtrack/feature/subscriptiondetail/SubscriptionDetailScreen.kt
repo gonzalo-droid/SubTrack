@@ -1,5 +1,11 @@
 package com.gondroid.subtrack.feature.subscriptiondetail
 
+import com.gondroid.subtrack.resources.common_loading
+
+import com.gondroid.subtrack.resources.Res
+
+import org.jetbrains.compose.resources.stringResource
+
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -33,7 +39,7 @@ fun SubscriptionDetailScreen(
 
     when (val state = uiState) {
         is SubscriptionDetailUiState.Loading -> Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Cargando…", style = SubTrackType.bodyM, color = TextSecondary)
+            Text(stringResource(Res.string.common_loading), style = SubTrackType.bodyM, color = TextSecondary)
         }
         is SubscriptionDetailUiState.Admin -> AdminDetailScreen(
             subscriptionId = state.subscriptionId,
