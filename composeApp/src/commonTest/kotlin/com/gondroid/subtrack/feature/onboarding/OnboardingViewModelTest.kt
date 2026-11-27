@@ -1,5 +1,11 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import kotlinx.coroutines.cancel
+
+import androidx.lifecycle.viewModelScope
+
+import androidx.lifecycle.ViewModel
+
 import app.cash.turbine.test
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.core.preferences.createUserPrefsDataStore
@@ -21,7 +27,6 @@ import com.gondroid.subtrack.testing.UnusedSubscriptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okio.FileSystem
@@ -37,7 +42,13 @@ class OnboardingViewModelTest {
     private val user = User(id = "u1", name = "Ana Pérez", phone = "", email = null, referralCode = "U1", createdAt = 0)
 
     @BeforeTest fun setUp() = Dispatchers.setMain(dispatcher)
-    @AfterTest fun tearDown() = Dispatchers.resetMain()
+
+    private fun <T : ViewModel> track(vm: T): T = vm.also { created += it }
+    private val created = mutableListOf<ViewModel>()
+
+    // Main stays on a test dispatcher (each setUp installs a fresh one): DataStore resumes cancelled
+    // ViewModel work on Main from its IO thread, and a reset Main would crash the next test
+    @AfterTest fun tearDown() = created.forEach { it.viewModelScope.cancel() }
 
     private class FakeAuth(private val result: AppResult<User>) : AuthRepository {
         override suspend fun signInWithGoogle(credential: GoogleCredential) = result
@@ -58,7 +69,7 @@ class OnboardingViewModelTest {
         override fun getOtherService() = ServiceTemplate("tpl_other", "Otro", "#888888", "+", null, SubscriptionCategory.OTHER, isPopular = false)
     }
 
-    private fun viewModel(signIn: AppResult<User>) = OnboardingViewModel(
+    private fun viewModel(signIn: AppResult<User>) = track(OnboardingViewModel(
         authenticateUser = AuthenticateUserUseCase(FakeAuth(signIn)),
         createSubscription = CreateSubscriptionUseCase(UnusedSubscriptions),
         getCurrentUser = GetCurrentUserUseCase(FakeUsers()),
@@ -66,7 +77,7 @@ class OnboardingViewModelTest {
         userPreferences = UserPreferences(
             createUserPrefsDataStore((FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "prefs-${randomId()}.preferences_pb").toString())
         )
-    )
+    ))
 
     @Test fun signInGoesFromAuthenticatingToTheFirstSubscription() = runTest(dispatcher) {
         val vm = viewModel(AppResult.Success(user))

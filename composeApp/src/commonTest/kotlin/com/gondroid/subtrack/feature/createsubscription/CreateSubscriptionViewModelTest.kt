@@ -1,5 +1,11 @@
 package com.gondroid.subtrack.feature.createsubscription
 
+import kotlinx.coroutines.cancel
+
+import androidx.lifecycle.viewModelScope
+
+import androidx.lifecycle.ViewModel
+
 import app.cash.turbine.test
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.core.preferences.createUserPrefsDataStore
@@ -20,7 +26,6 @@ import com.gondroid.subtrack.testing.UnusedSubscriptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okio.FileSystem
@@ -36,14 +41,20 @@ class CreateSubscriptionViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val netflix = ServiceTemplate("tpl_netflix", "Netflix", "#E50914", "N", 54.9, SubscriptionCategory.STREAMING)
     private val spotifyFamily = ServiceTemplate("tpl_spotify", "Spotify", "#1DB954", "S", 26.9, SubscriptionCategory.MUSIC, suggestsShared = true)
-    private val created = mutableListOf<Subscription>()
+    private val createdSubs = mutableListOf<Subscription>()
 
     @BeforeTest fun setUp() = Dispatchers.setMain(dispatcher)
-    @AfterTest fun tearDown() = Dispatchers.resetMain()
+
+    private fun <T : ViewModel> track(vm: T): T = vm.also { created += it }
+    private val created = mutableListOf<ViewModel>()
+
+    // Main stays on a test dispatcher (each setUp installs a fresh one): DataStore resumes cancelled
+    // ViewModel work on Main from its IO thread, and a reset Main would crash the next test
+    @AfterTest fun tearDown() = created.forEach { it.viewModelScope.cancel() }
 
     private inner class RecordingSubs : SubscriptionRepository by UnusedSubscriptions {
         override suspend fun createSubscription(subscription: Subscription): Result<String> {
-            created += subscription
+            createdSubs += subscription
             return Result.success(subscription.id)
         }
     }
@@ -56,7 +67,7 @@ class CreateSubscriptionViewModelTest {
 
     private fun viewModel(): CreateSubscriptionViewModel {
         val subs = RecordingSubs()
-        return CreateSubscriptionViewModel(
+        return track(CreateSubscriptionViewModel(
             startWithShared = false,
             editSubscriptionId = null,
             createSubscription = CreateSubscriptionUseCase(subs),
@@ -70,7 +81,7 @@ class CreateSubscriptionViewModelTest {
             userPreferences = UserPreferences(
                 createUserPrefsDataStore((FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "prefs-${randomId()}.preferences_pb").toString())
             )
-        )
+        ))
     }
 
     @Test fun personalSubscriptionTakesThreeStepsAndIsCreatedForMe() = runTest(dispatcher) {
@@ -93,8 +104,8 @@ class CreateSubscriptionViewModelTest {
             assertEquals("Netflix", success.serviceName)
         }
         assertEquals(3, vm.totalSteps.value)
-        assertEquals(listOf("me"), created.map { it.ownerId })
-        assertEquals(54.9, created.single().totalAmount)
+        assertEquals(listOf("me"), createdSubs.map { it.ownerId })
+        assertEquals(54.9, createdSubs.single().totalAmount)
     }
 
     @Test fun familyPlansStartAsShared() = runTest(dispatcher) {
