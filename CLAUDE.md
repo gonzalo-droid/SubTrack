@@ -1,24 +1,30 @@
-# CLAUDE.md — SubTrack Android
+# CLAUDE.md — SubTrack (Android + iOS, Kotlin Multiplatform)
 
 Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **antes** de cualquier cambio.
 
 ## Sobre el proyecto
 
-**SubTrack** es una app Android para gestionar suscripciones personales y compartidas (Netflix, Spotify, etc.) con cobranza vía WhatsApp. El usuario puede ser **admin** (cobra a otros) o **miembro** (solo ve su parte). **No procesamos pagos**: solo coordinamos.
+**SubTrack** es una app Android e iOS (Kotlin Multiplatform + Compose Multiplatform) para gestionar suscripciones personales y compartidas (Netflix, Spotify, etc.) con cobranza vía WhatsApp. El usuario puede ser **admin** (cobra a otros) o **miembro** (solo ve su parte). **No procesamos pagos**: solo coordinamos.
 
 ## Stack
 
-- **Lenguaje**: Kotlin 2.0+
-- **UI**: Jetpack Compose + Material 3
-- **minSdk**: 24 · **targetSdk**: 34+ · **compileSdk**: 34+
+Sigue la base KMP (skill `base-kmp-audit`); las desviaciones están en `docs/DECISIONES.md`. Plan de la migración: `docs/plans/2026-11-26-kmp-migration.md`.
+
+- **Lenguaje**: Kotlin 2.4 · **UI**: Compose Multiplatform 1.12 + Material 3 (`org.jetbrains.compose.*`)
+- **Android**: minSdk 24 · targetSdk/compileSdk 37 · **iOS**: 16.0+ (iPhone)
+- **Módulos** (MOD-01): `androidApp` (entrada Android: Application, MainActivity, manifest, firma, R8), `composeApp` (biblioteca KMP con todo el código: `commonMain`, `androidMain`, `iosMain`) e `iosApp` (host SwiftUI + SPM)
 - **Arquitectura**: Clean Architecture (data / domain / presentation) con MVVM
-- **DI**: Koin 4.2 (BOM), módulos en `core/di/Koin.kt` (`platformModule`, `dataModule`, `domainModule`, `uiModule`). Pantallas con `koinViewModel()`; los ViewModels con argumentos de navegación usan `koinViewModel<VM>(parameters = { parametersOf(...) })` y se registran con `viewModel { (arg: T) -> VM(arg, get(), …) }`. Una clase nueva se registra en su módulo; no crear `ViewModelProvider.Factory` manuales.
-- **Async**: Coroutines + Flow
-- **Navegación**: Navigation Compose type-safe (con `@Serializable`)
-- **Persistencia local**: Room (fase 2)
-- **Backend**: Firebase, proyecto `subtrack-f4dd3` (activo): Auth con Google (Credential Manager) y Firestore (`users/{uid}/…`, reglas en `firestore.rules`) como espejo del store; Room es la caché offline. FCM y Functions, pendientes.
-- **Post-clone**: baja `androidApp/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
-- **Datos**: los repositorios (`data/repository/*RepositoryImpl`) trabajan sobre el store en memoria `AppStore`; `LocalStoreSync` lo persiste en Room fila por fila y `FirestoreSync` lo sube a Firestore. Los datos demo (`data/demo/DemoData`) solo existen en debug.
+- **DI**: Koin 4.2 (BOM). Módulos comunes en `di/Koin.kt` (`dataModule`, `domainModule`, `uiModule`) más un `platformModule` por plataforma (`Koin.android.kt`, `Koin.ios.kt`). Pantallas con `koinViewModel()`; los ViewModels con argumentos de navegación usan `koinViewModel<VM>(parameters = { parametersOf(...) })` y se registran con `viewModel { (arg: T) -> VM(arg, get(), …) }`. Una clase nueva se registra en su módulo; `KoinModulesTest` verifica el grafo.
+- **Async**: Coroutines + Flow · **Fechas**: kotlinx-datetime (nunca `java.util.Calendar`)
+- **Navegación**: Navigation Compose multiplataforma type-safe (con `@Serializable`)
+- **Persistencia local**: Room KMP + `sqlite-bundled`; DataStore Preferences (`USER_PREFS_FILE`)
+- **Imágenes**: Coil 3 con red Ktor (OkHttp en Android, Darwin en iOS)
+- **Backend**: Firebase, proyecto `subtrack-f4dd3`: Auth con Google y Firestore (`users/{uid}/…`, reglas en `firestore.rules`) como espejo del store; Room es la caché offline. El código común usa `platform/RemoteDocuments` y `platform/AuthBridge`; Android los implementa con el SDK de Firebase (`androidMain/platform`) e iOS con Swift (`iosApp/iosApp/NativeBridges.swift`, PLT-02). FCM y Functions, pendientes.
+- **Plataforma** (PLT-01): todo lo nativo va detrás de una interfaz o un `expect` en `commonMain/platform`: `ExternalActions` (WhatsApp, compartir, correo, ajustes), `rememberGoogleSignIn`, `rememberNotificationPermissionRequest`, `qrCodeImage`, `rememberImagePicker`.
+- **Post-clone**:
+  - Android: baja `androidApp/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
+  - iOS: baja `iosApp/iosApp/GoogleService-Info.plist` (app iOS `com.gondroid.subtrack` en el mismo proyecto) y copia `iosApp/Configuration/Secrets.xcconfig.example` a `Secrets.xcconfig` con tu `TEAM_ID` y el `REVERSED_CLIENT_ID`. Sin el plist la app abre, pero el login y la sincronización fallan.
+- **Datos**: los repositorios (`data/repository/*RepositoryImpl`) trabajan sobre el store en memoria `AppStore`; `LocalStoreSync` lo persiste en Room fila por fila y `FirestoreSync` lo sube a Firestore. Los datos demo (`data/demo/DemoData`) solo existen en debug (`AppEnvironment.isDebug`, que fija cada punto de entrada).
 
 ## Reglas de comportamiento obligatorias
 
@@ -54,8 +60,9 @@ Todo dato pasa por los repositorios sobre `AppStore`; la persistencia (Room) y l
 No dejes clases, imports o dependencies sin usar. Si algo queda para después, marca con `// TODO: [feature/fase]` explícito.
 
 ### 8. Strings
-- Todo texto visible al usuario va en `strings.xml` con nombre descriptivo (ej. `dashboard_greeting_format`, `subscription_shared_tag`)
+- Todo texto visible al usuario va en `composeApp/src/commonMain/composeResources/values/strings.xml` con nombre descriptivo (ej. `dashboard_greeting_format`) y se usa con `stringResource(Res.string.x)`.
 - Español es el default (`values/`). Inglés en `values-en/`: todo string nuevo va en los dos archivos con el mismo `name`.
+- Formato de Compose Multiplatform: solo `%1$s` / `%1$d` con posición, sin comillas envolventes ni `\'` (se muestran tal cual).
 
 ### 9. Commits atómicos
 Si el usuario pide trabajar en una feature específica, haz commits pequeños y descriptivos. Un commit = un cambio lógico.
@@ -66,48 +73,38 @@ Si el usuario pide trabajar en una feature específica, haz commits pequeños y 
 ## Estructura de paquetes
 
 ```
-com.gondroid.subtrack/
+composeApp/src/commonMain/kotlin/com/gondroid/subtrack/
+├── App.kt, AppStateViewModel.kt   // Raíz de la UI (la montan MainActivity y MainViewController)
 ├── core/                          // Utilidades compartidas
-│   ├── designsystem/              // Theme, colors, typography, components
+│   ├── designsystem/              // Theme, colors, typography (fuentes en composeResources/font), components
 │   ├── navigation/                // Routes, NavHost
-│   ├── util/                      // Extensions, formatters
-│   └── di/                        // Koin.kt: los 4 módulos de Koin e initKoin
-│
-├── data/                          // Implementaciones de repositorios
-│   ├── demo/                      // DemoData: datos de ejemplo (solo debug)
-│   ├── remote/                    // Firebase: auth y sync con Firestore
-│   ├── local/                     // Room DAO + entities
-│   └── repository/                // Implementaciones de interfaces
-│
-├── domain/                        // Pure Kotlin, sin Android
-│   ├── model/                     // Subscription, Member, Payment...
-│   ├── repository/                // Interfaces
-│   └── usecase/                   // Una clase por use case
-│
-└── feature/                       // Features, cada una con su UI
-    ├── onboarding/
-    ├── dashboard/
-    ├── subscriptionlist/
-    ├── subscriptiondetail/
-    ├── createsubscription/
-    ├── members/
-    ├── people/
-    └── profile/
+│   ├── config/                    // AppInfo (generado por Gradle), AppEnvironment
+│   └── util/                      // Formateadores (fechas, montos), WhatsAppHelper, log
+├── data/                          // demo/, local/ (Room), remote/ (sync Firestore), repository/
+├── domain/                        // Kotlin puro: model/, repository/, usecase/, util/
+├── platform/                      // Interfaces y expect que implementa cada plataforma
+├── di/                            // Módulos de Koin
+└── feature/                       // Pantallas por feature (onboarding, dashboard, …)
+composeApp/src/androidMain/        // actuals Android: Firebase, Credential Manager, Intents, ZXing
+composeApp/src/iosMain/            // actuals iOS, puentes que implementa Swift, MainViewController, IosEntry
+iosApp/                            // Xcode: iOSApp.swift, NativeBridges.swift, Config.xcconfig
 ```
 
 ## Flujo de decisión al trabajar
 
 Cuando recibas una tarea:
 
-1. **Lee** este archivo, `DESIGN_TOKENS.md` y `SCAFFOLDING.md` si no los tienes en contexto
+1. **Lee** este archivo y `DESIGN_TOKENS.md` si no los tienes en contexto (`SCAFFOLDING.md` y `ARCHITECTURE.md` son históricos, de antes de KMP)
 2. **Confirma** que entendiste: resume en 2-3 líneas lo que vas a hacer
 3. Si hay ambigüedad o decisión importante: **presenta opciones**
 4. Implementa cambios mínimos y atómicos
 5. **Valida**: compila, ejecuta previews si aplica, revisa que no rompiste nada
-   - Unit tests: `./gradlew :composeApp:testAndroidHostTest`
+   - Unit tests: `./gradlew :composeApp:testAndroidHostTest` (JVM) y `./gradlew :composeApp:iosSimulatorArm64Test` (`commonTest` en iOS)
    - Lint (debe quedar en 0 errores): `./gradlew :androidApp:lintDebug` (revisa también `composeApp`)
    - Screenshot tests: `./gradlew :composeApp:verifyRoborazziAndroidHostTest` (regrabar con `recordRoborazziAndroidHostTest` si el cambio visual es intencional)
    - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo; los flujos lanzan la app con `fakeAuth: true`, que en debug salta el login real de Google) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
+   - iOS: `cd iosApp && xcodebuild -project iosApp.xcodeproj -scheme iosApp -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO build`; para entrar sin cuenta, lanza con `-fakeAuth` (solo Debug)
+   - Versión: `./gradlew check` falla si `iosApp/Configuration/Config.xcconfig` no repite la de `libs.versions.toml` (VER-02)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
 ## Publicación (firma y respaldos)

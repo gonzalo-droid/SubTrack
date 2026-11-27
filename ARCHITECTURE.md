@@ -1,3 +1,5 @@
+> **Histórico:** describe el proyecto antes de la migración a Kotlin Multiplatform (un módulo `:app`, Hilt). La estructura y el stack actuales están en `CLAUDE.md` y `docs/plans/2026-11-26-kmp-migration.md`.
+
 # SubTrack — Architecture
 
 ## Clean Architecture: capas
