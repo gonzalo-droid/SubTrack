@@ -27,7 +27,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Baja
 
-- [ ] **Logos cruzados** — `ic_service_appletv.xml` tiene el trazado de Apple Music y el de Apple Music no es el suyo (ya pasaba antes de la migración): volver a bajarlos de Simple Icons.
 - [ ] **TIE-04** — En tablet, la grilla de servicios del asistente dibuja celdas cuadradas enormes y los servicios quedan fuera de la pantalla.
 - [ ] **COD-05** — Separar en archivos las secciones de las pantallas de más de 300 líneas (empezar por `DashboardScreen.kt`, 1004).
 - [ ] **ARQ-01 / ARQ-02 / ARQ-05** — `UiState` + `StateFlow` en Settings, Profile, Referral y SubscriptionDetailRouter; catálogo de servicios por caso de uso; un `@ApplicationScope` de Hilt compartido.
