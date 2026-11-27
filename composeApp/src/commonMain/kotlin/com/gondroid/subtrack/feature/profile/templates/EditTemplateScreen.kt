@@ -2,6 +2,8 @@
 
 package com.gondroid.subtrack.feature.profile.templates
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsAppBubble
+
 import androidx.compose.ui.ExperimentalComposeUiApi
 
 import com.gondroid.subtrack.resources.Res
@@ -509,7 +511,7 @@ private fun WhatsAppBubble(text: String) {
                         bottomStart = 12.dp, bottomEnd = 2.dp
                     )
                 )
-                .background(Color(0xFF1FAD4E))
+                .background(BrandWhatsAppBubble)
                 .padding(horizontal = Spacing.m, vertical = Spacing.s)
         ) {
             Text(

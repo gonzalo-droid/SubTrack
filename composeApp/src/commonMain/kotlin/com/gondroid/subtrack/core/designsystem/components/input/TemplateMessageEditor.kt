@@ -53,7 +53,7 @@ private val variableSpan: SpanStyle @Composable get() = SpanStyle(
     fontSize = 11.sp,
     fontWeight = FontWeight.Medium,
     color = AccentGreen,
-    background = Color(0x1F32D74B)
+    background = AccentGreenBg
 )
 
 private class VariableVisualTransformation(private val variableSpan: SpanStyle) : VisualTransformation {

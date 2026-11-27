@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.profile.referral
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsApp
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentAmberDeep
+
 import androidx.compose.ui.graphics.ImageBitmap
 
 import com.gondroid.subtrack.platform.qrCodeImage
@@ -300,7 +304,7 @@ private fun ReferralHero(code: String, onCopyCode: () -> Unit) {
             modifier = Modifier
                 .size(54.dp)
                 .clip(SubTrackShapes.l)
-                .background(Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500))))
+                .background(Brush.linearGradient(listOf(AccentAmber, AccentAmberDeep)))
                 .rotate(rotation)
                 .offset { IntOffset(0, offsetY.dp.roundToPx()) }
         ) {
@@ -374,7 +378,7 @@ private fun ShareRow(
         ShareButton(
             icon = Icons.Outlined.IosShare,
             label = stringResource(Res.string.referral_share_wa),
-            iconTint = Color(0xFF25D366),
+            iconTint = BrandWhatsApp,
             onClick = onWhatsApp,
             modifier = Modifier.weight(1f)
         )
@@ -495,7 +499,7 @@ private fun ProgressCard(info: ReferralInfo, modifier: Modifier = Modifier) {
         ProgressBar(
             progress = progress,
             showShimmer = true,
-            progressColor = Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500)))
+            progressColor = Brush.linearGradient(listOf(AccentAmber, AccentAmberDeep))
         )
         Spacer(Modifier.height(Spacing.s))
         Text(

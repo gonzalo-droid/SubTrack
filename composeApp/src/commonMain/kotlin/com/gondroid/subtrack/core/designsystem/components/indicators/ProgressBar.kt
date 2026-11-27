@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.core.designsystem.components.indicators
 
+import com.gondroid.subtrack.core.designsystem.theme.AccentAmberDeep
+
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -38,7 +40,7 @@ private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
 
 // Default: amber → warm orange (iOS-style warning progress)
 private val DefaultProgressBrush: Brush
-    get() = Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500)))
+    get() = Brush.linearGradient(listOf(AccentAmber, AccentAmberDeep))
 
 @Composable
 fun ProgressBar(

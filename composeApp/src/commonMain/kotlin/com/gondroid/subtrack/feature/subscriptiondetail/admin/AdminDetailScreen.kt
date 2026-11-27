@@ -621,7 +621,7 @@ private fun CutoffPill(cutoffDay: Int) {
         Triple(AccentAmberBg, AccentAmber, stringResource(Res.string.subscription_detail_cutoff_today, dateStr))
     } else {
         Triple(
-            Color.White.copy(alpha = 0.06f),
+            BorderDefault,
             TextSecondary,
             stringResource(Res.string.subscription_detail_cutoff_day, cutoffDay, dateStr)
         )

@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.dashboard
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandWhatsApp
+
 import com.gondroid.subtrack.platform.ExternalActions
 
 import org.koin.compose.koinInject
@@ -822,8 +824,8 @@ private fun DebtorRow(
             icon = CustomIcons.WhatsApp,
             contentDescription = stringResource(Res.string.dashboard_reminder_cd),
             onClick = onWhatsApp,
-            iconTint = Color(0xFF25D366),
-            containerColor = Color(0xFF25D366).copy(alpha = 0.12f)
+            iconTint = BrandWhatsApp,
+            containerColor = BrandWhatsApp.copy(alpha = 0.12f)
         )
     }
 }
@@ -897,7 +899,7 @@ private fun SectionHeader(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .clip(SubTrackShapes.circle)
-                .background(androidx.compose.ui.graphics.Color.White.copy(alpha = 0.06f))
+                .background(BorderDefault)
                 .padding(horizontal = 6.dp, vertical = 2.dp)
         ) {
             Text(text = "$count", style = SubTrackType.monoXS, color = TextTertiary)

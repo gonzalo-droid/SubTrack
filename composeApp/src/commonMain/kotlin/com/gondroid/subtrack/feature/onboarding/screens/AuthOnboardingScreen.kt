@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding.screens
 
+import com.gondroid.subtrack.core.designsystem.theme.BrandGoogleText
+
 import com.gondroid.subtrack.resources.common_error_offline
 
 import com.gondroid.subtrack.core.result.isConnectivity
@@ -156,7 +158,7 @@ fun AuthOnboardingScreen(
             icon = { Icon(CustomIcons.Google, null, modifier = Modifier.size(20.dp), tint = Color.Unspecified) },
             text = stringResource(Res.string.onboarding_auth_google),
             containerColor = Color.White,
-            contentColor = Color(0xFF202124),
+            contentColor = BrandGoogleText,
             enabled = !isLoading,
             onClick = onGoogleSignIn,
             isLoading = isLoading,

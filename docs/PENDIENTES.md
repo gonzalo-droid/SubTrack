@@ -24,7 +24,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 - [ ] **DOC-02 / DOC-03** — `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (KMP, Compose Multiplatform, Koin, Room KMP, Firebase con puentes Swift).
 - [ ] **GIT-01 / GIT-02 / GIT-08 / PUB-16** — Flujo `release/0.1.0` → `master` con tag `v0.1.0`; borrar las ramas ya unidas en GitHub (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`).
-- [ ] **COD-02 / TST-06** — `ContrastTest` (4.5:1 texto, 3:1 elementos) y los 66 colores fijos de `feature/` pasados a tokens.
 
 ## Baja
 

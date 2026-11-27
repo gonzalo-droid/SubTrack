@@ -118,7 +118,7 @@ fun <T> SegmentedSelector(
                                     .clip(SubTrackShapes.circle)
                                     .background(
                                         if (isActive) AccentGreen
-                                        else Color.White.copy(alpha = 0.06f)
+                                        else BorderDefault
                                     )
                                     .padding(horizontal = 5.dp, vertical = 2.dp)
                             ) {

@@ -1,5 +1,15 @@
 package com.gondroid.subtrack.feature.profile
 
+import com.gondroid.subtrack.core.designsystem.theme.CardGradientTop
+
+import com.gondroid.subtrack.core.designsystem.theme.CardGradientBottom
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandYape
+
+import com.gondroid.subtrack.core.designsystem.theme.BrandPlin
+
+import com.gondroid.subtrack.core.designsystem.theme.AccentAmberDeep
+
 import com.gondroid.subtrack.resources.common_error_offline
 
 import com.gondroid.subtrack.core.result.isConnectivity
@@ -357,7 +367,7 @@ private fun ProfileContent(
             ) {
                 SettingsRow(
                     icon = Icons.Outlined.Lock,
-                    iconBg = Color.White.copy(alpha = 0.06f),
+                    iconBg = BorderDefault,
                     iconTint = TextSecondary,
                     title = stringResource(Res.string.legal_logos_title),
                     onClick = { showLegalSheet = true }
@@ -402,7 +412,7 @@ private fun ProCard(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .clip(SubTrackShapes.l)
-            .background(Brush.linearGradient(listOf(Color(0xFF1A1A1A), Color(0xFF0F0F0F))))
+            .background(Brush.linearGradient(listOf(CardGradientTop, CardGradientBottom)))
             .border(1.dp, AccentAmber.copy(alpha = 0.25f), SubTrackShapes.l)
             .clickable {}
             .padding(Spacing.base),
@@ -414,7 +424,7 @@ private fun ProCard(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .size(38.dp)
                 .clip(SubTrackShapes.base)
-                .background(Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500))))
+                .background(Brush.linearGradient(listOf(AccentAmber, AccentAmberDeep)))
         ) {
             Icon(Icons.Outlined.Star, null, tint = Color.Black, modifier = Modifier.size(20.dp))
         }
@@ -521,14 +531,14 @@ private fun AliasCard(
         ) {
             AliasRow(
                 logoText = "Y",
-                logoBg = Color(0xFF6B2A86),
+                logoBg = BrandYape,
                 brand = "Yape",
                 value = alias.yape?.let { formatPhone(it) } ?: "—",
                 isDefault = alias.defaultMethod == PaymentAliasType.YAPE
             )
             AliasRow(
                 logoText = "P",
-                logoBg = Color(0xFF00B5E2),
+                logoBg = BrandPlin,
                 brand = "Plin",
                 value = alias.plin?.let { formatPhone(it) } ?: "—",
                 isDefault = alias.defaultMethod == PaymentAliasType.PLIN
@@ -668,7 +678,7 @@ private fun ReferralEntryCard(
             modifier = Modifier
                 .size(38.dp)
                 .clip(SubTrackShapes.base)
-                .background(Brush.linearGradient(listOf(AccentAmber, Color(0xFFFF9500))))
+                .background(Brush.linearGradient(listOf(AccentAmber, AccentAmberDeep)))
         ) {
             Icon(Icons.Outlined.Star, null, tint = Color.Black, modifier = Modifier.size(20.dp))
         }

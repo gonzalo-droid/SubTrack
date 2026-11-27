@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
+
 import com.gondroid.subtrack.resources.settings_support_email
 
 import com.gondroid.subtrack.resources.settings_download_url
@@ -288,7 +290,7 @@ private fun SettingsContent(
         Eyebrow(text = stringResource(Res.string.settings_data_section), modifier = Modifier.padding(top = Spacing.s))
         SettingsGroup {
             SettingsRow(
-                Icons.Outlined.CloudDownload, Color.White.copy(alpha = 0.06f), TextSecondary,
+                Icons.Outlined.CloudDownload, BorderDefault, TextSecondary,
                 stringResource(Res.string.profile_account_export),
                 value = stringResource(Res.string.settings_export_desc),
                 onClick = onExport
@@ -316,12 +318,12 @@ private fun SettingsContent(
             )
             SettingsDivider()
             SettingsRow(
-                Icons.Outlined.Code, Color.White.copy(alpha = 0.06f), TextSecondary,
+                Icons.Outlined.Code, BorderDefault, TextSecondary,
                 stringResource(Res.string.settings_licenses), onClick = onLicenses
             )
             SettingsDivider()
             SettingsRow(
-                Icons.Outlined.Info, Color.White.copy(alpha = 0.06f), TextSecondary,
+                Icons.Outlined.Info, BorderDefault, TextSecondary,
                 stringResource(Res.string.settings_version),
                 value = "${AppInfo.VERSION_NAME} (${AppInfo.VERSION_CODE})"
             )
@@ -335,7 +337,7 @@ private fun SettingsContent(
             )
             SettingsDivider()
             SettingsRow(
-                Icons.Outlined.Description, Color.White.copy(alpha = 0.06f), TextSecondary,
+                Icons.Outlined.Description, BorderDefault, TextSecondary,
                 stringResource(Res.string.settings_terms), onClick = onTerms
             )
         }
