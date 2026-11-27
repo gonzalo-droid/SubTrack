@@ -1,5 +1,7 @@
 package com.gondroid.subtrack
 
+import com.gondroid.subtrack.feature.update.UpdateRequiredScreen
+
 import androidx.compose.foundation.background
 import org.koin.compose.koinInject
 import com.gondroid.subtrack.platform.ExternalActions
@@ -75,6 +77,7 @@ private fun AppContent() {
 
         when (appState) {
             AppReadyState.Loading -> SplashScreen()
+            AppReadyState.UpdateRequired -> UpdateRequiredScreen()
             AppReadyState.ShowOnboarding -> OnboardingFlow(
                 onComplete = appStateVm::markOnboardingComplete
             )

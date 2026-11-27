@@ -156,6 +156,8 @@ class FirestoreSync(private val remote: RemoteDocuments) {
     }
 
     private fun profileDoc(): Map<String, Any?> = mapOf(
+        // UPD-04: new fields stay optional; an incompatible change bumps this and the min version (config/app)
+        SCHEMA_VERSION to CURRENT_SCHEMA_VERSION,
         PROFILE to AppStore.currentUser.value?.toEntity()?.toFirestore(),
         ALIAS to AppStore.userAlias.value.toEntity().toFirestore()
     )
@@ -178,6 +180,8 @@ class FirestoreSync(private val remote: RemoteDocuments) {
         const val TEMPLATES = "templates"
         const val PROFILE = "profile"
         const val ALIAS = "alias"
+        const val SCHEMA_VERSION = "schemaVersion"
+        const val CURRENT_SCHEMA_VERSION = 1
         const val MAX_BATCH_WRITES = 450 // Firestore allows 500 writes per batch
     }
 }

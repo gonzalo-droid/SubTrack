@@ -55,6 +55,8 @@ class AndroidExternalActions(private val context: Context) : ExternalActions {
         return launch(intent)
     }
 
+    override fun openStorePage() = openStoreReview()
+
     override fun openStoreReview() {
         val pkg = context.packageName
         if (!launch(Intent(Intent.ACTION_VIEW, "market://details?id=$pkg".toUri()))) {

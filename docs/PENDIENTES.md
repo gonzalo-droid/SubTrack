@@ -10,6 +10,8 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 - [ ] **Publicar las páginas legales** — Revisar y desplegar la rama `feature/subtrack-app` del repo de Nekodojo (privacidad, términos, soporte, borrado de cuenta y la redirección `/apps/subtrack/download` que comparte "Compartir la app"). Revisar los textos agregados además de los hechos de la app: derechos de la Ley 29733, ley peruana aplicable y uso de WhatsApp.
 - [ ] **SEC-03** — Crear la llave de subida con el comando de "Publicación" en `CLAUDE.md`, poner `subtrack.signing.*` en `local.properties`, guardar el respaldo y activar Play App Signing.
 
+- [ ] **Versión mínima (UPD-01)** — Desplegar `firestore.rules` (`firebase deploy --only firestore:rules`) y crear en la consola el documento `config/app` con `minVersionCode` (Android) y `minVersionIos` en `1`. Subirlos fuerza a actualizar a quien tenga una versión menor.
+
 ### iOS (migración a KMP, 2026-11-26)
 
 - [ ] **Firebase iOS** — Registrar la app iOS `com.gondroid.subtrack` en el proyecto `subtrack-f4dd3`, bajar `GoogleService-Info.plist` a `iosApp/iosApp/` y poner `TEAM_ID` y `GOOGLE_REVERSED_CLIENT_ID` en `iosApp/Configuration/Secrets.xcconfig`. Sin eso, en iOS el login real y la sincronización no funcionan (la app abre igual).
@@ -20,7 +22,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 
 ## Media
 
-- [ ] **UPD-01 / UPD-02 / UPD-04** — Versión mínima (`minVersionCode`) en un documento de Firestore, pantalla "Actualiza la app" que nunca bloquea sin red, y `schemaVersion` en el perfil `users/{uid}`.
 - [ ] **DOC-02 / DOC-03** — `CHANGELOG.md` con la 0.1.0; README con capturas y el stack real (KMP, Compose Multiplatform, Koin, Room KMP, Firebase con puentes Swift).
 - [ ] **GIT-01 / GIT-02 / GIT-08 / PUB-16** — Flujo `release/0.1.0` → `master` con tag `v0.1.0`; borrar las ramas ya unidas en GitHub (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`).
 - [ ] **COD-02 / TST-06** — `ContrastTest` (4.5:1 texto, 3:1 elementos) y los 66 colores fijos de `feature/` pasados a tokens.

@@ -49,6 +49,11 @@ class IosExternalActions : ExternalActions {
     override fun email(to: String, subject: String, body: String): Boolean =
         open("mailto:$to?subject=${subject.encoded()}&body=${body.encoded()}")
 
+    override fun openStorePage() {
+        // Until the listing exists, the app's landing page has the store buttons
+        open(if (APP_STORE_ID.isNotEmpty()) "itms-apps://apps.apple.com/app/id$APP_STORE_ID" else "https://nekodojo.app/apps/subtrack")
+    }
+
     override fun openStoreReview() {
         if (APP_STORE_ID.isNotEmpty()) {
             open("itms-apps://apps.apple.com/app/id$APP_STORE_ID?action=write-review")

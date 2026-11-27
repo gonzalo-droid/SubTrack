@@ -26,6 +26,9 @@ interface ExternalActions {
     /** Opens the mail app to [to] with [subject] and [body]; false when there is none. */
     fun email(to: String, subject: String, body: String): Boolean
 
+    /** The app's store page, to update it (UPD-02). */
+    fun openStorePage()
+
     /** The app's store page, ready to write a review (AJU-05). */
     fun openStoreReview()
 
