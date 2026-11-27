@@ -34,3 +34,7 @@ DerivedData/
 /docs/capturas/
 /store-screenshots/
 /marketing/
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log
