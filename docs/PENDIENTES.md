@@ -23,7 +23,7 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 ## Media
 
 - [ ] **Titular del copyright** — `README.md` (sección License) tiene un TODO: decidir si el titular es una persona o Nekodojo; recién ahí crear el archivo `LICENSE`.
-- [ ] **GIT-01 / GIT-02 / GIT-08 / PUB-16** — Flujo `release/0.1.0` → `master` con tag `v0.1.0`; borrar las ramas ya unidas en GitHub (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`).
+- [ ] **GIT-01 / GIT-08 / PUB-16** — Al publicar la 0.1.0: merge de `release/0.1.0` a `master`, tag `v0.1.0` y fecha en el CHANGELOG. Borrar en GitHub las ramas ya unidas (`feature/pending-batch`, `chore/tech-debt`, `docs/audit-base-kmp`, `feature/high-priority`, `claude/pending-medium-low-b35955`, `feature/kmp`).
 
 ## Baja
 
