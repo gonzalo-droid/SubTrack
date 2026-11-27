@@ -28,7 +28,7 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 ## Baja
 
 - [ ] **COD-05** — Las secciones ya están en archivos propios; quedan largas las funciones de contenido de `AdminDetailScreen.kt` (575), `MemberDetailScreen.kt` (490) y `EditTemplateScreen.kt` (417): partirlas exige separar estado de layout, no solo mover código.
-- [ ] **PERF-01** — Medir tamaño del AAB y arranque en frío antes del primer release.
+- [ ] **PERF-01 (iOS)** — Medir el `.ipa` de Release y el arranque en un iPhone real; Android 0.1.0 ya está en `docs/RENDIMIENTO.md`.
 - [ ] **DOC-04 / SEC-05** — Capturas de tienda (`store-screenshots`) y regla en `.gitignore` para el material de marketing.
 
 ## Antes de activar una función planeada
