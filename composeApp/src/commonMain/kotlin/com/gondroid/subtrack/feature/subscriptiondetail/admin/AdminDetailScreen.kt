@@ -1,20 +1,13 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin
 
 import org.jetbrains.compose.resources.getPluralString
-
 import org.jetbrains.compose.resources.getString
-
 import com.gondroid.subtrack.platform.ExternalActions
-
 import org.koin.compose.koinInject
-
 import com.gondroid.subtrack.domain.util.formatTwoDecimals
-
 import com.gondroid.subtrack.resources.Res
-import com.gondroid.subtrack.resources.common_back
 import com.gondroid.subtrack.resources.common_cancel
 import com.gondroid.subtrack.resources.common_error_generic
-import com.gondroid.subtrack.resources.date_day_of_month
 import com.gondroid.subtrack.resources.member_sheet_add_step1_title
 import com.gondroid.subtrack.resources.member_sheet_added_toast
 import com.gondroid.subtrack.resources.member_sheet_archived_toast
@@ -22,36 +15,23 @@ import com.gondroid.subtrack.resources.member_sheet_bulk_done
 import com.gondroid.subtrack.resources.member_sheet_forgiven_toast
 import com.gondroid.subtrack.resources.member_sheet_paid_toast
 import com.gondroid.subtrack.resources.member_sheet_updated_toast
-import com.gondroid.subtrack.resources.month_names
 import com.gondroid.subtrack.resources.subscription_delete_desc
 import com.gondroid.subtrack.resources.subscription_delete_title
 import com.gondroid.subtrack.resources.subscription_deleted_toast
 import com.gondroid.subtrack.resources.subscription_detail_admin_tag
-import com.gondroid.subtrack.resources.subscription_detail_archived_help
 import com.gondroid.subtrack.resources.subscription_detail_back_cd
-import com.gondroid.subtrack.resources.subscription_detail_cutoff_day
-import com.gondroid.subtrack.resources.subscription_detail_cutoff_today
 import com.gondroid.subtrack.resources.subscription_detail_history_months
 import com.gondroid.subtrack.resources.subscription_detail_history_title
 import com.gondroid.subtrack.resources.subscription_detail_members_count
 import com.gondroid.subtrack.resources.subscription_detail_members_title
-import com.gondroid.subtrack.resources.subscription_detail_not_found_subtitle
-import com.gondroid.subtrack.resources.subscription_detail_not_found_title
-import com.gondroid.subtrack.resources.subscription_detail_overflow_cd
 import com.gondroid.subtrack.resources.subscription_detail_plan_label
 import com.gondroid.subtrack.resources.subscription_menu_delete
-import com.gondroid.subtrack.resources.subscription_menu_edit
-import com.gondroid.subtrack.resources.subscription_menu_pause
-import com.gondroid.subtrack.resources.subscription_menu_resume
 import com.gondroid.subtrack.resources.subscription_paused_tag
 import com.gondroid.subtrack.resources.subscription_paused_toast
 import com.gondroid.subtrack.resources.subscription_resumed_toast
-
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,10 +50,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -82,28 +60,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.pluralStringResource
-import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gondroid.subtrack.core.designsystem.components.avatar.ServiceLogo
-import com.gondroid.subtrack.core.designsystem.components.buttons.PrimaryButton
 import com.gondroid.subtrack.core.designsystem.components.buttons.STIconButton
 import com.gondroid.subtrack.core.designsystem.components.text.AmountDisplay
 import com.gondroid.subtrack.core.designsystem.components.text.AmountSize
 import com.gondroid.subtrack.core.designsystem.components.text.Badge
 import com.gondroid.subtrack.core.designsystem.components.text.BadgeVariant
-import com.gondroid.subtrack.core.designsystem.theme.AccentAmber
-import com.gondroid.subtrack.core.designsystem.theme.AccentAmberBg
 import com.gondroid.subtrack.core.designsystem.theme.BgPage
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
 import com.gondroid.subtrack.core.designsystem.theme.Spacing
-import com.gondroid.subtrack.core.designsystem.theme.SubTrackShapes
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackTheme
 import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
@@ -128,23 +100,14 @@ import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberD
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.EditMemberSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.ExitRequestSheet
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.sheets.RemoveMemberSheet
-import com.gondroid.subtrack.domain.util.daysUntilCutoff
-import com.gondroid.subtrack.domain.util.nextCutoff
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.TextButton
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
-import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.domain.model.enums.isUnpaid
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.components.TimelineLegend
 
@@ -347,7 +310,7 @@ fun AdminDetailScreen(
 // ── Content ───────────────────────────────────────────────────────────────────
 
 @Composable
-private fun AdminDetailContent(
+internal fun AdminDetailContent(
     data: AdminDetailData,
     onBack: () -> Unit,
     onAddMember: () -> Unit,
@@ -560,148 +523,7 @@ private fun AdminDetailContent(
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-@Composable
-private fun SubscriptionMenu(
-    isPaused: Boolean,
-    onEdit: () -> Unit,
-    onSetPaused: (Boolean) -> Unit,
-    onDelete: () -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        STIconButton(
-            icon = Icons.Outlined.MoreVert,
-            contentDescription = stringResource(Res.string.subscription_detail_overflow_cd),
-            onClick = { expanded = true }
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            containerColor = BgSurfaceEl
-        ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(Res.string.subscription_menu_edit), color = TextPrimary) },
-                leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null, tint = TextSecondary) },
-                onClick = { expanded = false; onEdit() }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        stringResource(if (isPaused) Res.string.subscription_menu_resume else Res.string.subscription_menu_pause),
-                        color = TextPrimary
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        if (isPaused) Icons.Outlined.PlayArrow else Icons.Outlined.Pause,
-                        contentDescription = null,
-                        tint = TextSecondary
-                    )
-                },
-                onClick = { expanded = false; onSetPaused(!isPaused) }
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(Res.string.subscription_menu_delete), color = AccentRed) },
-                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null, tint = AccentRed) },
-                onClick = { expanded = false; onDelete() }
-            )
-        }
-    }
-}
-
-@Composable
-private fun CutoffPill(cutoffDay: Int) {
-    val next = nextCutoff(cutoffDay)
-    val dateStr = stringResource(
-        Res.string.date_day_of_month,
-        next.day,
-        stringArrayResource(Res.array.month_names)[next.month.ordinal]
-    )
-    val (bg, color, text) = if (daysUntilCutoff(cutoffDay) == 0) {
-        Triple(AccentAmberBg, AccentAmber, stringResource(Res.string.subscription_detail_cutoff_today, dateStr))
-    } else {
-        Triple(
-            BorderDefault,
-            TextSecondary,
-            stringResource(Res.string.subscription_detail_cutoff_day, cutoffDay, dateStr)
-        )
-    }
-    Text(
-        text = text,
-        style = SubTrackType.monoXS,
-        color = color,
-        modifier = Modifier
-            .clip(SubTrackShapes.circle)
-            .background(bg)
-            .padding(horizontal = Spacing.m, vertical = Spacing.xs)
-    )
-}
-
-@Composable
-private fun SectionHeader(title: String, trailing: String, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = title, style = SubTrackType.headlineS, color = TextPrimary)
-        Text(text = trailing, style = SubTrackType.monoXS, color = TextTertiary)
-    }
-}
-
-@Composable
-private fun ArchivedHelpCard(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(SubTrackShapes.l)
-            .background(AccentAmberBg)
-            .border(1.dp, AccentAmber.copy(alpha = 0.2f), SubTrackShapes.l)
-            .padding(Spacing.m),
-        verticalAlignment = Alignment.Top
-    ) {
-        Text(
-            text = stringResource(Res.string.subscription_detail_archived_help),
-            style = SubTrackType.bodyS,
-            color = AccentAmber
-        )
-    }
-}
-
-@Composable
-private fun AdminDetailNotFound(onBack: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(Spacing.xl),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(Res.string.subscription_detail_not_found_title),
-            style = SubTrackType.headlineL,
-            color = TextPrimary,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(Spacing.s))
-        Text(
-            text = stringResource(Res.string.subscription_detail_not_found_subtitle),
-            style = SubTrackType.bodyM,
-            color = TextSecondary,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(Spacing.xl))
-        PrimaryButton(
-            text = stringResource(Res.string.common_back),
-            onClick = onBack,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-// ── Previews ──────────────────────────────────────────────────────────────────
-
-private fun previewData(includeArchived: Boolean = true): AdminDetailData {
+internal fun previewData(includeArchived: Boolean = true): AdminDetailData {
     val sub = DemoData.subscriptions.first { it.id == "sub_netflix" }
     val active = sub.members
     val archived = if (includeArchived) listOf(DemoData.memCarlos) else emptyList()
@@ -718,7 +540,7 @@ private fun previewData(includeArchived: Boolean = true): AdminDetailData {
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success – con archivados")
 @Composable
-private fun AdminDetailSuccessPreview() {
+internal fun AdminDetailSuccessPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = true),
@@ -730,7 +552,7 @@ private fun AdminDetailSuccessPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Success – sin archivados")
 @Composable
-private fun AdminDetailNoArchivedPreview() {
+internal fun AdminDetailNoArchivedPreview() {
     SubTrackTheme {
         AdminDetailContent(
             data = previewData(includeArchived = false),
@@ -742,12 +564,12 @@ private fun AdminDetailNoArchivedPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "Loading")
 @Composable
-private fun AdminDetailLoadingPreview() {
+internal fun AdminDetailLoadingPreview() {
     SubTrackTheme { AdminDetailSkeleton() }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C, name = "NotFound")
 @Composable
-private fun AdminDetailNotFoundPreview() {
+internal fun AdminDetailNotFoundPreview() {
     SubTrackTheme { AdminDetailNotFound(onBack = {}) }
 }

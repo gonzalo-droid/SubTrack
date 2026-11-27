@@ -1,42 +1,25 @@
 package com.gondroid.subtrack.feature.profile.settings
 
 import com.gondroid.subtrack.core.designsystem.theme.BorderDefault
-
 import com.gondroid.subtrack.resources.settings_support_email
-
 import com.gondroid.subtrack.resources.settings_download_url
-
 import com.gondroid.subtrack.resources.settings_feedback_body
-
 import com.gondroid.subtrack.resources.settings_licenses
-
 import com.gondroid.subtrack.resources.settings_rate_app
-
 import com.gondroid.subtrack.resources.settings_share_app_message
-
 import com.gondroid.subtrack.resources.settings_share_app
-
 import com.gondroid.subtrack.resources.settings_community_section
-
 import androidx.compose.material.icons.outlined.Code
-
 import androidx.compose.material.icons.outlined.StarOutline
-
 import androidx.compose.material.icons.outlined.Share
-
 import com.gondroid.subtrack.platform.deviceSummary
-
 import com.gondroid.subtrack.resources.common_error_offline
-
 import com.gondroid.subtrack.core.result.isConnectivity
-
 import com.gondroid.subtrack.platform.ExternalActions
 import com.gondroid.subtrack.platform.rememberGoogleSignIn
 import org.koin.compose.koinInject
-
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.common_back
-import com.gondroid.subtrack.resources.common_cancel
 import com.gondroid.subtrack.resources.profile_account_export
 import com.gondroid.subtrack.resources.profile_account_locale
 import com.gondroid.subtrack.resources.profile_account_notifications
@@ -46,11 +29,7 @@ import com.gondroid.subtrack.resources.profile_support_feedback
 import com.gondroid.subtrack.resources.profile_support_section
 import com.gondroid.subtrack.resources.settings_data_section
 import com.gondroid.subtrack.resources.settings_delete_account
-import com.gondroid.subtrack.resources.settings_delete_account_body
-import com.gondroid.subtrack.resources.settings_delete_account_confirm
 import com.gondroid.subtrack.resources.settings_delete_account_error
-import com.gondroid.subtrack.resources.settings_delete_account_title
-import com.gondroid.subtrack.resources.settings_deleting_account
 import com.gondroid.subtrack.resources.settings_export_chooser
 import com.gondroid.subtrack.resources.settings_export_desc
 import com.gondroid.subtrack.resources.settings_export_file_name
@@ -67,24 +46,16 @@ import com.gondroid.subtrack.resources.settings_terms
 import com.gondroid.subtrack.resources.settings_terms_url
 import com.gondroid.subtrack.resources.settings_title
 import com.gondroid.subtrack.resources.settings_version
-
 import org.koin.compose.viewmodel.koinViewModel
-
-import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.DeleteForever
@@ -112,7 +83,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -139,7 +109,6 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun SettingsScreen(
@@ -216,7 +185,7 @@ fun SettingsScreen(
 
 
 @Composable
-private fun SettingsContent(
+internal fun SettingsContent(
     onBack: () -> Unit,
     onEditUser: () -> Unit,
     onNotifications: () -> Unit,
@@ -357,42 +326,9 @@ private fun SettingsContent(
 }
 
 
-@Composable
-private fun DeleteAccountDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(Res.string.settings_delete_account_title), color = TextPrimary) },
-        text = { Text(stringResource(Res.string.settings_delete_account_body), color = TextSecondary) },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(stringResource(Res.string.settings_delete_account_confirm), color = AccentRed)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.common_cancel), color = TextSecondary)
-            }
-        },
-        containerColor = BgSurface
-    )
-}
-
-/** Blocks the screen while the account is deleted; it cannot be dismissed halfway. */
-@Composable
-private fun DeletingAccountDialog() {
-    AlertDialog(
-        onDismissRequest = {},
-        confirmButton = {},
-        title = { Text(stringResource(Res.string.settings_deleting_account), color = TextPrimary) },
-        text = { LinearProgressIndicator(color = AccentRed, modifier = Modifier.fillMaxWidth()) },
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
-        containerColor = BgSurface
-    )
-}
-
 @Preview(showBackground = true, backgroundColor = 0xFF0A0A0C)
 @Composable
-private fun SettingsContentPreview() {
+internal fun SettingsContentPreview() {
     SubTrackTheme {
         SettingsContent(
             onBack = {}, onEditUser = {}, onNotifications = {}, onLanguage = {}, onExport = {}, onFeedback = {},
