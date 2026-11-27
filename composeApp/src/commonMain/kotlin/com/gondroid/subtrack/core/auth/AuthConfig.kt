@@ -8,5 +8,8 @@ package com.gondroid.subtrack.core.auth
 object AuthConfig {
     const val FAKE_AUTH_EXTRA = "fakeAuth"
 
+    /** Token returned in fake-auth mode; the auth repository never sends it to Firebase. */
+    const val FAKE_TOKEN = "fake-token"
+
     var useFakeAuth: Boolean = false
 }

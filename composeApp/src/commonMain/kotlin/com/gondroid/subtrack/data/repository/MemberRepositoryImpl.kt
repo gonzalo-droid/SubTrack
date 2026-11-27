@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.data.repository
 
+import com.gondroid.subtrack.domain.util.randomId
+
 import com.gondroid.subtrack.domain.util.currentTimeMillis
 
 import com.gondroid.subtrack.domain.model.ExitRequest
@@ -12,8 +14,6 @@ import com.gondroid.subtrack.domain.repository.MemberRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 import com.gondroid.subtrack.domain.model.enums.isOverdue
 
 class MemberRepositoryImpl : MemberRepository {
@@ -78,7 +78,7 @@ class MemberRepositoryImpl : MemberRepository {
             .find { it.memberId == memberId && it.subscriptionId == subscriptionId && it.status == ExitRequestStatus.PENDING }
         if (existing != null) return Result.success(existing)
         val request = ExitRequest(
-            id = "exit_${@OptIn(ExperimentalUuidApi::class) Uuid.random()}",
+            id = "exit_${randomId()}",
             memberId = memberId,
             subscriptionId = subscriptionId,
             requestedAt = currentTimeMillis()

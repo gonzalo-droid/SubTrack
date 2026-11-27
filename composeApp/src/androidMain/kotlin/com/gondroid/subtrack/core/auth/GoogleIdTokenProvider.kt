@@ -15,15 +15,12 @@ import com.gondroid.subtrack.domain.model.GoogleCredential
  */
 object GoogleIdTokenProvider {
 
-    /** Token returned in fake-auth mode; the auth repository never sends it to Firebase. */
-    const val FAKE_TOKEN = "fake-token"
-
     /** OAuth web client id from google-services.json; the app sets it at startup (the library cannot read the generated resource). */
     var webClientId: String = ""
 
     /** Null when the user closed the picker; failure for any other problem. */
     suspend fun request(activityContext: Context): Result<GoogleCredential?> {
-        if (AuthConfig.useFakeAuth) return Result.success(GoogleCredential(FAKE_TOKEN))
+        if (AuthConfig.useFakeAuth) return Result.success(GoogleCredential(AuthConfig.FAKE_TOKEN))
         val option = GetSignInWithGoogleOption.Builder(webClientId).build()
         val request = GetCredentialRequest.Builder().addCredentialOption(option).build()
         return try {

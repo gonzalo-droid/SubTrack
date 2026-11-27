@@ -6,6 +6,7 @@ plugins {
     // The KMP library plugin has no lint of its own; `:androidApp:lintDebug` reaches this module through it
     alias(libs.plugins.android.lint)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
@@ -63,6 +64,19 @@ kotlin {
             kotlin.srcDir(generateAppInfo)
             dependencies {
                 implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.ui.backhandler)
+                implementation(libs.compose.ui.tooling.preview)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.material.icons.extended)
+                implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+                implementation(libs.jetbrains.lifecycle.runtime.compose)
+                implementation(libs.jetbrains.navigation.compose)
+                implementation(libs.coil3.compose)
+                implementation(libs.coil3.network.ktor)
+                implementation(libs.ktor.client.core)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
@@ -71,6 +85,8 @@ kotlin {
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
             }
         }
         commonTest.dependencies {
@@ -79,26 +95,11 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
-            implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.activity.compose)
-
-            implementation(project.dependencies.platform(libs.androidx.compose.bom))
-            implementation(libs.androidx.compose.ui)
-            implementation(libs.androidx.compose.ui.graphics)
-            implementation(libs.androidx.compose.ui.tooling.preview)
-            implementation(libs.androidx.compose.ui.text.google.fonts)
-            implementation(libs.androidx.compose.foundation)
-            implementation(libs.androidx.compose.material3)
-            implementation(libs.androidx.compose.material.icons.extended)
-
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.kotlinx.serialization.json)
 
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.android)
-            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.ktor.client.okhttp)
 
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.kotlinx.coroutines.play.services)
@@ -110,8 +111,10 @@ kotlin {
             implementation(libs.androidx.credentials.play.services.auth)
             implementation(libs.googleid)
 
-            implementation(libs.coil.compose)
             implementation(libs.zxing.core)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         getByName("androidHostTest").dependencies {
             implementation(libs.junit)
@@ -128,6 +131,24 @@ kotlin {
     }
 }
 
+// VER-02: Config.xcconfig repeats the catalog version for Xcode; `check` fails when they drift apart
+val checkIosVersion by tasks.registering {
+    val xcconfig = rootProject.file("iosApp/Configuration/Config.xcconfig")
+    val name = libs.versions.app.versionName.get()
+    val code = libs.versions.app.versionCode.get()
+    inputs.file(xcconfig)
+    doLast {
+        val values = xcconfig.readLines().mapNotNull { line ->
+            line.substringBefore("//").split("=", limit = 2).takeIf { it.size == 2 }?.let { it[0].trim() to it[1].trim() }
+        }.toMap()
+        check(values["MARKETING_VERSION"] == name && values["CURRENT_PROJECT_VERSION"] == code) {
+            "Config.xcconfig (${values["MARKETING_VERSION"]} / ${values["CURRENT_PROJECT_VERSION"]}) does not match " +
+                "libs.versions.toml ($name / $code)."
+        }
+    }
+}
+tasks.named("check") { dependsOn(checkIosVersion) }
+
 // Room writes each schema version here so future migrations can be written and tested
 room {
     schemaDirectory("$projectDir/schemas")
@@ -136,4 +157,9 @@ room {
 dependencies {
     listOf("kspAndroid", "kspIosArm64", "kspIosSimulatorArm64").forEach { add(it, libs.room.compiler) }
     add("androidRuntimeClasspath", libs.androidx.compose.ui.tooling)
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.gondroid.subtrack.resources"
 }

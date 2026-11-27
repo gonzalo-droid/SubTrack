@@ -28,3 +28,11 @@ interface AuthNativeBridge {
 
     fun deleteCurrentUser(completion: (error: String?) -> Unit)
 }
+
+interface GoogleSignInNativeBridge {
+    /**
+     * Shows Google's account picker. [completion] gets both tokens, an error, or all nulls when
+     * the user cancels.
+     */
+    fun signIn(completion: (idToken: String?, accessToken: String?, error: String?) -> Unit)
+}

@@ -8,6 +8,9 @@ import com.gondroid.subtrack.data.local.SubTrackDatabase
 import com.gondroid.subtrack.data.local.buildSubTrack
 import com.gondroid.subtrack.platform.AuthBridge
 import com.gondroid.subtrack.platform.AuthNativeBridge
+import com.gondroid.subtrack.platform.ExternalActions
+import com.gondroid.subtrack.platform.GoogleSignInNativeBridge
+import com.gondroid.subtrack.platform.IosExternalActions
 import com.gondroid.subtrack.platform.FirestoreNativeBridge
 import com.gondroid.subtrack.platform.IosAuthBridge
 import com.gondroid.subtrack.platform.IosRemoteDocuments
@@ -27,16 +30,23 @@ actual val platformModule: Module = module {
     single { createUserPrefsDataStore(documentPath(USER_PREFS_FILE)) }
     single<RemoteDocuments> { IosRemoteDocuments(get()) }
     single<AuthBridge> { IosAuthBridge(get()) }
+    single<ExternalActions> { IosExternalActions() }
 }
 
 /** Called from Swift at launch (ARQ-06) with the Firebase bridges written in Swift. */
-fun initKoinIos(firestore: FirestoreNativeBridge, auth: AuthNativeBridge, isDebug: Boolean): KoinApplication {
+fun initKoinIos(
+    firestore: FirestoreNativeBridge,
+    auth: AuthNativeBridge,
+    googleSignIn: GoogleSignInNativeBridge,
+    isDebug: Boolean
+): KoinApplication {
     AppEnvironment.isDebug = isDebug
     val bridges = module {
         single { firestore }
         single { auth }
+        single { googleSignIn }
     }
-    return startKoin { modules(bridges, platformModule, dataModule, domainModule) }
+    return startKoin { modules(bridges, platformModule, dataModule, domainModule, uiModule) }
 }
 
 @OptIn(ExperimentalForeignApi::class)
