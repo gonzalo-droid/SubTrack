@@ -126,6 +126,7 @@ fun AdminDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val activeSheet by viewModel.activeSheet.collectAsStateWithLifecycle()
+    val templates by viewModel.templates.collectAsStateWithLifecycle()
     val externalActions = koinInject<ExternalActions>()
     val messenger = LocalSnackbarMessenger.current
     var deleting by remember { mutableStateOf(false) }
@@ -291,7 +292,7 @@ fun AdminDetailScreen(
                                     subscriptionName = sub?.name ?: ""
                                 )
                             },
-                            templates = com.gondroid.subtrack.data.demo.DemoData.templates,
+                            templates = templates,
                             adminName = successState?.data?.adminName.orEmpty(),
                             onDone = { sent ->
                                 viewModel.onBulkReminderSent(sent)

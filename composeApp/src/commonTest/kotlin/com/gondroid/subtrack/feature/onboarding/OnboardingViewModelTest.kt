@@ -55,6 +55,7 @@ class OnboardingViewModelTest {
         override fun getPopularServices() = listOf(
             ServiceTemplate("tpl_netflix", "Netflix", "#E50914", "N", 54.9, SubscriptionCategory.STREAMING)
         )
+        override fun getOtherService() = ServiceTemplate("tpl_other", "Otro", "#888888", "+", null, SubscriptionCategory.OTHER, isPopular = false)
     }
 
     private fun viewModel(signIn: AppResult<User>) = OnboardingViewModel(

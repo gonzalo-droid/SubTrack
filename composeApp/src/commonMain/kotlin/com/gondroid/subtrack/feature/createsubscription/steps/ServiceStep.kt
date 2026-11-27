@@ -77,6 +77,7 @@ private val PRESET_COLORS = listOf("#E50914", "#1DB954", "#0A84FF", "#BF5AF2", "
 @Composable
 fun ServiceStep(
     services: List<ServiceTemplate>,
+    otherService: ServiceTemplate,
     selectedService: ServiceTemplate?,
     customServiceName: String,
     onSelectService: (ServiceTemplate) -> Unit,
@@ -123,7 +124,7 @@ fun ServiceStep(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    onSelectService(ServiceTemplates.other.copy(brandColor = dialogColor))
+                    onSelectService(otherService.copy(brandColor = dialogColor))
                     onUpdateCustomName(dialogName)
                     onUpdateCustomColor(dialogColor)
                     showCustomDialog = false
@@ -290,6 +291,7 @@ private fun ServiceStepPreview() {
     SubTrackTheme {
         ServiceStep(
             services = ServiceTemplates.popular,
+            otherService = ServiceTemplates.other,
             selectedService = ServiceTemplates.popular[0],
             customServiceName = "",
             onSelectService = {},

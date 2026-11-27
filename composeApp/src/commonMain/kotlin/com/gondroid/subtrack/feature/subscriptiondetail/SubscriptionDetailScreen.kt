@@ -29,26 +29,26 @@ fun SubscriptionDetailScreen(
         key = subscriptionId,
         parameters = { parametersOf(subscriptionId) }
     )
-    val roleState by vm.roleState.collectAsStateWithLifecycle()
+    val uiState by vm.uiState.collectAsStateWithLifecycle()
 
-    when (val state = roleState) {
-        is RoleState.Loading -> Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    when (val state = uiState) {
+        is SubscriptionDetailUiState.Loading -> Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("Cargando…", style = SubTrackType.bodyM, color = TextSecondary)
         }
-        is RoleState.Admin -> AdminDetailScreen(
+        is SubscriptionDetailUiState.Admin -> AdminDetailScreen(
             subscriptionId = state.subscriptionId,
             onBack = onBack,
             onEdit = onEdit,
             onMemberHistory = onMemberHistory,
             modifier = modifier
         )
-        is RoleState.MemberOf -> MemberDetailScreen(
+        is SubscriptionDetailUiState.MemberOf -> MemberDetailScreen(
             subscriptionId = state.subscriptionId,
             memberId = state.memberId,
             onBack = onBack,
             modifier = modifier
         )
         // Also reached right after the admin deletes the subscription
-        is RoleState.NotFound -> LaunchedEffect(Unit) { onBack() }
+        is SubscriptionDetailUiState.NotFound -> LaunchedEffect(Unit) { onBack() }
     }
 }

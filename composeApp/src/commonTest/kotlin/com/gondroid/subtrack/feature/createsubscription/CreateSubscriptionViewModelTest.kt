@@ -62,6 +62,7 @@ class CreateSubscriptionViewModelTest {
             createSubscription = CreateSubscriptionUseCase(subs),
             getPopularServices = GetPopularServicesUseCase(object : ServiceTemplateRepository {
                 override fun getPopularServices() = listOf(netflix, spotifyFamily)
+                override fun getOtherService() = ServiceTemplate("tpl_other", "Otro", "#888888", "+", null, SubscriptionCategory.OTHER, isPopular = false)
             }),
             getCurrentUser = GetCurrentUserUseCase(Users),
             getSubscriptionDetail = GetSubscriptionDetailUseCase(subs),

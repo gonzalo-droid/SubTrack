@@ -1,6 +1,5 @@
 package com.gondroid.subtrack.data.remote
 
-import com.gondroid.subtrack.core.util.logError
 import com.gondroid.subtrack.data.local.PaymentEntity
 import com.gondroid.subtrack.data.local.TemplateEntity
 import com.gondroid.subtrack.data.local.UserAliasEntity
@@ -12,13 +11,9 @@ import com.gondroid.subtrack.data.repository.AppStore
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.platform.RemoteDocuments
 import com.gondroid.subtrack.platform.RemoteWrite
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -32,11 +27,8 @@ import kotlinx.coroutines.launch
  * shortcut: pulls only at sign-in, no live listener; enough for one device per account,
  * add snapshot listeners when the same account is used on several devices.
  */
-class FirestoreSync(private val remote: RemoteDocuments) {
+class FirestoreSync(private val remote: RemoteDocuments, private val scope: CoroutineScope) {
 
-    private val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> logError(TAG, "Firestore sync failed", e) }
-    )
     private var mirrorJob: Job? = null
 
     /**
@@ -173,7 +165,6 @@ class FirestoreSync(private val remote: RemoteDocuments) {
     private fun userDoc(uid: String) = "$USERS/$uid"
 
     private companion object {
-        const val TAG = "FirestoreSync"
         const val USERS = "users"
         const val SUBSCRIPTIONS = "subscriptions"
         const val PAYMENTS = "payments"

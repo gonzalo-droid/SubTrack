@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin
 
+import com.gondroid.subtrack.domain.model.Template
+
+import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
+
 import com.gondroid.subtrack.domain.util.monthKey
 
 import com.gondroid.subtrack.domain.util.today
@@ -76,8 +80,13 @@ class AdminDetailViewModel(
     private val removeMemberUseCase: RemoveMemberUseCase,
     private val markMemberAsPaidUseCase: MarkMemberAsPaidUseCase,
     private val pauseSubscriptionUseCase: PauseSubscriptionUseCase,
-    private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase
+    private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase,
+    getAllTemplates: GetAllTemplatesUseCase
 ) : ViewModel() {
+
+    /** The user's message templates (edited ones included) for the bulk reminder. */
+    val templates: StateFlow<List<Template>> = getAllTemplates()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
 
 

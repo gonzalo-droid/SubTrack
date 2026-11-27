@@ -175,6 +175,7 @@ fun CreateSubscriptionScreen(
                 when (step) {
                     WizardStep.SERVICE -> ServiceStep(
                         services = viewModel.popularServices,
+                        otherService = viewModel.otherService,
                         selectedService = form.selectedService,
                         customServiceName = form.customServiceName,
                         onSelectService = viewModel::selectService,
