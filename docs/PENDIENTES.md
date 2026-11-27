@@ -30,7 +30,6 @@ Al cerrar una tarea, bórrala de aquí y anota la decisión en `DECISIONES.md` s
 - [ ] **COD-05** — Las secciones ya están en archivos propios; quedan largas las funciones de contenido de `AdminDetailScreen.kt` (575), `MemberDetailScreen.kt` (490) y `EditTemplateScreen.kt` (417): partirlas exige separar estado de layout, no solo mover código.
 - [ ] **PERF-01** — Medir tamaño del AAB y arranque en frío antes del primer release.
 - [ ] **DOC-04 / SEC-05** — Capturas de tienda (`store-screenshots`) y regla en `.gitignore` para el material de marketing.
-- [ ] **TST-07** — Preparar `MigrationTestHelper` antes de la versión 2 de la base de datos.
 
 ## Antes de activar una función planeada
 
