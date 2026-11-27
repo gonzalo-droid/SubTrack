@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlinx.coroutines.test.runTest
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.Test
 
 class SubscriptionUseCasesTest {
 
@@ -50,7 +50,7 @@ class SubscriptionUseCasesTest {
         members = members, isPaused = paused, createdAt = 0, updatedAt = 0
     )
 
-    @Test fun `paused subscriptions are left out of totals and upcoming`() = runBlocking {
+    @Test fun pausedSubscriptionsAreLeftOutOfTotalsAndUpcoming() = runTest {
         val repo = FakeRepo(listOf(sub("a", 10.0), sub("b", 30.0, paused = true), sub("c", 20.0, shared = true)))
         val summary = GetSubscriptionsUseCase(repo)().first()
         assertEquals(30.0, summary.totalMonthlySpend, 0.001)
@@ -58,7 +58,7 @@ class SubscriptionUseCasesTest {
         assertTrue(summary.upcomingCutoffs.none { it.isPaused })
     }
 
-    @Test fun `paused subscriptions are left out of stats money but still counted as listed`() = runBlocking {
+    @Test fun pausedSubscriptionsAreLeftOutOfStatsMoneyButStillCountedAsListed() = runTest {
         val users = object : com.gondroid.subtrack.domain.repository.UserRepository {
             val me = com.gondroid.subtrack.domain.model.User("me", "Yo", "900", null, referralCode = "Y", createdAt = 0)
             override fun getCurrentUser() = kotlinx.coroutines.flow.flowOf(me)
@@ -75,7 +75,7 @@ class SubscriptionUseCasesTest {
         assertEquals(1, stats.pendingMembersCount)
     }
 
-    @Test fun `pause and resume toggle the flag`() = runBlocking {
+    @Test fun pauseAndResumeToggleTheFlag() = runTest {
         val repo = FakeRepo(listOf(sub("a", 10.0)))
         PauseSubscriptionUseCase(repo)("a", paused = true)
         assertTrue(repo.store.value.single().isPaused)
@@ -83,7 +83,7 @@ class SubscriptionUseCasesTest {
         assertEquals(false, repo.store.value.single().isPaused)
     }
 
-    @Test fun `equal split shares follow the new total`() = runBlocking {
+    @Test fun equalSplitSharesFollowTheNewTotal() = runTest {
         val repo = FakeRepo(listOf(sub("s", 30.0, shared = true, members = listOf(member("m1", 10.0), member("m2", 10.0)))))
         UpdateSubscriptionDetailsUseCase(repo)("s", 45.0, "PEN", BillingCycle.MONTHLY, 10)
         val updated = repo.store.value.single()
@@ -91,7 +91,7 @@ class SubscriptionUseCasesTest {
         assertEquals(10, updated.cutoffDay)
     }
 
-    @Test fun `percentage shares scale and fixed shares stay`() = runBlocking {
+    @Test fun percentageSharesScaleAndFixedSharesStay() = runTest {
         val repo = FakeRepo(listOf(
             sub("p", 100.0, shared = true, split = SplitType.PERCENTAGE, members = listOf(member("m", 40.0))),
             sub("f", 100.0, shared = true, split = SplitType.FIXED, members = listOf(member("m", 25.0)))

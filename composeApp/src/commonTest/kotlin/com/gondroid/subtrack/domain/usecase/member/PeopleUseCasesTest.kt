@@ -17,10 +17,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import org.junit.Test
-import java.lang.reflect.Proxy
+import kotlinx.coroutines.test.runTest
+import kotlin.test.assertEquals
+import kotlin.test.Test
+import com.gondroid.subtrack.testing.UnusedMembers
 
 class PeopleUseCasesTest {
 
@@ -60,12 +60,12 @@ class PeopleUseCasesTest {
         shared("disney", "maria", member("me-in-disney", "me", PaymentStatus.LATE, share = 8.0), member("ana", null, PaymentStatus.OVERDUE))
     )
 
-    @Test fun `debtors only come from subscriptions I administer and count overdue or late`() = runBlocking {
+    @Test fun debtorsOnlyComeFromSubscriptionsIAdministerAndCountOverdueOrLate() = runTest {
         val debtors = GetDebtorsUseCase(FakeSubs(subs), FakeUsers())().first()
         assertEquals(listOf("ana" to "netflix"), debtors.map { it.memberName to it.subscriptionId })
     }
 
-    @Test fun `my debts group by admin with the overdue amount`() = runBlocking {
+    @Test fun myDebtsGroupByAdminWithTheOverdueAmount() = runTest {
         val debts = GetMyDebtsUseCase(FakeSubs(subs), FakeUsers())().first()
         val owner = debts.single()
         assertEquals("María Rodríguez", owner.name)
@@ -73,13 +73,13 @@ class PeopleUseCasesTest {
         assertEquals(listOf("disney"), owner.subscriptions.map { it.subscriptionId })
     }
 
-    @Test fun `an admin without a user record still shows up with a blank name`() = runBlocking {
+    @Test fun anAdminWithoutAUserRecordStillShowsUpWithABlankName() = runTest {
         val ghost = listOf(shared("spotify", "ghost", member("me-in-spotify", "me", PaymentStatus.PENDING)))
         val debts = GetMyDebtsUseCase(FakeSubs(ghost), FakeUsers())().first()
         assertEquals(listOf("" to "ghost"), debts.map { it.name to it.userId })
     }
 
-    @Test fun `paused subscriptions create no debts but the admin stays listed as paused`() = runBlocking {
+    @Test fun pausedSubscriptionsCreateNoDebtsButTheAdminStaysListedAsPaused() = runTest {
         val paused = subs.map { it.copy(isPaused = true) }
         assertEquals(emptyList<Any>(), GetDebtorsUseCase(FakeSubs(paused), FakeUsers())().first())
         val owner = GetMyDebtsUseCase(FakeSubs(paused), FakeUsers())().first().single()
@@ -87,16 +87,14 @@ class PeopleUseCasesTest {
         assertEquals(true, owner.isAllPaused)
     }
 
-    @Test fun `people who owe me exclude me and subscriptions I don't own`() = runBlocking {
+    @Test fun peopleWhoOweMeExcludeMeAndSubscriptionsIDonTOwn() = runTest {
         fun person(userId: String?, name: String, vararg subIds: String) = PersonSummary(
             userId = userId, name = name, phone = name, hasApp = userId != null, totalDebt = 99.0,
             totalMonthlyContribution = 99.0, punctualityPercent = 100, firstJoinedAt = 0, lastActivityAt = null,
             subscriptions = subIds.map { SubscriptionParticipation(it, it, "#000000", PaymentStatus.OVERDUE, 10.0, false) }
         )
         // Only getAllPeopleWithSubscriptions is used; every other call fails loudly.
-        val unused = Proxy.newProxyInstance(javaClass.classLoader, arrayOf(MemberRepository::class.java)) { _, _, _ ->
-            error("unused")
-        } as MemberRepository
+        val unused = UnusedMembers
         val memberRepo = object : MemberRepository by unused {
             override fun getAllPeopleWithSubscriptions() = flowOf(
                 listOf(person(null, "Ana", "netflix", "disney"), person("me", "Gonzalo", "disney"), person(null, "Solo Disney", "disney"))

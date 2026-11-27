@@ -1,12 +1,12 @@
 package com.gondroid.subtrack.data.local
 
 import com.gondroid.subtrack.data.demo.DemoData
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.Test
 
 class MappersTest {
 
-    @Test fun `subscriptions round-trip with active and archived members in order`() {
+    @Test fun subscriptionsRoundTripWithActiveAndArchivedMembersInOrder() {
         DemoData.subscriptions.forEach { sub ->
             val withArchived = sub.copy(archivedMembers = listOf(DemoData.memCarlos))
             val back = withArchived.toEntity().toDomain(withArchived.memberEntities())
@@ -14,7 +14,7 @@ class MappersTest {
         }
     }
 
-    @Test fun `payments, templates, user and alias round-trip`() {
+    @Test fun paymentsTemplatesUserAndAliasRoundTrip() {
         DemoData.payments.forEach { assertEquals(it, it.toEntity().toDomain()) }
         DemoData.templates.forEachIndexed { i, t -> assertEquals(t, t.toEntity(i).toDomain()) }
         assertEquals(DemoData.currentUser, DemoData.currentUser.toEntity().toDomain())
