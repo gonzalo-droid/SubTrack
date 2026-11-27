@@ -17,7 +17,7 @@ Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **
 - **Navegación**: Navigation Compose type-safe (con `@Serializable`)
 - **Persistencia local**: Room (fase 2)
 - **Backend**: Firebase, proyecto `subtrack-f4dd3` (activo): Auth con Google (Credential Manager) y Firestore (`users/{uid}/…`, reglas en `firestore.rules`) como espejo del store; Room es la caché offline. FCM y Functions, pendientes.
-- **Post-clone**: baja `app/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
+- **Post-clone**: baja `androidApp/google-services.json` desde la consola de Firebase (está en `.gitignore` porque el repo es público).
 - **Datos**: los repositorios (`data/repository/*RepositoryImpl`) trabajan sobre el store en memoria `AppStore`; `LocalStoreSync` lo persiste en Room fila por fila y `FirestoreSync` lo sube a Firestore. Los datos demo (`data/demo/DemoData`) solo existen en debug.
 
 ## Reglas de comportamiento obligatorias
@@ -104,9 +104,9 @@ Cuando recibas una tarea:
 3. Si hay ambigüedad o decisión importante: **presenta opciones**
 4. Implementa cambios mínimos y atómicos
 5. **Valida**: compila, ejecuta previews si aplica, revisa que no rompiste nada
-   - Unit tests: `./gradlew testDebugUnitTest`
-   - Lint (debe quedar en 0 errores): `./gradlew lintDebug`
-   - Screenshot tests: `./gradlew verifyRoborazziDebug` (regrabar con `recordRoborazziDebug` si el cambio visual es intencional)
+   - Unit tests: `./gradlew :composeApp:testAndroidHostTest`
+   - Lint (debe quedar en 0 errores): `./gradlew :androidApp:lintDebug` (revisa también `composeApp`)
+   - Screenshot tests: `./gradlew :composeApp:verifyRoborazziAndroidHostTest` (regrabar con `recordRoborazziAndroidHostTest` si el cambio visual es intencional)
    - E2E: `.maestro/run.sh` con el emulador abierto (limpia datos y fija español antes de cada flujo; los flujos lanzan la app con `fakeAuth: true`, que en debug salta el login real de Google) (si Maestro no conecta, desinstala `dev.mobile.maestro` y `dev.mobile.maestro.test` y reintenta)
 6. Reporta con un resumen breve de archivos tocados y por qué
 
@@ -116,7 +116,7 @@ Cuando recibas una tarea:
   `keytool -genkeypair -v -keystore ~/.config/subtrack-signing/upload.jks -alias upload -keyalg RSA -keysize 4096 -validity 10000`
 - `local.properties` (fuera de git) le da la ruta y las contraseñas al build de release: `subtrack.signing.storeFile`, `subtrack.signing.storePassword`, `subtrack.signing.keyAlias`, `subtrack.signing.keyPassword`. Sin ellas el release sale sin firmar y Gradle avisa.
 - Play App Signing debe quedar activado en Play Console: Google guarda la llave de la app y la de subida se puede cambiar si se pierde.
-- **Respaldo** (SEC-04), dónde va y no la llave en sí: la keystore y sus contraseñas se guardan en el gestor de contraseñas del dueño, con una copia del `.jks` fuera de este Mac; `app/google-services.json` se vuelve a bajar desde la consola de Firebase (proyecto `subtrack-f4dd3`).
+- **Respaldo** (SEC-04), dónde va y no la llave en sí: la keystore y sus contraseñas se guardan en el gestor de contraseñas del dueño, con una copia del `.jks` fuera de este Mac; `androidApp/google-services.json` se vuelve a bajar desde la consola de Firebase (proyecto `subtrack-f4dd3`).
 
 ## Nunca hagas esto
 

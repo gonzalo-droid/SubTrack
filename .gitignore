@@ -8,7 +8,7 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
+build/
 /captures
 .externalNativeBuild
 .cxx
@@ -20,4 +20,4 @@ local.properties
 /.superpowers/
 
 # Firebase config (public repo: download from the console, see CLAUDE.md)
-/app/google-services.json
+/androidApp/google-services.json
