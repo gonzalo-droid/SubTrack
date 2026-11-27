@@ -1,0 +1,12 @@
+// Non-secret values of the iOS target. The version must match gradle/libs.versions.toml (checkIosVersion).
+TEAM_ID=
+BUNDLE_ID=com.gondroid.subtrack
+APP_NAME=SubTrack
+MARKETING_VERSION=0.1.0
+CURRENT_PROJECT_VERSION=1
+
+// Google Sign-In URL scheme: REVERSED_CLIENT_ID from GoogleService-Info.plist, set in Secrets.xcconfig
+GOOGLE_REVERSED_CLIENT_ID=com.googleusercontent.apps.missing
+
+// Must stay last so its values win
+#include? "Secrets.xcconfig"

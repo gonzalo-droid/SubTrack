@@ -21,3 +21,11 @@ local.properties
 
 # Firebase config (public repo: download from the console, see CLAUDE.md)
 /androidApp/google-services.json
+
+# iOS
+/iosApp/Configuration/Secrets.xcconfig
+/iosApp/iosApp/GoogleService-Info.plist
+xcuserdata/
+*.xcuserstate
+/iosApp/build/
+DerivedData/
