@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.createsubscription
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.core.net.toUri
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -82,7 +85,6 @@ import androidx.compose.runtime.LaunchedEffect
 import android.os.Build
 import com.gondroid.subtrack.feature.onboarding.screens.NotificationsPermissionScreen
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun CreateSubscriptionScreen(
@@ -92,8 +94,8 @@ fun CreateSubscriptionScreen(
     startWithShared: Boolean = false,
     editSubscriptionId: String? = null
 ) {
-    val viewModel = hiltViewModel<CreateSubscriptionViewModel, CreateSubscriptionViewModel.Factory>(
-        creationCallback = { it.create(startWithShared, editSubscriptionId) }
+    val viewModel = koinViewModel<CreateSubscriptionViewModel>(
+        parameters = { parametersOf(startWithShared, editSubscriptionId) }
     )
     val askNotificationPermission by viewModel.askNotificationPermission.collectAsStateWithLifecycle()
     val form by viewModel.formState.collectAsStateWithLifecycle()

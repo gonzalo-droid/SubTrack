@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
 import com.gondroid.subtrack.domain.usecase.user.UpdateUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,10 +12,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class EditProfileViewModel @Inject constructor(
+class EditProfileViewModel(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val updateUser: UpdateUserUseCase
 ) : ViewModel() {

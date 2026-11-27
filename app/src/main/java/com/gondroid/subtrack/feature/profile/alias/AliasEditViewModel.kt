@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.domain.usecase.alias.GetUserAliasUseCase
 import com.gondroid.subtrack.domain.usecase.alias.UpdateUserAliasUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,14 +12,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed interface AliasEditEvent {
     data object Saved : AliasEditEvent
 }
 
-@HiltViewModel
-class AliasEditViewModel @Inject constructor(
+class AliasEditViewModel(
     private val getUserAlias: GetUserAliasUseCase,
     private val updateUserAlias: UpdateUserAliasUseCase
 ) : ViewModel() {

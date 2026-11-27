@@ -19,10 +19,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 // ── UI State ──────────────────────────────────────────────────────────────────
 
@@ -54,23 +50,15 @@ sealed interface MemberDetailEvent {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-@HiltViewModel(assistedFactory = MemberDetailViewModel.Factory::class)
-class MemberDetailViewModel @AssistedInject constructor(
-    @Assisted("memberId") private val memberId: String,
-    @Assisted("subscriptionId") private val subscriptionId: String,
+class MemberDetailViewModel(
+    private val memberId: String,
+    private val subscriptionId: String,
     getMemberSubscriptionDetail: GetMemberSubscriptionDetailUseCase,
     getMemberPaymentHistory: GetMemberPaymentHistoryUseCase,
     private val markOwnPaymentUseCase: MarkOwnPaymentUseCase,
     private val requestGroupExitUseCase: RequestGroupExitUseCase
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(
-            @Assisted("memberId") memberId: String,
-            @Assisted("subscriptionId") subscriptionId: String
-        ): MemberDetailViewModel
-    }
 
 
     val uiState: StateFlow<MemberDetailUiState> = combine(

@@ -7,16 +7,13 @@ import com.gondroid.subtrack.domain.usecase.subscription.GetInsightsUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetUpcomingCutoffsUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.util.Calendar
-import javax.inject.Inject
 
-@HiltViewModel
-class DashboardViewModel @Inject constructor(
+class DashboardViewModel(
     private val getSubscriptionsUseCase: GetSubscriptionsUseCase,
     private val getUpcomingCutoffsUseCase: GetUpcomingCutoffsUseCase,
     private val getDebtorsUseCase: GetDebtorsUseCase,

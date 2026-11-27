@@ -5,11 +5,8 @@ import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import com.gondroid.subtrack.domain.util.daysUntilCutoff
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SubscriptionRepositoryImpl @Inject constructor() : SubscriptionRepository {
+class SubscriptionRepositoryImpl : SubscriptionRepository {
 
     private val store = AppStore.subscriptions
 

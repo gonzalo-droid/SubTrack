@@ -23,8 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 // ── Step enum ────────────────────────────────────────────────────────────────
 
@@ -44,8 +42,7 @@ sealed interface AuthState {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-@HiltViewModel
-class OnboardingViewModel @Inject constructor(
+class OnboardingViewModel(
     private val authenticateUser: AuthenticateUserUseCase,
     private val createSubscription: CreateSubscriptionUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,

@@ -5,11 +5,10 @@ import com.gondroid.subtrack.domain.model.InsightType
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 private const val UNUSED_THRESHOLD_DAYS = 30
 
-class GetInsightsUseCase @Inject constructor(
+class GetInsightsUseCase(
     private val repository: SubscriptionRepository
 ) {
     operator fun invoke(): Flow<Insight?> =

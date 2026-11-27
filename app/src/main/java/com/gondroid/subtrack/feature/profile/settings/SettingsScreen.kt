@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.AccentRedBg
 import com.gondroid.subtrack.core.designsystem.theme.AccentRed
@@ -84,7 +86,6 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import kotlinx.coroutines.launch
-import androidx.hilt.navigation.compose.hiltViewModel
 
 
 /** Cache subfolder shared by the FileProvider; see res/xml/file_paths.xml. */
@@ -96,7 +97,7 @@ fun SettingsScreen(
     onEditUser: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: SettingsViewModel = hiltViewModel()
+    val viewModel: SettingsViewModel = koinViewModel()
     val context = LocalContext.current
     val messenger = LocalSnackbarMessenger.current
     val scope = rememberCoroutineScope()

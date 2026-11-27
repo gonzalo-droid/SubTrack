@@ -22,8 +22,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Mirrors the in-memory store ([AppStore], persisted to Room by LocalStoreSync) to
@@ -34,8 +32,7 @@ import javax.inject.Singleton
  * shortcut: pulls only at sign-in, no live listener; enough for one device per account,
  * add snapshot listeners when the same account is used on several devices.
  */
-@Singleton
-class FirestoreSync @Inject constructor(private val db: FirebaseFirestore) {
+class FirestoreSync(private val db: FirebaseFirestore) {
 
     private val scope = CoroutineScope(
         SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, e -> Log.e(TAG, "Firestore sync failed", e) }

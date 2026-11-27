@@ -14,16 +14,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Room persistence for the in-memory store ([AppStore]): the repositories work on it; this loads
  * it from the database at startup (seeding the demo data on a debug first run) and writes every
  * later change back, row by row.
  */
-@Singleton
-class LocalStoreSync @Inject constructor(private val dao: SnapshotDao) {
+class LocalStoreSync(private val dao: SnapshotDao) {
 
     // A failed write (e.g. SQLite error) is logged and skipped instead of crashing the app
     private val scope = CoroutineScope(

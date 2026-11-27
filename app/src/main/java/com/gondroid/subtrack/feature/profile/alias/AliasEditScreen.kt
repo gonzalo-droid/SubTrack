@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.alias
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,14 +49,13 @@ import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.enums.PaymentAliasType
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AliasEditScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: AliasEditViewModel = hiltViewModel()
+    val viewModel: AliasEditViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

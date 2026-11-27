@@ -1,5 +1,7 @@
 package com.gondroid.subtrack
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,8 +36,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import com.gondroid.subtrack.core.designsystem.components.feedback.STSnackbarHost
 import com.gondroid.subtrack.core.designsystem.components.feedback.rememberSnackbarMessenger
-import androidx.hilt.navigation.compose.hiltViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import com.gondroid.subtrack.core.auth.AuthConfig
 
 private fun NavDestination?.isMainRoute(): Boolean =
@@ -44,7 +44,6 @@ private fun NavDestination?.isMainRoute(): Boolean =
     this?.hasRoute(Route.People::class) == true ||
     this?.hasRoute(Route.Profile::class) == true
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +53,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SubTrackTheme {
-                val appStateVm: AppStateViewModel = hiltViewModel()
+                val appStateVm: AppStateViewModel = koinViewModel()
                 val appState by appStateVm.state.collectAsStateWithLifecycle()
 
                 when (appState) {

@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.referral
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.ui.unit.IntOffset
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -92,7 +94,6 @@ import com.gondroid.subtrack.domain.model.ReferralRecord
 import com.gondroid.subtrack.domain.model.enums.ReferralStatus
 import java.util.concurrent.TimeUnit
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +101,7 @@ fun ReferralScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: ReferralViewModel = hiltViewModel()
+    val viewModel: ReferralViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val resources = LocalResources.current

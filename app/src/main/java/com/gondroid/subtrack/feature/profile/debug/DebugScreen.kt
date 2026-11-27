@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.debug
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +28,6 @@ import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextSecondary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.data.demo.DemoData
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.activity.ComponentActivity
 import android.content.Context
 import android.content.ContextWrapper
@@ -38,7 +39,7 @@ fun DebugScreen(
 ) {
     val context = LocalContext.current
     // Activity-scoped: the same instance MainActivity uses, so resetting shows the onboarding
-    val appStateVm: AppStateViewModel = hiltViewModel(context.findActivity())
+    val appStateVm: AppStateViewModel = koinViewModel(viewModelStoreOwner = context.findActivity())
 
     LazyColumn(
         modifier = modifier.fillMaxSize().padding(Spacing.l),

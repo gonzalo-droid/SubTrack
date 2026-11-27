@@ -8,9 +8,8 @@ import com.gondroid.subtrack.domain.repository.PaymentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.util.Calendar
-import javax.inject.Inject
 
-class GetPaymentHistoryUseCase @Inject constructor(
+class GetPaymentHistoryUseCase(
     private val paymentRepository: PaymentRepository,
     private val memberRepository: MemberRepository
 ) {

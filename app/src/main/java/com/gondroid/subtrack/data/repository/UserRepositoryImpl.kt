@@ -5,11 +5,8 @@ import com.gondroid.subtrack.data.demo.DemoData
 import com.gondroid.subtrack.domain.model.User
 import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class UserRepositoryImpl @Inject constructor() : UserRepository {
+class UserRepositoryImpl : UserRepository {
 
     private val store = AppStore.currentUser
 

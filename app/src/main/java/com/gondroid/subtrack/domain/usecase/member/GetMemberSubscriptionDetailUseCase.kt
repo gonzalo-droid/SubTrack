@@ -8,9 +8,8 @@ import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class GetMemberSubscriptionDetailUseCase @Inject constructor(
+class GetMemberSubscriptionDetailUseCase(
     private val subscriptionRepository: SubscriptionRepository,
     private val memberRepository: MemberRepository,
     private val userRepository: UserRepository

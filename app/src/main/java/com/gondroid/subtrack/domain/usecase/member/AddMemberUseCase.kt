@@ -4,9 +4,8 @@ import com.gondroid.subtrack.domain.model.Member
 import com.gondroid.subtrack.domain.model.NewMemberData
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.MemberRepository
-import javax.inject.Inject
 
-class AddMemberUseCase @Inject constructor(
+class AddMemberUseCase(
     private val repository: MemberRepository
 ) {
     suspend operator fun invoke(subscriptionId: String, data: NewMemberData): Result<Member> {

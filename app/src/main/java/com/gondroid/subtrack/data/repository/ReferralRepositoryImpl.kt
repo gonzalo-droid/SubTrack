@@ -5,9 +5,8 @@ import com.gondroid.subtrack.domain.model.ReferralRecord
 import com.gondroid.subtrack.domain.repository.ReferralRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class ReferralRepositoryImpl @Inject constructor() : ReferralRepository {
+class ReferralRepositoryImpl : ReferralRepository {
 
     override fun getReferralInfo(): Flow<ReferralInfo> = AppStore.referralInfo
 

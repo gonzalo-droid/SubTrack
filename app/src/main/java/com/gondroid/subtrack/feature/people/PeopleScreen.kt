@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.people
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,14 +34,13 @@ import com.gondroid.subtrack.core.designsystem.components.input.SegmentedSelecto
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun PeopleScreen(
     onNavigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: PeopleViewModel = hiltViewModel()
+    val viewModel: PeopleViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize().background(BgApp)) {

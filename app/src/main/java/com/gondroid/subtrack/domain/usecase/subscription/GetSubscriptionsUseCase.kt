@@ -4,9 +4,8 @@ import com.gondroid.subtrack.domain.model.SubscriptionsSummary
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
-class GetSubscriptionsUseCase @Inject constructor(
+class GetSubscriptionsUseCase(
     private val repository: SubscriptionRepository
 ) {
     operator fun invoke(): Flow<SubscriptionsSummary> =

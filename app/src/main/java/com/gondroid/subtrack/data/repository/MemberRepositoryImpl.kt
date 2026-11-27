@@ -11,12 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 import com.gondroid.subtrack.domain.model.enums.isOverdue
 
-@Singleton
-class MemberRepositoryImpl @Inject constructor() : MemberRepository {
+class MemberRepositoryImpl : MemberRepository {
 
     private val store = AppStore.subscriptions
 

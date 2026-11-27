@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.profile.templates
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -79,7 +82,6 @@ import com.gondroid.subtrack.core.util.TemplateRenderer
 import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
-import androidx.hilt.navigation.compose.hiltViewModel
 
 private val COMMON_EMOJIS = listOf(
     "💬", "✅", "🔔", "💳", "📱", "🎵",
@@ -96,9 +98,9 @@ fun EditTemplateScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel = hiltViewModel<EditTemplateViewModel, EditTemplateViewModel.Factory>(
+    val viewModel = koinViewModel<EditTemplateViewModel>(
         key = templateId ?: "new",
-        creationCallback = { it.create(templateId) }
+        parameters = { parametersOf(templateId) }
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

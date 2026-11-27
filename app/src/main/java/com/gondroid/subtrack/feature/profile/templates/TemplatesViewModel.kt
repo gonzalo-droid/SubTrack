@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.template.DeleteTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.DuplicateTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed interface TemplatesEvent {
     data class Duplicated(val name: String) : TemplatesEvent
@@ -22,8 +20,7 @@ sealed interface TemplatesEvent {
     data object Error : TemplatesEvent
 }
 
-@HiltViewModel
-class TemplatesViewModel @Inject constructor(
+class TemplatesViewModel(
     private val getAllTemplates: GetAllTemplatesUseCase,
     private val duplicateTemplate: DuplicateTemplateUseCase,
     private val deleteTemplate: DeleteTemplateUseCase

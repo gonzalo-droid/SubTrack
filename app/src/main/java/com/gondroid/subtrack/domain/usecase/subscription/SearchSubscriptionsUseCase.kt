@@ -1,11 +1,10 @@
 package com.gondroid.subtrack.domain.usecase.subscription
 
 import com.gondroid.subtrack.domain.model.Subscription
-import javax.inject.Inject
 
 enum class SubscriptionFilter { ALL, PERSONAL, SHARED }
 
-class SearchSubscriptionsUseCase @Inject constructor() {
+class SearchSubscriptionsUseCase() {
     operator fun invoke(
         subscriptions: List<Subscription>,
         query: String,

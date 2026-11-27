@@ -11,14 +11,11 @@ import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetAllTemplatesUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
-@HiltViewModel
-class ProfileViewModel @Inject constructor(
+class ProfileViewModel(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val getUserAlias: GetUserAliasUseCase,
     private val getSubscriptions: GetSubscriptionsUseCase,

@@ -7,10 +7,6 @@ import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 sealed interface RoleState {
     data object Loading : RoleState
@@ -19,17 +15,12 @@ sealed interface RoleState {
     data object NotFound : RoleState
 }
 
-@HiltViewModel(assistedFactory = SubscriptionDetailRouterViewModel.Factory::class)
-class SubscriptionDetailRouterViewModel @AssistedInject constructor(
-    @Assisted private val subscriptionId: String,
+class SubscriptionDetailRouterViewModel(
+    private val subscriptionId: String,
     getSubscriptionDetail: GetSubscriptionDetailUseCase,
     getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(subscriptionId: String): SubscriptionDetailRouterViewModel
-    }
 
     val roleState = combine(
         getSubscriptionDetail(subscriptionId),

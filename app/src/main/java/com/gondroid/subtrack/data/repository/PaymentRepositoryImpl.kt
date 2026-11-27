@@ -5,11 +5,8 @@ import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.domain.repository.PaymentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
+class PaymentRepositoryImpl : PaymentRepository {
 
     private val store = AppStore.payments
 

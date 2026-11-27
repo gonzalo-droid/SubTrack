@@ -12,7 +12,6 @@ import com.gondroid.subtrack.domain.model.enums.SubscriptionCategory
 import com.gondroid.subtrack.domain.usecase.servicetemplate.GetPopularServicesUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.CreateSubscriptionUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,14 +27,10 @@ import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUs
 import com.gondroid.subtrack.domain.usecase.subscription.UpdateSubscriptionDetailsUseCase
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import java.util.Locale
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 
-@HiltViewModel(assistedFactory = CreateSubscriptionViewModel.Factory::class)
-class CreateSubscriptionViewModel @AssistedInject constructor(
-    @Assisted startWithShared: Boolean,
-    @Assisted editSubscriptionId: String?,
+class CreateSubscriptionViewModel(
+    startWithShared: Boolean,
+    editSubscriptionId: String?,
     private val createSubscription: CreateSubscriptionUseCase,
     private val getPopularServices: GetPopularServicesUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
@@ -44,10 +39,6 @@ class CreateSubscriptionViewModel @AssistedInject constructor(
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(startWithShared: Boolean, editSubscriptionId: String?): CreateSubscriptionViewModel
-    }
 
 
     /** D2: the notification permission is asked right after the first subscription is created. */

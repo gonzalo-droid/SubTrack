@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.subscriptiondetail
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -13,7 +16,6 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.AdminDetailScreen
 import com.gondroid.subtrack.feature.subscriptiondetail.member.MemberDetailScreen
 import androidx.compose.runtime.LaunchedEffect
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SubscriptionDetailScreen(
@@ -23,9 +25,9 @@ fun SubscriptionDetailScreen(
     onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm = hiltViewModel<SubscriptionDetailRouterViewModel, SubscriptionDetailRouterViewModel.Factory>(
+    val vm = koinViewModel<SubscriptionDetailRouterViewModel>(
         key = subscriptionId,
-        creationCallback = { it.create(subscriptionId) }
+        parameters = { parametersOf(subscriptionId) }
     )
     val roleState by vm.roleState.collectAsStateWithLifecycle()
 

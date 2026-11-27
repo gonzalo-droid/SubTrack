@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile.editprofile
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,14 +53,13 @@ import com.gondroid.subtrack.core.designsystem.theme.SubTrackType
 import com.gondroid.subtrack.core.designsystem.theme.TextPrimary
 import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun EditProfileScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: EditProfileViewModel = hiltViewModel()
+    val viewModel: EditProfileViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 

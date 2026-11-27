@@ -9,11 +9,11 @@ Formato: fecha, decisión, por qué, y qué la haría cambiar.
 - **Por qué:** el mercado inicial (Perú) es mayoritariamente Android y la app aún no está publicada. Partir el código en KMP antes de validar el producto suma trabajo sin usuarios que lo pidan.
 - **Cambiaría si:** se decide lanzar en iOS. La capa `domain` ya es Kotlin puro, así que es la primera candidata a `commonMain`.
 
-## 2026-11-26 — Hilt en vez de Koin (STK-02, ARQ-04)
+## 2026-11-26 — Koin en vez de Hilt (ARQ-04)
 
-- **Decisión:** inyección con Hilt 2.60.1; ViewModels con argumentos usan assisted injection.
-- **Por qué:** al ser solo Android, Hilt da verificación en compilación y la integración oficial con `hiltViewModel()`. Koin es la opción de la base porque funciona en KMP.
-- **Cambiaría si:** el proyecto pasa a KMP.
+- **Decisión:** se reemplazó Hilt por Koin 4.2 como primer paso de la migración a KMP (`docs/plans/2026-11-26-kmp-migration.md`).
+- **Por qué:** Hilt solo funciona en Android y no es compatible con el plugin de biblioteca KMP de AGP 9; Koin es lo que pide la base.
+- **Costo:** se pierde la verificación del grafo en compilación; una dependencia que falta aparece al abrir la pantalla, así que los flujos de Maestro la cubren.
 
 ## 2026-11-26 — Firebase en vez de un backend propio con Ktor (STK-02, TST-03)
 

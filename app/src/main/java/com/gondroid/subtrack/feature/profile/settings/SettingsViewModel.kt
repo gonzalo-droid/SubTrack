@@ -4,19 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.auth.DeleteAccountUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.ExportSubscriptionsCsvUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class SettingsUiState(val isDeletingAccount: Boolean = false)
 
-@HiltViewModel
-class SettingsViewModel @Inject constructor(
+class SettingsViewModel(
     private val exportSubscriptionsCsv: ExportSubscriptionsCsvUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase
 ) : ViewModel() {

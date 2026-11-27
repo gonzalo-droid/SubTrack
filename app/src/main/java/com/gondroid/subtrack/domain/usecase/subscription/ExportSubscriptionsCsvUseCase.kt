@@ -4,10 +4,9 @@ import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.flow.first
 import java.util.Locale
-import javax.inject.Inject
 
 /** "Exportar mis datos": every subscription as CSV (one row per subscription). */
-class ExportSubscriptionsCsvUseCase @Inject constructor(
+class ExportSubscriptionsCsvUseCase(
     private val repository: SubscriptionRepository
 ) {
     suspend operator fun invoke(): String = toCsv(repository.getAllSubscriptions().first())

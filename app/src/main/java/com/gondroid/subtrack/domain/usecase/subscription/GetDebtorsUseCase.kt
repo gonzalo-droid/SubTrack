@@ -8,10 +8,9 @@ import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.util.Calendar
-import javax.inject.Inject
 
 /** Members who owe the current user, only in subscriptions the user administers. */
-class GetDebtorsUseCase @Inject constructor(
+class GetDebtorsUseCase(
     private val repository: SubscriptionRepository,
     private val userRepository: UserRepository
 ) {

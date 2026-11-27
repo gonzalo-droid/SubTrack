@@ -2,9 +2,8 @@ package com.gondroid.subtrack.domain.usecase.template
 
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.repository.TemplateRepository
-import javax.inject.Inject
 
-class SaveTemplateUseCase @Inject constructor(
+class SaveTemplateUseCase(
     private val repository: TemplateRepository
 ) {
     suspend operator fun invoke(template: Template): Result<String> {

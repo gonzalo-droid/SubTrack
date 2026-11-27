@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.dashboard
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -95,7 +97,6 @@ import com.gondroid.subtrack.domain.model.enums.isOverdue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.outlined.Add
-import androidx.hilt.navigation.compose.hiltViewModel
 
 // ── Public entry point ────────────────────────────────────────────────────────
 
@@ -106,7 +107,7 @@ fun DashboardScreen(
     onNavigateToNotifications: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DashboardViewModel = hiltViewModel()
+    viewModel: DashboardViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

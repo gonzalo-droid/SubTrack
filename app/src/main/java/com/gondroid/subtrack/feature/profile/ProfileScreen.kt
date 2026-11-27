@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.profile
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.background
@@ -80,7 +82,6 @@ import com.gondroid.subtrack.domain.model.enums.TemplateTone
 import com.gondroid.subtrack.core.designsystem.components.list.SettingsRow
 import com.gondroid.subtrack.core.designsystem.components.list.SettingsDivider
 import com.gondroid.subtrack.BuildConfig
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun ProfileScreen(
@@ -94,7 +95,7 @@ fun ProfileScreen(
     onDebugOnboarding: () -> Unit = {},
     onDebugData: () -> Unit = {}
 ) {
-    val viewModel: ProfileViewModel = hiltViewModel()
+    val viewModel: ProfileViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val messenger = LocalSnackbarMessenger.current
     LaunchedEffect(Unit) {

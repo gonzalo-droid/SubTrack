@@ -11,8 +11,6 @@ import kotlinx.coroutines.launch
 import com.gondroid.subtrack.core.navigation.Route
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 sealed interface AppReadyState {
     data object Loading : AppReadyState
@@ -20,8 +18,7 @@ sealed interface AppReadyState {
     data object ShowMain : AppReadyState
 }
 
-@HiltViewModel
-class AppStateViewModel @Inject constructor(
+class AppStateViewModel(
     private val userPreferences: UserPreferences
 ) : ViewModel() {
 

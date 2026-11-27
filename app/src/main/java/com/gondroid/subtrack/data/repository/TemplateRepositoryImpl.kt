@@ -3,11 +3,8 @@ package com.gondroid.subtrack.data.repository
 import com.gondroid.subtrack.domain.model.Template
 import com.gondroid.subtrack.domain.repository.TemplateRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class TemplateRepositoryImpl @Inject constructor() : TemplateRepository {
+class TemplateRepositoryImpl : TemplateRepository {
 
     private val store = AppStore.templates
 

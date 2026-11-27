@@ -7,13 +7,12 @@ import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 /**
  * "Debes": the admins of subscriptions where the current user is a member, one entry per
  * admin, with what the user pays them and how much is overdue.
  */
-class GetMyDebtsUseCase @Inject constructor(
+class GetMyDebtsUseCase(
     private val subscriptionRepository: SubscriptionRepository,
     private val userRepository: UserRepository
 ) {

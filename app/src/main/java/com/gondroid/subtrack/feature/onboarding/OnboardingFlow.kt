@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.onboarding
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -33,7 +35,6 @@ import com.gondroid.subtrack.feature.onboarding.screens.ValueShareScreen
 import com.gondroid.subtrack.feature.onboarding.screens.ValueTrackerScreen
 import androidx.compose.ui.res.stringResource
 import com.gondroid.subtrack.R
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun OnboardingFlow(
@@ -41,7 +42,7 @@ fun OnboardingFlow(
     onComplete: (then: Route?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm: OnboardingViewModel = hiltViewModel()
+    val vm: OnboardingViewModel = koinViewModel()
 
     val step by vm.currentStep.collectAsStateWithLifecycle()
     val authState by vm.authState.collectAsStateWithLifecycle()

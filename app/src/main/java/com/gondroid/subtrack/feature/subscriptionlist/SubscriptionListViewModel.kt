@@ -9,7 +9,6 @@ import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionStatsUse
 import com.gondroid.subtrack.domain.usecase.subscription.SearchSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.SubscriptionFilter
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
 sealed interface SubscriptionListUiState {
     data object Loading : SubscriptionListUiState
@@ -33,8 +31,7 @@ sealed interface SubscriptionListUiState {
 }
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-class SubscriptionListViewModel @Inject constructor(
+class SubscriptionListViewModel(
     private val getAllSubscriptionsAlphabetical: GetAllSubscriptionsAlphabeticalUseCase,
     private val searchSubscriptions: SearchSubscriptionsUseCase,
     private val getSubscriptionStats: GetSubscriptionStatsUseCase,

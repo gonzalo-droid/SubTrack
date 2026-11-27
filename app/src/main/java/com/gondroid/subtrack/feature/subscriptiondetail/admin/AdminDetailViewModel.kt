@@ -16,7 +16,6 @@ import com.gondroid.subtrack.domain.usecase.member.UpdateMemberUseCase
 import com.gondroid.subtrack.domain.usecase.payment.GetPaymentHistoryUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.GetSubscriptionDetailUseCase
 import com.gondroid.subtrack.domain.usecase.user.GetCurrentUserUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,9 +29,6 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.gondroid.subtrack.domain.usecase.subscription.DeleteSubscriptionUseCase
 import com.gondroid.subtrack.domain.usecase.subscription.PauseSubscriptionUseCase
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 
 // ── Sheet navigation state ────────────────────────────────────────────────────
 
@@ -64,9 +60,8 @@ sealed interface AdminDetailEvent {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
-@HiltViewModel(assistedFactory = AdminDetailViewModel.Factory::class)
-class AdminDetailViewModel @AssistedInject constructor(
-    @Assisted private val subscriptionId: String,
+class AdminDetailViewModel(
+    private val subscriptionId: String,
     getSubscriptionDetail: GetSubscriptionDetailUseCase,
     getMembersForSubscription: GetMembersForSubscriptionUseCase,
     getArchivedMembers: GetArchivedMembersUseCase,
@@ -81,10 +76,6 @@ class AdminDetailViewModel @AssistedInject constructor(
     private val deleteSubscriptionUseCase: DeleteSubscriptionUseCase
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(subscriptionId: String): AdminDetailViewModel
-    }
 
 
     val uiState: StateFlow<AdminDetailUiState> = combine(

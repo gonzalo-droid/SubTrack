@@ -12,7 +12,7 @@ Instrucciones para Claude Code al trabajar en este proyecto. Lee este archivo **
 - **UI**: Jetpack Compose + Material 3
 - **minSdk**: 24 · **targetSdk**: 34+ · **compileSdk**: 34+
 - **Arquitectura**: Clean Architecture (data / domain / presentation) con MVVM
-- **DI**: Hilt 2.60.1 (activo). Pantallas con `hiltViewModel()`; los ViewModels con argumentos de navegación usan assisted injection (`hiltViewModel<VM, VM.Factory>(creationCallback = { it.create(...) })`). No crear `ViewModelProvider.Factory` manuales.
+- **DI**: Koin 4.2 (BOM), módulos en `core/di/Koin.kt` (`platformModule`, `dataModule`, `domainModule`, `uiModule`). Pantallas con `koinViewModel()`; los ViewModels con argumentos de navegación usan `koinViewModel<VM>(parameters = { parametersOf(...) })` y se registran con `viewModel { (arg: T) -> VM(arg, get(), …) }`. Una clase nueva se registra en su módulo; no crear `ViewModelProvider.Factory` manuales.
 - **Async**: Coroutines + Flow
 - **Navegación**: Navigation Compose type-safe (con `@Serializable`)
 - **Persistencia local**: Room (fase 2)
@@ -39,7 +39,7 @@ Todo dato pasa por los repositorios sobre `AppStore`; la persistencia (Room) y l
 
 ### 5. Compose idiomático
 - Preview obligatorio para cada Composable público (al menos uno en light + uno en dark si aplica)
-- `hiltViewModel()` para inyectar, no instanciar manualmente
+- `koinViewModel()` para inyectar, no instanciar manualmente
 - `collectAsStateWithLifecycle()` siempre — nunca `collectAsState()`
 - Estado mínimo: un `UiState` data class por pantalla con `loading`, `data`, `error`
 
@@ -71,7 +71,7 @@ com.gondroid.subtrack/
 │   ├── designsystem/              // Theme, colors, typography, components
 │   ├── navigation/                // Routes, NavHost
 │   ├── util/                      // Extensions, formatters
-│   └── di/                        // Modules de Hilt globales
+│   └── di/                        // Koin.kt: los 4 módulos de Koin e initKoin
 │
 ├── data/                          // Implementaciones de repositorios
 │   ├── demo/                      // DemoData: datos de ejemplo (solo debug)

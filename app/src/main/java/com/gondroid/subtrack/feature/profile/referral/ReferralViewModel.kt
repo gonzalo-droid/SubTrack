@@ -4,14 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.referral.GetRecentReferralsUseCase
 import com.gondroid.subtrack.domain.usecase.referral.GetReferralInfoUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
-@HiltViewModel
-class ReferralViewModel @Inject constructor(
+class ReferralViewModel(
     private val getReferralInfo: GetReferralInfoUseCase,
     private val getRecentReferrals: GetRecentReferralsUseCase
 ) : ViewModel() {

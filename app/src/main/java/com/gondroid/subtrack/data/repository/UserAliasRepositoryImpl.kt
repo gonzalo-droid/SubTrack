@@ -3,9 +3,8 @@ package com.gondroid.subtrack.data.repository
 import com.gondroid.subtrack.domain.model.UserAlias
 import com.gondroid.subtrack.domain.repository.UserAliasRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class UserAliasRepositoryImpl @Inject constructor() : UserAliasRepository {
+class UserAliasRepositoryImpl : UserAliasRepository {
 
     override fun getAlias(): Flow<UserAlias> = AppStore.userAlias
 

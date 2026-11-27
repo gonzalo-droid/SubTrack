@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.model.PersonSummary
 import com.gondroid.subtrack.domain.usecase.member.GetAllPeopleWithSubscriptionsUseCase
 import com.gondroid.subtrack.domain.usecase.member.GetMyDebtsUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
 /** "Te deben": people in subscriptions I administer. "Debes": admins I pay. */
 enum class PeopleTab { OWED_TO_ME, I_OWE }
@@ -32,8 +30,7 @@ sealed interface PeopleUiState {
 }
 
 @OptIn(FlowPreview::class)
-@HiltViewModel
-class PeopleViewModel @Inject constructor(
+class PeopleViewModel(
     getAllPeopleWithSubscriptions: GetAllPeopleWithSubscriptionsUseCase,
     getMyDebts: GetMyDebtsUseCase
 ) : ViewModel() {

@@ -7,13 +7,12 @@ import com.gondroid.subtrack.domain.repository.SubscriptionRepository
 import com.gondroid.subtrack.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 /**
  * "Te deben": people who share the subscriptions the current user administers.
  * The user is left out, and totals only count those subscriptions.
  */
-class GetAllPeopleWithSubscriptionsUseCase @Inject constructor(
+class GetAllPeopleWithSubscriptionsUseCase(
     private val repository: MemberRepository,
     private val subscriptionRepository: SubscriptionRepository,
     private val userRepository: UserRepository

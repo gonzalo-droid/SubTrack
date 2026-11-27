@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.admin
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -100,7 +103,6 @@ import com.gondroid.subtrack.core.designsystem.theme.BgSurface
 import com.gondroid.subtrack.core.designsystem.theme.BgSurfaceEl
 import com.gondroid.subtrack.domain.model.enums.isUnpaid
 import com.gondroid.subtrack.feature.subscriptiondetail.admin.components.TimelineLegend
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,9 +112,9 @@ fun AdminDetailScreen(
     onEdit: () -> Unit,
     onMemberHistory: (memberId: String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AdminDetailViewModel = hiltViewModel<AdminDetailViewModel, AdminDetailViewModel.Factory>(
+    viewModel: AdminDetailViewModel = koinViewModel<AdminDetailViewModel>(
         key = subscriptionId,
-        creationCallback = { it.create(subscriptionId) }
+        parameters = { parametersOf(subscriptionId) }
     )
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

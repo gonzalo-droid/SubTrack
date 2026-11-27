@@ -4,10 +4,9 @@ import com.gondroid.subtrack.domain.model.Subscription
 import com.gondroid.subtrack.domain.model.enums.BillingCycle
 import com.gondroid.subtrack.domain.model.enums.SplitType
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
-import javax.inject.Inject
 
 /** Edits amount, currency, cycle and cutoff day; member shares follow the new total. */
-class UpdateSubscriptionDetailsUseCase @Inject constructor(
+class UpdateSubscriptionDetailsUseCase(
     private val repository: SubscriptionRepository
 ) {
     suspend operator fun invoke(

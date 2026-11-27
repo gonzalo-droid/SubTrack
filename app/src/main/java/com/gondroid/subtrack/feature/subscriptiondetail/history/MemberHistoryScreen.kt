@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.history
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +47,6 @@ import com.gondroid.subtrack.domain.model.Payment
 import com.gondroid.subtrack.domain.model.enums.PaymentStatus
 import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun MemberHistoryScreen(
@@ -53,9 +55,9 @@ fun MemberHistoryScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel = hiltViewModel<MemberHistoryViewModel, MemberHistoryViewModel.Factory>(
+    val viewModel = koinViewModel<MemberHistoryViewModel>(
         key = "$subscriptionId/$memberId",
-        creationCallback = { it.create(subscriptionId, memberId) }
+        parameters = { parametersOf(subscriptionId, memberId) }
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

@@ -1,23 +1,19 @@
 package com.gondroid.subtrack
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.gondroid.subtrack.core.di.initKoin
 import com.gondroid.subtrack.data.local.LocalStoreSync
 import com.gondroid.subtrack.data.remote.FirestoreSync
 import com.google.firebase.auth.FirebaseAuth
-import javax.inject.Inject
+import org.koin.android.ext.android.get
 
-@HiltAndroidApp
 class SubTrackApplication : Application() {
-
-    @Inject lateinit var localStoreSync: LocalStoreSync
-    @Inject lateinit var firestoreSync: FirestoreSync
-    @Inject lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate() {
         super.onCreate()
-        localStoreSync.start()
+        initKoin(this)
+        get<LocalStoreSync>().start()
         // Signed in on an earlier run: Room already has the data, keep it mirrored to Firestore
-        firebaseAuth.currentUser?.let { firestoreSync.resume(it.uid) }
+        get<FirebaseAuth>().currentUser?.let { get<FirestoreSync>().resume(it.uid) }
     }
 }

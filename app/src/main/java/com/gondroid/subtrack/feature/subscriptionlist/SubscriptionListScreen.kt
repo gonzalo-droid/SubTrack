@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.feature.subscriptionlist
 
+import org.koin.compose.viewmodel.koinViewModel
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +53,6 @@ import com.gondroid.subtrack.core.designsystem.theme.TextTertiary
 import com.gondroid.subtrack.domain.model.SubscriptionStats
 import com.gondroid.subtrack.domain.usecase.subscription.SubscriptionFilter
 import com.gondroid.subtrack.feature.subscriptionlist.components.SubscriptionRow
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun SubscriptionListScreen(
@@ -59,7 +60,7 @@ fun SubscriptionListScreen(
     onCreateSubscription: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: SubscriptionListViewModel = hiltViewModel()
+    val viewModel: SubscriptionListViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize().background(BgApp)) {

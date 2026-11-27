@@ -1,5 +1,8 @@
 package com.gondroid.subtrack.feature.subscriptiondetail.member
 
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -78,7 +81,6 @@ import java.util.Date
 import java.util.Locale
 import com.gondroid.subtrack.core.designsystem.components.feedback.LocalSnackbarMessenger
 import com.gondroid.subtrack.feature.subscriptiondetail.components.PaymentHistoryRow
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,9 +90,9 @@ fun MemberDetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val vm = hiltViewModel<MemberDetailViewModel, MemberDetailViewModel.Factory>(
+    val vm = koinViewModel<MemberDetailViewModel>(
         key = "$subscriptionId/$memberId",
-        creationCallback = { it.create(memberId, subscriptionId) }
+        parameters = { parametersOf(memberId, subscriptionId) }
     )
     val uiState by vm.uiState.collectAsStateWithLifecycle()
     val activeSheet by vm.activeSheet.collectAsStateWithLifecycle()

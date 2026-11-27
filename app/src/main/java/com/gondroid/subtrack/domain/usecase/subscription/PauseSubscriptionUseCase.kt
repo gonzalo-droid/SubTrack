@@ -1,9 +1,8 @@
 package com.gondroid.subtrack.domain.usecase.subscription
 
 import com.gondroid.subtrack.domain.repository.SubscriptionRepository
-import javax.inject.Inject
 
-class PauseSubscriptionUseCase @Inject constructor(
+class PauseSubscriptionUseCase(
     private val repository: SubscriptionRepository
 ) {
     suspend operator fun invoke(id: String, paused: Boolean): Result<Unit> {

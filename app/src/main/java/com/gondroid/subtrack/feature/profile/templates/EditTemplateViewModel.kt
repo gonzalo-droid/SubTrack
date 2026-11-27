@@ -7,7 +7,6 @@ import com.gondroid.subtrack.domain.model.TemplateVariable
 import com.gondroid.subtrack.domain.usecase.template.DeleteTemplateUseCase
 import com.gondroid.subtrack.domain.usecase.template.GetTemplateByIdUseCase
 import com.gondroid.subtrack.domain.usecase.template.SaveTemplateUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,22 +14,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 
-@HiltViewModel(assistedFactory = EditTemplateViewModel.Factory::class)
-class EditTemplateViewModel @AssistedInject constructor(
-    @Assisted templateId: String?,
+class EditTemplateViewModel(
+    templateId: String?,
     private val getTemplateById: GetTemplateByIdUseCase,
     private val saveTemplate: SaveTemplateUseCase,
     private val deleteTemplate: DeleteTemplateUseCase
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(templateId: String?): EditTemplateViewModel
-    }
 
 
     private val _uiState = MutableStateFlow<EditTemplateUiState>(EditTemplateUiState.Loading)
