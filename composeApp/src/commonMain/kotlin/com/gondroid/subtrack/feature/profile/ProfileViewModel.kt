@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.profile
 
+import com.gondroid.subtrack.core.result.onFailure
+
+import com.gondroid.subtrack.core.result.DataError
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gondroid.subtrack.domain.usecase.alias.GetUserAliasUseCase
@@ -24,13 +28,13 @@ class ProfileViewModel(
     private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
 
-    private val _signOutFailed = Channel<Unit>(Channel.BUFFERED)
+    private val _signOutFailed = Channel<DataError>(Channel.BUFFERED)
     /** Emits when the sign-out failed; on success the app goes back to the onboarding by itself. */
     val signOutFailed = _signOutFailed.receiveAsFlow()
 
     fun signOut() {
         viewModelScope.launch {
-            signOutUseCase().onFailure { _signOutFailed.send(Unit) }
+            signOutUseCase().onFailure { _signOutFailed.send(it) }
         }
     }
 

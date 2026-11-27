@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.profile
 
+import com.gondroid.subtrack.resources.common_error_offline
+
+import com.gondroid.subtrack.core.result.isConnectivity
+
 import com.gondroid.subtrack.resources.Res
 import com.gondroid.subtrack.resources.cd_settings
 import com.gondroid.subtrack.resources.common_cancel
@@ -127,7 +131,9 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val messenger = LocalSnackbarMessenger.current
     LaunchedEffect(Unit) {
-        viewModel.signOutFailed.collect { messenger.show(Res.string.profile_logout_error) }
+        viewModel.signOutFailed.collect { error ->
+            messenger.show(if (error.isConnectivity) Res.string.common_error_offline else Res.string.profile_logout_error)
+        }
     }
 
     when (val state = uiState) {

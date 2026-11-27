@@ -1,5 +1,7 @@
 package com.gondroid.subtrack.data.remote
 
+import com.gondroid.subtrack.core.result.AppResult
+
 import com.gondroid.subtrack.core.auth.AuthConfig
 import com.gondroid.subtrack.core.preferences.UserPreferences
 import com.gondroid.subtrack.data.demo.DemoData
@@ -16,10 +18,10 @@ class AuthRepositoryImpl(
     private val userPreferences: UserPreferences
 ) : AuthRepository {
 
-    override suspend fun signInWithGoogle(credential: GoogleCredential): Result<User> = runCatching {
+    override suspend fun signInWithGoogle(credential: GoogleCredential): AppResult<User> = dataCall {
         if (AuthConfig.useFakeAuth) {
             // E2E tests: the demo user, no Firebase and no sync
-            return@runCatching DemoData.currentUser.also { AppStore.currentUser.value = it }
+            return@dataCall DemoData.currentUser.also { AppStore.currentUser.value = it }
         }
         val account = auth.signInWithGoogle(credential)
         val user = User(
@@ -35,13 +37,13 @@ class AuthRepositoryImpl(
         AppStore.currentUser.value ?: user
     }
 
-    override suspend fun signOut(): Result<Unit> = runCatching {
+    override suspend fun signOut(): AppResult<Unit> = dataCall {
         sync.stop()
         auth.signOut()
         clearDevice()
     }
 
-    override suspend fun deleteAccount(credential: GoogleCredential): Result<Unit> = runCatching {
+    override suspend fun deleteAccount(credential: GoogleCredential): AppResult<Unit> = dataCall {
         if (!AuthConfig.useFakeAuth) {
             val uid = auth.currentUserId() ?: error("No signed-in user")
             auth.reauthenticate(credential)

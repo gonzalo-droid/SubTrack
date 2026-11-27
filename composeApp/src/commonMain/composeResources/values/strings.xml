@@ -21,6 +21,7 @@
     <string name="common_cancel">Cancelar</string>
     <string name="common_confirm">Confirmar</string>
     <string name="common_loading">Cargando…</string>
+    <string name="common_error_offline">Sin conexión. Revisa tu internet e inténtalo de nuevo.</string>
     <string name="common_error_generic">Algo salió mal. Intenta de nuevo.</string>
 
     <!-- Dashboard — header -->

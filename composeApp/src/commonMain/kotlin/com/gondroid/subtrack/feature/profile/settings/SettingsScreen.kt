@@ -1,5 +1,9 @@
 package com.gondroid.subtrack.feature.profile.settings
 
+import com.gondroid.subtrack.resources.common_error_offline
+
+import com.gondroid.subtrack.core.result.isConnectivity
+
 import com.gondroid.subtrack.platform.ExternalActions
 import com.gondroid.subtrack.platform.rememberGoogleSignIn
 import org.koin.compose.koinInject
@@ -132,7 +136,9 @@ fun SettingsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.deleteFailed.collect { messenger.show(Res.string.settings_delete_account_error) }
+        viewModel.deleteFailed.collect { error ->
+            messenger.show(if (error.isConnectivity) Res.string.common_error_offline else Res.string.settings_delete_account_error)
+        }
     }
 
     if (showDeleteDialog) {

@@ -13,6 +13,15 @@ import GoogleSignIn
 private var firebaseReady: Bool { FirebaseApp.app() != nil }
 private let notConfigured = "Firebase is not configured: GoogleService-Info.plist is missing"
 
+/// Error text for Kotlin; connectivity errors get the "network:" prefix IosFirebase.kt maps to DataError.Network.
+private func describe(_ error: Error) -> String {
+    let ns = error as NSError
+    let offline = ns.domain == NSURLErrorDomain
+        || (ns.domain == AuthErrorDomain && ns.code == AuthErrorCode.networkError.rawValue)
+        || (ns.domain == FirestoreErrorDomain && ns.code == FirestoreErrorCode.unavailable.rawValue)
+    return (offline ? "network:" : "") + ns.localizedDescription
+}
+
 private func jsonString(_ object: Any) -> String? {
     guard JSONSerialization.isValidJSONObject(object),
           let data = try? JSONSerialization.data(withJSONObject: object) else { return nil }
@@ -25,7 +34,7 @@ final class FirestoreBridge: FirestoreNativeBridge {
     func getDocument(path: String, completion: @escaping (String?, String?) -> Void) {
         guard firebaseReady else { return completion(nil, notConfigured) }
         db.document(path).getDocument { snapshot, error in
-            if let error { return completion(nil, error.localizedDescription) }
+            if let error { return completion(nil, describe(error)) }
             guard let snapshot, snapshot.exists else { return completion(nil, nil) }
             completion(jsonString(snapshot.data() ?? [:]) ?? "{}", nil)
         }
@@ -34,7 +43,7 @@ final class FirestoreBridge: FirestoreNativeBridge {
     func listCollection(path: String, completion: @escaping (String?, String?) -> Void) {
         guard firebaseReady else { return completion(nil, notConfigured) }
         db.collection(path).getDocuments { snapshot, error in
-            if let error { return completion(nil, error.localizedDescription) }
+            if let error { return completion(nil, describe(error)) }
             var documents: [String: Any] = [:]
             snapshot?.documents.forEach { documents[$0.documentID] = $0.data() }
             completion(jsonString(documents) ?? "{}", nil)
@@ -57,7 +66,7 @@ final class FirestoreBridge: FirestoreNativeBridge {
                 batch.setData(fields, forDocument: document)
             }
         }
-        batch.commit { error in completion(error?.localizedDescription) }
+        batch.commit { error in completion(error.map(describe)) }
     }
 }
 
@@ -68,7 +77,7 @@ final class FirebaseAuthBridge: AuthNativeBridge {
         guard firebaseReady else { return completion(nil, notConfigured) }
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
         Auth.auth().signIn(with: credential) { result, error in
-            if let error { return completion(nil, error.localizedDescription) }
+            if let error { return completion(nil, describe(error)) }
             guard let user = result?.user else { return completion(nil, "Firebase returned no user") }
             var json: [String: Any] = ["uid": user.uid]
             json["displayName"] = user.displayName
@@ -84,7 +93,7 @@ final class FirebaseAuthBridge: AuthNativeBridge {
         guard firebaseReady else { return completion(notConfigured) }
         guard let user = Auth.auth().currentUser else { return completion("No signed-in user") }
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-        user.reauthenticate(with: credential) { _, error in completion(error?.localizedDescription) }
+        user.reauthenticate(with: credential) { _, error in completion(error.map(describe)) }
     }
 
     func signOut(completion: @escaping (String?) -> Void) {
@@ -94,14 +103,14 @@ final class FirebaseAuthBridge: AuthNativeBridge {
             GIDSignIn.sharedInstance.signOut()
             completion(nil)
         } catch {
-            completion(error.localizedDescription)
+            completion(describe(error))
         }
     }
 
     func deleteCurrentUser(completion: @escaping (String?) -> Void) {
         guard firebaseReady else { return completion(notConfigured) }
         guard let user = Auth.auth().currentUser else { return completion("No signed-in user") }
-        user.delete { error in completion(error?.localizedDescription) }
+        user.delete { error in completion(error.map(describe)) }
     }
 }
 
@@ -117,7 +126,7 @@ final class GoogleSignInBridge: GoogleSignInNativeBridge {
                 if error.domain == kGIDSignInErrorDomain && error.code == GIDSignInError.canceled.rawValue {
                     return completion(nil, nil, nil)
                 }
-                return completion(nil, nil, error.localizedDescription)
+                return completion(nil, nil, describe(error))
             }
             guard let user = result?.user, let idToken = user.idToken?.tokenString else {
                 return completion(nil, nil, "Google returned no token")
